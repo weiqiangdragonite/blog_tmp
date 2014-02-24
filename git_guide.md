@@ -65,6 +65,17 @@ This will set the cache to timeout after 1 hour (setting is in seconds)
                  add          commit
     working dir -----> Index --------> HEAD
 
+检查当前状态：
+
+    $ git status
+
+有4种状态，分别是  
+staged: Files are ready to be committed.  
+unstaged: Files with changes that have not been prepared to be commited.  
+untracked: Files aren't tracked by Git yet. This usually indicates a newly
+created file.  
+deleted: File has been deleted and is waiting to be removed from Git.
+
 3.可以计划改动（把它们添加到缓存区），使用如下命令：
 
     $ git add <filename>
@@ -76,11 +87,14 @@ This will set the cache to timeout after 1 hour (setting is in seconds)
 
     $ git commit -m "代码提交信息"
 
-
 5.你的改动现在已经在本地仓库的 HEAD 中了。执行如下命令以将这些改动提交到远端
 仓库：
 
     $ git push origin master
+    $ git push -u origin master
+
+The -u tells Git to remember the parameters, so that next time we can simply
+run git push and Git will know what to do.
 
 (可以把 master 换成你想要推送的任何分支)
 
@@ -112,6 +126,7 @@ This will set the cache to timeout after 1 hour (setting is in seconds)
 
 7.要更新你的本地仓库至最新改动，执行：
 
+    $ git pull origin master
     $ git pull
 
 要合并其他分支到你的当前分支（例如 master），执行：
@@ -136,3 +151,8 @@ This will set the cache to timeout after 1 hour (setting is in seconds)
 
     $ git fetch origin
     $ git reset --hard origin/master
+
+10.查看记录
+
+    $ git log
+    $ git log --summary
