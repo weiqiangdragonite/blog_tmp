@@ -1,0 +1,287 @@
+
+1.CentOS主机规划与安装
+VirtualBox 100GB Disk(102398MB)
+
+/boot     100MB
+/         20000MB
+/home     20000MB
+swap      2000MB
+
+/var      20000MB
+/tmp      2000MB
+
+Hostname: centos
+选择Configure Network -> Edit -> Connect automatically
+取消勾选UTC
+选择Minimal Desktop来安装
+
+Username: dragonite
+Fullname: dragonite
+
+
+
+/boot   100 MB
+/       10000 MB
+/usr    20000 MB
+/var    10000 MB
+/home   100000 MB
+
+
+环境变量
+~/.bashrc
+
+--------------------------------------------------------------------------------
+
+跟新yum源
+cd /etc/yum.repos.d
+mv CentOS-Base.repo CentOS-Base.repo.backup
+
+下载163的源
+wget http://mirrors.163.com/.help/CentOS-Base-163.repo
+
+设为yum源
+mv CentOS6-Base-163.repo CentOS-Base.repo
+
+运行yum makecache生成缓存
+
+-----------------------------------------------------------
+
+1.Install update:
+su
+yum update
+(yum-complete-transaction)
+
+yum install gcc gcc-c++ kernel-devel
+Then  reboot
+
+yum info kernel-devel
+uname -r
+(make sure the version of kernel-devel and kernel
+ is the same.)
+ 
+-----------------------------------------------------------
+
+2.VirtualBox Guest Additions
+
+Install VirtualBox Guest Additions
+Then reboot
+
+-----------------------------------------------------------
+
+3.Install system monitor
+
+yum install gnome-system-monitor
+
+-----------------------------------------------------------
+
+4.Install GCC
+
+安装GCC 4.8.2:
+http://www.gnu.org/software/gcc/
+
+tar -xvjf gcc-4.8.2
+./contrib/download_prerequisites
+
+安装gmp-4.3.2
+cd /contrib/gmp-4.3.2
+./configure --prefix=/usr/local/gmp-4.3.2
+make
+make install
+
+安装mpfr-2.4.2
+cd /contrib/mpfr-2.4.2
+./configure --prefix=/usr/local/mpfr-2.4.2 --with-gmp=/usr/local/gmp-4.3.2
+make
+make install
+
+安装mpc-0.8.1
+cd /contrib/mpc-0.8.1
+./configure  --prefix=/usr/local/mpc-0.8.1 --with-gmp=/usr/local/gmp-4.3.2 --with-mpfr=/usr/local/mpfr-2.4.2
+make
+make install
+
+
+安装三个依赖库之后要把库路径添加到/etc/ld.so.conf文件中
+vim /etc/ld.so.conf
+添加
+/usr/local/gmp-4.3.2/lib
+/usr/local/mpfr-2.4.2/lib
+/usr/local/mpc-0.8.1/lib
+
+更新响应cache文件让系统能找到共享库
+ldconfig
+
+
+建立编译目录
+mkdir build
+cd build
+
+../configure  --prefix=/usr/local/gcc-4.8.2 --mandir=/usr/local/gcc-4.8.2/share/man --infodir=/usr/local/gcc-4.8.2/share/info --enable-bootstrap --enable-shared --enable-checking=release --enable-languages=c,c++,objc,obj-c++ --disable-multilib --with-gmp=/usr/local/gmp-4.3.2 --with-mpfr=/usr/local/mpfr-2.4.2 --with-mpc=/usr/local/mpc-0.8.1
+
+make
+make install
+
+
+备份旧gcc链接
+su
+cd /usr/bin
+mv gcc gcc-backup
+mv g++ g++-backup
+
+建立新链接
+ln -s /usr/local/gcc-4.8.2/bin/gcc gcc
+ln -s /usr/local/gcc-4.8.2/bin/g++ g++
+
+updatedb
+
+
+添加环境变量
+vim /etc/bashrc
+LD_LIBRARY_PATH=:/usr/local/mpc-0.8.1/lib:/usr/local/gmp-4.3.2/lib:/usr/local/mpfr-2.4.2/lib:/usr/local/gcc-4.8.2/lib
+export LD_LIBRARY_PATH
+
+
+--------------------------------------------------------------------------------
+
+
+Install Java:
+
+First download the ".tar.gz" file:
+http://www.oracle.com/technetwork/java/javase/downloads/index.html
+"jdk-version-linux-i586.tar.gz"
+
+Then extract it and get the "jdk1.7.0" folder:
+tar -xvzf jdk-version.tar.gz
+
+和ubuntu一致
+
+
+
+--------------------------------------------------------------------------------
+
+5.Install NTFS-driver
+
+download from http://www.tuxera.com/community/ntfs-3g-download/
+
+tar -xvzf xxx.tgz
+
+su
+./configure
+make
+make install
+
+
+usage:
+mount -t ntfs-3g /dev/sda1 /mnt/windows
+
+
+mounted during boot:
+vim /etc/fstab
+/dev/sdb5 /mnt/windows ntfs-3g defaults 0 0
+
+
+see the disk:
+su
+fdisk -l
+
+--------------------------------------------------------------------------------
+
+5.Install gedit
+
+yum install gedit
+
+--------------------------------------------------------------------------------
+
+6.Setting Vim
+
+cp /etc/vimrc ~/.vimrc
+
+vi .vimrc
+
+Add these to the last line:
+
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set number
+set nobackup
+set backupcopy=yes
+set autoindent
+set smartindent
+set cindent
+set expandtab
+set ruler
+set showmode
+syntax on
+
+--------------------------------------------------------------------------------
+
+7.Install input-method
+
+System -> Preferences -> Input Method
+(choose iBus)
+
+--------------------------------------------------------------------------------
+
+8.Change the hosts
+
+vim /etc/hosts
+
+--------------------------------------------------------------------------------
+
+9.Install Google Chrome
+
+vim /etc/yum.repos.d/CentOS-Base.repo
+
+for 32-bit:
+
+[google]
+name=Google - i386
+baseurl=http://dl.google.com/linux/rpm/stable/i386
+enabled=1
+gpgcheck=1
+gpgkey=https://dl-ssl.google.com/linux/linux_signing_key.pub
+
+
+for 64-bit:
+
+[google64]
+name=Google - x86_64
+baseurl=http://dl.google.com/linux/rpm/stable/x86_64
+enabled=1
+gpgcheck=1
+gpgkey=https://dl-ssl.google.com/linux/linux_signing_key.pub
+
+
+su
+cd /usr/lib
+rm libstdc++.so.6
+
+cp /usr/local/gcc-4.8.2/lib/libstdc++.so.6.0.18 /usr/lib
+ln -s libstdc++.so.6.0.18  libstdc++.so.6
+
+yum install google-chrome-stable
+
+--------------------------------------------------------------------------------
+
+检测cpu温度
+
+yum install lm_sensors
+sensors-detect
+(choos YES)
+sensors
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,258 @@
+
+每个文件的开头注释：
+/*
+ * filepath/filename
+ *
+ * one sentence description
+ *
+ * Copyright Author
+ *
+ * description
+ *
+ */
+
+或者GNU
+
+/*
+ * program’s name
+ *
+ * a brief idea of what it does.
+ *
+ * Copyright (C) year author <email>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
+
+
+
+
+使用tab 8位缩进
+嵌套层数不要超过3层
+局部变量5-10个
+使用/* */来注释
+小用全局变量
+局部变量尽量简洁和突出意义，变量名尽量用名词，bool的用is_xxx
+一行定义一个变量
+命名方式 xxx_xxx_xxx
+函数命尽量用动词 get_xxx()
+注释在函数开头前，body里少用
+少用typedef
+
+macro定义的变量用大写
+const变量用大写
+
+
+参数传递少于4个
+
+一般的，如果能写成内联函数就不要写成像函数的宏。
+inline函数少于3行
+
+长于80列的语句要打散成有意义的片段。每个片段要明显短于原来的语句，而且放置的位置
+也明显的靠右
+
+当只有一个单独的语句的时候，不用加不必要的大括号，while，for也是。
+	if (...)
+		do_this()
+
+如果是多分支，即使是单语句，也加大括号。
+	if (...) {
+		do_this()
+	} else {
+		do_another()
+	}
+
+
+
+注释 /** 开头的是用于kernel-doc的
+
+
+/**
+ * foobar() - short function description of foobar
+ * @arg1:	Describe the first argument to foobar.
+ * @arg2:	Describe the second argument to foobar.
+ *		One can provide multiple line descriptions
+ *		for arguments.
+ *
+ * A longer description, with more discussion of the function foobar()
+ * that might be useful to those using or modifying it.  Begins with
+ * empty comment line, and may include additional embedded empty
+ * comment lines.
+ *
+ * The longer description can have multiple paragraphs.
+ *
+ * Return: Describe the return value of foobar.
+ */
+func()
+{
+	if () {
+		...
+	} else {
+		...
+	}
+}
+
+
+/**
+ * struct my_struct - short description
+ * @a: first member
+ * @b: second member
+ *
+ * Longer description
+ */
+struct my_struct {
+    int a;
+    int b;
+/* private: internal use only */
+    int c;
+};
+
+struct, enum的名字用小写，不要用typedef
+
+struct tcb {
+    ...
+};
+
+struct tcb *tcb_ptr;
+
+enum week {
+    ...
+};
+
+enum week week_day;
+
+
+头文件：
+#ifndef HEADER_H
+#define HEADER_H
+
+#endif	/* HEADER_H */
+
+
+
+Programming Adages
+
+General
+    - Comment, comment, comment. Put a lot of comments in your program. They
+      tell other programmers what you did. They also tell you what you did.
+    - Use the "KISS" principle. (Keep It Simple, Stupid.) Clear and simple
+      is better than complex and wonderful.
+    - Avoid side effects. Use ++ and -- on lines by themselves.
+    - Use the prefix version of ++ and -- (++x, --x) instead of the postfix
+      version (x++, x--). This adage does nothing for you in C, but will serve
+      you well when you move to C++.
+    - Never put an assignment inside a conditional.
+    - Never put an assignment inside any other statement.
+    - Know the difference between = and ==. Using = for == is a very common
+      mistake and is difficult to find.
+    - Never do "nothing" silently.
+        /* Don't program like this */
+        for (index = 0; data[index] < key; ++index);
+        /* Did you see the semicolon at the end of the last line? */
+      Always put in a comment or statement.
+        for (index = 0; data[index] < key; ++index)
+            continue;
+
+
+Design
+    - When designing your program, keep in mind "The Law of Least
+      Astonishment," which states that your program should behave in a way that
+      least astonishes the user.
+    - Make the user interface as simple and consistent as possible.
+    - Give the user as much help as you can.
+    - Clearly identify all error messages with the word "error", and try to
+      give the user some idea of how to correct his problem.
+
+
+Declarations
+    - Put one variable declaration per line, and comment them.
+    - Make variable-names long enough to be easily understood, but not so long
+      that they are difficult to type in. Two or three words is usually enough.
+    - Never use default declarations. If a function returns an integer, declare
+      it as type int.
+    - All parameters to a function should be declared and commented. Never use
+      default declarations.
+    - Always declare main as:
+        int main(void)                    /* Correct declaration */
+        int main(int argc, char *argv[])  /* Also correct */
+      Never declare main as:
+        void main()                     /* never program like this */
+        void main(int ac, char *av[])   /* never use names like this */
+
+
+switch Statement
+    - Always put a default case in a switch statement. Even if the case does
+      nothing, put it in.
+        switch (expression) {
+        /* ... */
+        default:
+            /* do nothing */
+            break;
+        }
+    - Every case in a switch should end with a break or /* Fall through */
+      comment.
+
+
+Preprocessor
+    - Always put parentheses around each constant expression defined by a
+      preprocessor
+        #define directive.
+        #define BOX_SIZE (3*10) /* size of the box in pixels */
+    - Use const declarations instead of #define wherever possible.
+    - Put () around each argument of a parameterized macro.
+        #define SQUARE(x) ((x) * (x))
+    - Surround macros that contain complete statements with curly braces ({}).
+        /* A fatal error has occurred. Tell user and abort */
+        #define DIE(msg) {printf(msg);exit(8);}
+    - When using the #ifdef/#endif construct for conditional compilation, put
+      the #define and #undef statements near the top of the program and comment
+      them.
+
+
+Style
+    - A single block of code enclosed in {} should not span more than a couple
+      of pages. Anything much bigger than that should probably be split up
+      into several smaller, simpler procedures.
+    - When your code starts to run into the right margin, you should split the 
+      procedure into several smaller, simpler procedures.
+
+
+Compiling
+    - Always create a Makefile so that others will know how to compile your
+      program.
+    - Turn on all the warning flags, then make your program warning free.
+
+
+--------------------------------------------------------------------------------
+
+Qt/C++ Style
+
+http://qt-project.org/wiki/Qt_Coding_Style
+
+使用空格 4位缩进
+一行定义一个变量
+注释使用 // ...
+变量名采用 nameLikeThis，不要缩写
+
+// ....
+if ()
+    bar()
+
+// ....
+if () {
+    ...
+} else {
+    ...
+}
+
+
