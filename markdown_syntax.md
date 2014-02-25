@@ -137,6 +137,36 @@ I am in another line now.
 
 --------------------------------------------------------------------------------
 
+# 代码：
+
+如果要标记一小段行内代码，你可以用反引号把它包起来（`），例如：
+
+    Use the `printf()` function.
+
+会产生
+
+    <p>Use the <code>printf()</code> function.</p>
+
+效果如下：  
+Use the `printf()` function.
+
+在代码区段内，& 和方括号都会被自动地转成 HTML 实体，这使得插入 HTML 原始码
+变得很容易，Markdown 会把下面这段：
+
+    Please don't use any `<blink>` tags.
+
+转为：
+
+    <p>Please don't use any <code>&lt;blink&gt;</code> tags.</p>
+
+效果如下：  
+Please don't use any `<blink>` tags.
+
+使用4个 空格 或1个 制表符 (Tab)缩进来表示代码区块，它们将被`<pre>`和`<code>`
+标签包裹起来。
+
+--------------------------------------------------------------------------------
+
 # 转义字符：
 
 可以利用反斜杠‘\’来插入一些在语法中有其它意义的符号。
