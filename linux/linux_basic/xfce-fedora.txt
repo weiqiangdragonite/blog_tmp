@@ -1,5 +1,17 @@
 
 
+在 win 下用 UltraISO 制作启动盘
+记住修改 syslinux.cfg 和 isolinux.cfg 的fedora label
+root=live:CDLABEL=Fedora-Live-Xfce-x86_64-20-1
+修改为u盘的label名字
+
+VirtualBox 安装增强功能包:
+
+
+
+
+
+
 64 bits
 
 /boot   300 MB
@@ -8,6 +20,8 @@
 /var    10000 MB
 /home   100000 MB
 swap    2000 MB
+
+biosboot  2 MB
 
 
 

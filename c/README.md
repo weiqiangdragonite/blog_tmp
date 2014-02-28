@@ -18,3 +18,9 @@ C Interfaces and Implementations
 大话数据结构  
 Mastering Algorithms with C  
 The Art of Computer Programming
+
+## C++
+
+Accelerated C++  
+Programming Principles and Practice Using C++  
+The C++ Programming Language
