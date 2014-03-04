@@ -217,6 +217,15 @@ vim /etc/fstab
 /dev/sdb5    /mnt/window    ntfs    defaults    0 0
 /dev/sda8    /mnt/linux     ntfs    defaults    0 0
 
+
+window 主机 Linux虚拟机 内设置共享文件夹
+vbox先设置共享文件夹路径，然后 linux 设置挂载：
+mount -t vboxsf vbox_share /mnt/share
+
+设置 fstab文件
+vbox_hare /mnt/share vboxsf rw, gid=100, uid=1000, auto 0 0
+
+
 --------------------------------------------------------------------------------
 
 修改hosts
