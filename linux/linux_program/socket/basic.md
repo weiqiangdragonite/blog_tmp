@@ -41,7 +41,7 @@ operation to enable the O_NONBLOCK open file status flag.
 
 # Stream Sockets
 
-`
+<pre>
 Passive socket:              Active socket:  
    (Server)                     (Client)  
 
@@ -58,7 +58,7 @@ Passive socket:              Active socket:
   write()                        read()  
     |                              |  
   close()                        close()  
-`
+</pre>
 
 # Datagram Sockets
 
