@@ -42,39 +42,39 @@ operation to enable the O_NONBLOCK open file status flag.
 # Stream Sockets
 
 <pre>
-Passive socket:              Active socket:  
-   (Server)                     (Client)  
+Passive socket:              Active socket:
+   (Server)                     (Client)
 
-  socket()                      socket()  
-    |                              |  
-  bind()                           |  
-    |                              |  
-  listen()                         |  
-    |                              |  
-  accept()                      connect()  
-    |                              |  
-  read()                         write()  
-    |                              |  
-  write()                        read()  
-    |                              |  
-  close()                        close()  
+  socket()                      socket()
+    |                              |
+  bind()                           |
+    |                              |
+  listen()                         |
+    |                              |
+  accept()                      connect()
+    |                              |
+  read()                         write()
+    |                              |
+  write()                        read()
+    |                              |
+  close()                        close()
 </pre>
 
 # Datagram Sockets
 
-`
-  Server:                       Client:  
+<pre>
+  Server:                       Client:
 
-  socket()                      socket()  
-    |                              |  
-  bind()                           |  
-    |                              |  
- recvfrom()                     sendto()  
-    |                              |  
-  sendto()                     recvfrom()  
-    |                              |  
-  close()                       close()  
-`
+  socket()                      socket()
+    |                              |
+  bind()                           |
+    |                              |
+ recvfrom()                     sendto()
+    |                              |
+  sendto()                     recvfrom()
+    |                              |
+  close()                       close()
+</pre>
 
 We can use connect() with Datagram sockets.
 
