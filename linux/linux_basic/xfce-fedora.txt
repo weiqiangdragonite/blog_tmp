@@ -222,9 +222,16 @@ window 主机 Linux虚拟机 内设置共享文件夹
 vbox先设置共享文件夹路径，然后 linux 设置挂载：
 mount -t vboxsf vbox_share /mnt/share
 
-设置 fstab文件
-vbox_hare /mnt/share vboxsf rw, gid=100, uid=1000, auto 0 0
+umount -f /mnt/share
 
+设置 fstab文件
+vbox_share /mnt/share vboxsf rw, gid=1000, uid=1000, auto 0 0
+
+vbox_share /home/dragonite/Public/share vboxsf defaults 0 0
+
+fedora 下不成功
+比较犯贱的方法，写个XXX.sh脚本放到 init.d 里面
+执行 update-rc.d XXX.sh defaults
 
 --------------------------------------------------------------------------------
 
