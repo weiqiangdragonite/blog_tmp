@@ -1,0 +1,42 @@
+在“工具”--->"扩展管理器"-->"联机库"中搜索“Editor Guidelines”插件,如上图所示，安装重启即可。
+
+很简单，先关闭VS2008、2005，打开注册表 regedit，
+找到[HKEY_CURRENT_USER]\Software\Microsoft\VisualStudio\8.0\Text Editor，
+如果是2008就是[HKEY_CURRENT_USER]\Software\Microsoft\VisualStudio\9.0\Text Editor，
+然后在该项下新建一个字符串键Guides，键值为RGB(x,y,z) n1 ,...,n13， 
+格式，RGB(x,y,z)是边界线的颜色，n1 ,...,n13 表示最多可以有13条列分界线。
+例如：Guides = RGB(128,0,0) 5, 80表示第5列和80列各有一个分界线，颜色为RGB(128,0,0) 。
+然后重新打开VS2008、2005，到文本编辑器中即可看到效果。
+如果不想要了，或改动后软件不正常，可以删除创建的键，重新启动，一切恢复如初！
+
+For example,
+Guides = RGB(128,0,0) 5, 80
+will place a Red guideline at column numbers 5 and 80.
+
+
+还有 indent guides 的插件不错
+
+ctrl + E + D 用于整理代码格式
+
+
+--------------------------------------------------------------------------------
+
+#region是C# 预处理器指令。#region与#endregion是配合来使用的，可以让代码进行折叠
+
+@在c#中为 强制不转义 的符号，在里面的转义字符无效
+private const string FILE_NAME = @"D:\config.mg";
+
+文档注释. 在一个类,方法或属性定义的上一行输入///就会出现<summary>. 
+调用这个类或方法时写在<summary>里的东西就会以提示的方式出现..
+
+
+
+
+
+
+
+
+
+
+
+

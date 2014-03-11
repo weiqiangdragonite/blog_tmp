@@ -372,6 +372,11 @@ iptables -F
 
 --------------------------------------------------------------------------------
 
+GtkTerm
+
+
+
+
 lsusb
 
 
@@ -548,6 +553,27 @@ wireshare
 nmap
 netcat
 
+--------------------------------------------------------------------------------
 
+TeamViewer:
+
+yum localinstall teamviewer_linux.rpm
+yum -ivh teamviewer_linux.rpm
+
+
+(应该不用)
+安装配置文件
+sudo cp /opt/teamviewer8/tv_bin/script/teamviewerd.service /lib/systemd/system/
+
+设置开机启动
+sudo systemctl enable teamviewerd.service
+
+现在启动：
+sudo systemctl start teamviewerd.service
+
+查看启动状态：
+sudo systemctl status teamviewerd.service
+
+--------------------------------------------------------------------------------
 
 
