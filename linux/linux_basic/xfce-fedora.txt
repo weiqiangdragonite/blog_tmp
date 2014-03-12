@@ -492,6 +492,11 @@ sqlite is already installed
 
 yum install sqlite-devel
 
+
+
+ssh:
+yum install openssh-server openssh-clients
+
 --------------------------------------------------------------------------------
 
 

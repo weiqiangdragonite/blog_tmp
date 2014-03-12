@@ -314,6 +314,11 @@ sudo apt-get install gtkterm
 
 
 
+SSH:
+
+sudo apt-get install ssh
+
+
 ------------------------
 
 
