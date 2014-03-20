@@ -268,6 +268,25 @@ sudo apt-get update
 sudo apt-get upgrade 
 sudo apt-get install nvidia-current 
 sudo apt-get install nvidia-settings 
+
+
+
+进入 ubuntu 黑屏
+X: cannot stat /etc/X11/X (no such file or directory), aborting
+/etc/X11/X is not executable
+xinit: giving up
+xinit: unable to connect to X server: Connection refused
+xinit: server error
+
+解决方法:
+
+dpkg --configure -a
+apt-get --fix-broken install
+
+apt-get update && apt-get upgrade
+apt-get install --reinstall xserver-xorg
+apt-get install --reinstall gdm gnome-desktop-environment xorg
+
 -----------------------------------------------------------
 
 

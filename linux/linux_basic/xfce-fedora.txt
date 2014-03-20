@@ -384,7 +384,7 @@ lsusb
 开发者经常要使用到的，我们有些时候需要使用windows开发，然而window装在了虚拟机中，
 我们怎么样在虚拟机中使用串口呢？
 
-1、在Virtualbox中选择启用串口，端口模式选择Host device。
+1、在Virtualbox中选择启用串口，端口模式选择Host device（主机设备）。
 由于现有两个系统但是只有一个物理串口，所以虚拟机要通过主机的串口文件间接获取数据，主机是linux，
 串口设备为/dev/ttyS0
 
@@ -395,6 +395,20 @@ lsusb
 这样就将ttyS0的所有权限都打开了。启动虚拟机，这时候就可以在虚拟机中（winXP）使用串口了。
 如果在虚拟机中（winXP）设备中还是找不到串口COM1，则进入控制面板-->添加硬件，选择 “是，
 我已经连接了此硬件” --> "添加新的硬件设备" --> "搜索并自动安装硬件"，有时这样即可自动检测出COM1并安装。
+
+
+
+
+更新：
+window主机下设置VirtualBox串口
+端口编号 -> 选择相应的端口，比如COM1
+端口模式 -> 选择 主机设备
+端口/文件位置 -> 填相应的端口，比如上面的端口编号选了 COM1，则这里填 COM1
+在系统设置里可能需要勾选 启用I/O APIC
+
+
+linux主机下设置VirtualBox串口
+
 
 
 
@@ -580,5 +594,11 @@ sudo systemctl start teamviewerd.service
 sudo systemctl status teamviewerd.service
 
 --------------------------------------------------------------------------------
+
+FileZilla
+
+yum install filezilla
+
+
 
 

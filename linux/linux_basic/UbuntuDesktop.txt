@@ -57,6 +57,43 @@ swap       2048 MB      logical
 
 -----------------------------------------------------------
 
+修改 ubuntu 的源列表:
+
+备份当前的源列表
+sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup
+
+更新源
+sudo gedit /etc/apt/sources.list
+
+12.04的源，不同版本的源略有不同
+#网易源
+deb http://mirrors.163.com/ubuntu/ precise main universe restricted multiverse
+deb-src http://mirrors.163.com/ubuntu/ precise main universe restricted multiverse
+deb http://mirrors.163.com/ubuntu/ precise-security universe main multiverse restricted
+deb-src http://mirrors.163.com/ubuntu/ precise-security universe main multiverse restricted
+deb http://mirrors.163.com/ubuntu/ precise-updates universe main multiverse restricted
+deb http://mirrors.163.com/ubuntu/ precise-proposed universe main multiverse restricted
+deb-src http://mirrors.163.com/ubuntu/ precise-proposed universe main multiverse restricted
+deb http://mirrors.163.com/ubuntu/ precise-backports universe main multiverse restricted
+deb-src http://mirrors.163.com/ubuntu/ precise-backports universe main multiverse restricted
+deb-src http://mirrors.163.com/ubuntu/ precise-updates universe main multiverse restricted
+
+#搜狐源
+deb http://mirrors.sohu.com/ubuntu/ precise-updates main restricted
+deb-src http://mirrors.sohu.com/ubuntu/ precise-updates main restricted
+deb http://mirrors.sohu.com/ubuntu/ precise universe
+deb-src http://mirrors.sohu.com/ubuntu/ precise universe
+deb http://mirrors.sohu.com/ubuntu/ precise-updates universe
+deb-src http://mirrors.sohu.com/ubuntu/ precise-updates universe
+deb http://mirrors.sohu.com/ubuntu/ precise multiverse
+deb-src http://mirrors.sohu.com/ubuntu/ precise multiverse
+deb http://mirrors.sohu.com/ubuntu/ precise-updates multiverse
+deb-src http://mirrors.sohu.com/ubuntu/ precise-updates multiverse
+deb http://mirrors.sohu.com/ubuntu/ precise-backports main restricted universe multiverse
+deb-src http://mirrors.sohu.com/ubuntu/ precise-backports main restricted universe multiverse
+
+
+
 1.Install update:
 
 sudo apt-get update
