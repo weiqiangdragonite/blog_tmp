@@ -1,4 +1,7 @@
 
+The C Programming Language, 2nd
+
+--------------------------------------------------------------------------------
 
 concentrate on the basics: variables and constants, arithmetic, control flow,
 functions, and the rudiments of input and output.
