@@ -318,6 +318,7 @@ yum remove VirtualBox-version
 pdf:
 
 yum install evince
+或
 yum install okular
 
 epub:
@@ -568,7 +569,9 @@ Python3:
 --------------------------------------------------------------------------------
 一些网络软件
 
-wireshare
+wireshark
+yum install wireshark wireshark-gnome wireshark-devel
+
 nmap
 netcat
 
