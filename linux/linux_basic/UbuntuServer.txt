@@ -380,3 +380,20 @@ http://www.realvnc.com/download/
 
 连接时如果vnc-server是ubuntu自带的话直接输ip地址就行了
 如果是vnc4server，则是ip地址：590窗口号（如果填域名的话，记得路由也要设转发端口）
+
+--------------------------------------------------------------------------------
+
+安装 sendmail 邮件服务器
+
+
+sudo apt-get install sendmail mailutils
+
+
+vi  /etc/mail/sendmail.mc
+
+找到如下行：
+DAEMON_OPTIONS(`Family=inet,  Name=MTA-v4, Port=smtp, Addr=127.0.0.1')dnl 修改Addr=0.0.0.0  ，表明可以连接到任何服务器。
+#cd /etc/mail  
+#mv sendmail.cf sendmail.cf~      //做一个备份
+m4 sendmail.mc > sendmail.cf      //做一个备份#m4 sendmail.mc > sendmail.cf   //>的左右有空格，提示错误没有安装sendmail-cf  
+
