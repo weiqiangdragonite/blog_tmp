@@ -6,6 +6,8 @@ http://www.cnblogs.com/Seiyagoo/archive/2012/04/28/2475618.html
 
 libpcap
 
+应该使用yum安装也行 yum search libpcap
+
 ./configure
 make
 make install
@@ -59,7 +61,67 @@ This is actually a very simple process. Five steps total, one of which is
 optional (step 3, in case you were wondering.) Let's take a look at each of the
 steps and how to implement them.
 
+注意，使用libpcap，需要使用root权限运行程序
+
+抓包基本流程：
+1.查找可用的网络设备 - pcap_lookup_dev()
+2.打开网络设备或文件作为包捕获描述符 - pcap_open_live() / pcap_open_offline()
+3.获取与网络设备相关的网络号和掩码 - pcap_lookupnet()
+4.编译过滤规则为内核过滤程序 - pcap_compile()
+5.设置过滤程序 - pcap_setfilter()
+6.包捕获并处理 - pcap_loop() / pcap_dispatch()
+7.关闭并返回 - pcap_close()
+
+
+
+1.获取网络接口
+首先我们需要获取监听的网络接口，我们可以手动指定或让libpcap自动选择
+char *pcap_lookupdev(char * errbuf);
+上面这个函数返回第一个合适的网络接口的字符串指针，如果出错，则errbuf存放出错信息字符串，
+errbuf至少应该是PCAP_ERRBUF_SIZE个字节长度的。注意，很多libpcap函数都有这个参数。
+pcap_lookupdev()一般可以在跨平台的，且各个平台上的网络接口名称都不相同的情况下使用。
+如果我们手动指定要监听的网络接口，则这一步跳过，我们在第二步中将要监听的网络接口字符串硬编码
+在pcap_open_live里。
+
+2.释放网络接口
+在操作网络接口后，我们应该要释放它：
+void pcap_close(pcap_t * p);
+该函数用于关闭pcap_open_live()获取的pcap_t的网络接口对象并释放相关资源。
+
+3.打开网络接口
+获取网络接口后，我们需要打开它：
+pcap_t *pcap_open_live(const char * device, int snaplen, int promisc, int to_ms, char * errbuf);
+上面这个函数会返回指定接口的pcap_t类型指针，后面的所有操作都要使用这个指针。
+第一个参数是第一步获取的网络接口字符串，可以直接使用硬编码。
+第二个参数是对于每个数据包，从开头要抓多少个字节，我们可以设置这个值来只抓每个数据包的头部，而不关心具体的内容。典型的以太网帧长度是1518字节，但其他的某些协议的数据包会更长一点，但任何一个协议的一个数据包长度都必然小于65535个字节。
+第三个参数指定是否打开混杂模式(Promiscuous Mode)，0表示非混杂模式，任何其他值表示混合模式。如果要打开混杂模式，那么网卡必须也要打开混杂模式，可以使用如下的命令打开eth0混杂模式：
+ifconfig eth0 promisc
+第四个参数指定需要等待的毫秒数，超过这个数值后，第3步获取数据包的这几个函数就会立即返回。0表示一直等待直到有数据包到来。
+第五个参数是存放出错信息的数组。
+
+4.获取数据包
+打开网络接口后就已经开始监听了，那如何知道收到了数据包呢?有下面3种方法：
+a)
+u_char * pcap_next(pcap_t * p, struct pcap_pkthdr * h)
+如果返回值为NULL，表示没有抓到包
+第一个参数是第2步返回的pcap_t类型的指针
+第二个参数是保存收到的第一个数据包的pcap_pkthdr类型的指针
+b)
+int pcap_loop(pcap_t *p, int cnt, pcap_handler callback, u_char *user)
+第一个参数是第2步返回的pcap_t类型的指针
+第二个参数是需要抓的数据包的个数，一旦抓到了cnt个数据包，pcap_loop立即返回。负数的cnt表示pcap_loop永远循环抓包，直到出现错误。
+第三个参数是一个回调函数指针，它必须是如下的形式：
+void callback(u_char * userarg, const struct pcap_pkthdr * pkthdr, const u_char * packet)
+第一个参数是pcap_loop的最后一个参数，当收到足够数量的包后pcap_loop会调用callback回调函数，同时将pcap_loop()的user参数传递给它
+第二个参数是收到的数据包的pcap_pkthdr类型的指针
+第三个参数是收到的数据包数据
+c)
+int pcap_dispatch(pcap_t * p, int cnt, pcap_handler callback, u_char * user)
+这个函数和pcap_loop()非常类似，只是在超过to_ms毫秒后就会返回(to_ms是pcap_open_live()的第4个参数)
+
 --------------------------------------------------------------------------------
+
+
 
 Setting the device
 
@@ -114,6 +176,8 @@ to pass them a string as an argument. The purpose of this string? In the event
 that the command fails, it will populate the string with a description of the
 error. In this case, if pcap_lookupdev() fails, it will store an error message
 in errbuf. Nifty, isn't it? And that's how we set our device.
+
+
 
 --------------------------------------------------------------------------------
 
@@ -201,6 +265,14 @@ appropriate for the code below, as it assumes Ethernet headers.
 --------------------------------------------------------------------------------
 
 Filtering traffic
+
+
+几乎所有的操作系统(BSD, AIX, Mac OS, Linux等)都会在内核中提供过滤数据包的方法，
+主要都是基于BSD Packet Filter(BPF)结构的。libpcap利用BPF来过滤数据包。
+过滤数据包需要完成3件事：
+a) 构造一个过滤表达式
+b) 编译这个表达式
+c) 应用这个过滤器
 
 
 Often times our sniffer may only be interested in specific traffic. For
@@ -416,6 +488,7 @@ are sniffed are sent to the callback.)
 The prototype for pcap_loop() is below:
 
 int pcap_loop(pcap_t *p, int cnt, pcap_handler callback, u_char *user);
+(简单的说，最后一个参数是回调函数的传递参数)
 
 The first argument is our session handle. Following that is an integer that
 tells pcap_loop() how many packets it should sniff for before returning (a
@@ -479,55 +552,55 @@ TCP/IP packet over Ethernet.
 /* Ethernet addresses are 6 bytes */
 #define ETHER_ADDR_LEN	6
 
-	/* Ethernet header */
-	struct sniff_ethernet {
-		u_char ether_dhost[ETHER_ADDR_LEN]; /* Destination host address */
-		u_char ether_shost[ETHER_ADDR_LEN]; /* Source host address */
-		u_short ether_type; /* IP? ARP? RARP? etc */
-	};
+/* Ethernet header */
+struct sniff_ethernet {
+	u_char ether_dhost[ETHER_ADDR_LEN]; /* Destination host address */
+	u_char ether_shost[ETHER_ADDR_LEN]; /* Source host address */
+	u_short ether_type; /* IP? ARP? RARP? etc */
+};
 
-	/* IP header */
-	struct sniff_ip {
-		u_char ip_vhl;		/* version << 4 | header length >> 2 */
-		u_char ip_tos;		/* type of service */
-		u_short ip_len;		/* total length */
-		u_short ip_id;		/* identification */
-		u_short ip_off;		/* fragment offset field */
-	#define IP_RF 0x8000		/* reserved fragment flag */
-	#define IP_DF 0x4000		/* dont fragment flag */
-	#define IP_MF 0x2000		/* more fragments flag */
-	#define IP_OFFMASK 0x1fff	/* mask for fragmenting bits */
-		u_char ip_ttl;		/* time to live */
-		u_char ip_p;		/* protocol */
-		u_short ip_sum;		/* checksum */
-		struct in_addr ip_src,ip_dst; /* source and dest address */
-	};
-	#define IP_HL(ip)		(((ip)->ip_vhl) & 0x0f)
-	#define IP_V(ip)		(((ip)->ip_vhl) >> 4)
+/* IP header */
+struct sniff_ip {
+	u_char ip_vhl;		/* version << 4 | header length >> 2 */
+	u_char ip_tos;		/* type of service */
+	u_short ip_len;		/* total length */
+	u_short ip_id;		/* identification */
+	u_short ip_off;		/* fragment offset field */
+#define IP_RF 0x8000		/* reserved fragment flag */
+#define IP_DF 0x4000		/* dont fragment flag */
+#define IP_MF 0x2000		/* more fragments flag */
+#define IP_OFFMASK 0x1fff	/* mask for fragmenting bits */
+	u_char ip_ttl;		/* time to live */
+	u_char ip_p;		/* protocol */
+	u_short ip_sum;		/* checksum */
+	struct in_addr ip_src,ip_dst; /* source and dest address */
+};
+#define IP_HL(ip)		(((ip)->ip_vhl) & 0x0f)
+#define IP_V(ip)		(((ip)->ip_vhl) >> 4)
 
-	/* TCP header */
-	typedef u_int tcp_seq;
+/* TCP header */
+typedef u_int tcp_seq;
 
-	struct sniff_tcp {
-		u_short th_sport;	/* source port */
-		u_short th_dport;	/* destination port */
-		tcp_seq th_seq;		/* sequence number */
-		tcp_seq th_ack;		/* acknowledgement number */
-		u_char th_offx2;	/* data offset, rsvd */
-	#define TH_OFF(th)	(((th)->th_offx2 & 0xf0) >> 4)
-		u_char th_flags;
-	#define TH_FIN 0x01
-	#define TH_SYN 0x02
-	#define TH_RST 0x04
-	#define TH_PUSH 0x08
-	#define TH_ACK 0x10
-	#define TH_URG 0x20
-	#define TH_ECE 0x40
-	#define TH_CWR 0x80
-	#define TH_FLAGS (TH_FIN|TH_SYN|TH_RST|TH_ACK|TH_URG|TH_ECE|TH_CWR)
-		u_short th_win;		/* window */
-		u_short th_sum;		/* checksum */
-		u_short th_urp;		/* urgent pointer */
+struct sniff_tcp {
+	u_short th_sport;	/* source port */
+	u_short th_dport;	/* destination port */
+	tcp_seq th_seq;		/* sequence number */
+	tcp_seq th_ack;		/* acknowledgement number */
+	u_char th_offx2;	/* data offset, rsvd */
+#define TH_OFF(th)	(((th)->th_offx2 & 0xf0) >> 4)
+	u_char th_flags;
+#define TH_FIN 0x01
+#define TH_SYN 0x02
+#define TH_RST 0x04
+#define TH_PUSH 0x08
+#define TH_ACK 0x10
+#define TH_URG 0x20
+#define TH_ECE 0x40
+#define TH_CWR 0x80
+#define TH_FLAGS (TH_FIN|TH_SYN|TH_RST|TH_ACK|TH_URG|TH_ECE|TH_CWR)
+	u_short th_win;		/* window */
+	u_short th_sum;		/* checksum */
+	u_short th_urp;		/* urgent pointer */
 };
 
 So how does all of this relate to pcap and our mysterious u_char pointer? Well,
@@ -545,13 +618,14 @@ data.
 /* ethernet headers are always exactly 14 bytes */
 #define SIZE_ETHERNET 14
 
-	const struct sniff_ethernet *ethernet; /* The ethernet header */
-	const struct sniff_ip *ip; /* The IP header */
-	const struct sniff_tcp *tcp; /* The TCP header */
-	const char *payload; /* Packet payload */
+const struct sniff_ethernet *ethernet; /* The ethernet header */
+const struct sniff_ip *ip; /* The IP header */
+const struct sniff_tcp *tcp; /* The TCP header */
+const char *payload; /* Packet payload */
 
-	u_int size_ip;
-	u_int size_tcp;
+u_int size_ip;
+u_int size_tcp;
+
 
 And now we do our magical typecasting:
 

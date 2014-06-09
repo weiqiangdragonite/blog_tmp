@@ -1,14 +1,10 @@
 
-这里是C语言学习板块，主要记录学习C语言等笔记
+# C语言学习板块
 
-
-
-
-# C Programming
 
 --------------------------------------------------------------------------------
 
-## Recommed book
+## C Programming
  
 Head First C  
 Practical C Programming  
@@ -22,10 +18,9 @@ C Interfaces and Implementations
 
 大话数据结构  
 Mastering Algorithms with C  
-The Art of Computer Programming
+The Art of Computer Programming  
 
 ## C++
 
-Accelerated C++  
 Programming Principles and Practice Using C++  
 The C++ Programming Language
