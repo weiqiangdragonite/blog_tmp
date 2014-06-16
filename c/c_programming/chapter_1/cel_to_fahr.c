@@ -1,5 +1,5 @@
 /*
- * Print Celsius-Fahrenheit table
+ * Print Celsius-Fahrenheit table.
  */
 
 #include <stdio.h>

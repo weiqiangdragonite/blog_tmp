@@ -1,5 +1,5 @@
 /*
- *
+ * Print EOF value.
  */
 
 #include <stdio.h>
