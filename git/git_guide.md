@@ -46,37 +46,43 @@ This will set the cache to timeout after 1 hour (setting is in seconds)
 
 --------------------------------------------------------------------------------
 
-常用命令：
+# 常用命令：
 
 1.从远程主机克隆到本地
-git clone https://...
+
+    git clone https://...
 
 2.将改动添加至缓存
-git add --all
+
+    git add --all
 
 3.提交改动到本地仓库
-git commit -m "..."
+
+    git commit -m "..."
 
 4.将本地仓库推到远程主机
-git push -u origin master
+
+    git push -u origin master
 
 5.远程主机的版本有了更新，将这些更新取回本地
-git pull origin master
+
+    git pull origin master
 
 6.创建新的分支并切换过去
-git checkout -b feature_x
 
-7.将新的分支推到远程主机上
-git push origin feature_x
+    git checkout -b feature_x
 
-(更新完后还需要将改动提交到本地仓库再推到主机上)
+7.将新的分支推到远程主机上 (更新完后还需要将改动提交到本地仓库再推到主机上)
+
+    git push origin feature_x
 
 8.切换回主分支
-git checkout master
+
+    git checkout master
 
 9.合并分支
-git merge feature_x
 
+    git merge feature_x
 
 
 --------------------------------------------------------------------------------
@@ -201,27 +207,28 @@ git pull命令的作用是，取回远程主机某个分支的更新，再与本
 11.一旦远程主机的版本库有了更新（Git术语叫做commit），需要将这些更新取回本地，这时就要用到
 git fetch命令。
 
-$ git fetch <远程主机名>
+    $ git fetch <远程主机名>
 
 上面命令将某个远程主机的更新，全部取回本地。
 默认情况下，git fetch取回所有分支（branch）的更新。如果只想取回特定分支的更新，可以指定
 分支名。
 
-$ git fetch <远程主机名> <分支名>
+    $ git fetch <远程主机名> <分支名>
 
-比如，取回origin主机的master分支。
-$ git fetch origin master
+比如，取回origin主机的master分支
+
+    $ git fetch origin master
 
 所取回的更新，在本地主机上要用”远程主机名/分支名”的形式读取。比如origin主机的master，
 就要用origin/master读取。
 
 git branch命令的-r选项，可以用来查看远程分支，-a选项查看所有分支。
 
-$ git branch -r
-origin/master
+    $ git branch -r
+      origin/master
  
-$ git branch -a
-* master
-  remotes/origin/master
+    $ git branch -a
+      * master
+      remotes/origin/master
 
 上面命令表示，本地主机的当前分支是master，远程分支是origin/master。
