@@ -274,8 +274,28 @@ yum install libncurses.so.5
 
 qt:
 
-
+出现 Basic XLib functionality test failed! 
+(原因在于没有安装libX11的开发包，貌似安装libX11-dev,libXext-dev,libXtst-dev三个包
+即可，我这里简单点全部安装了)
+解决方法
 yum install libX*
+
+出现 The test for linking against libxcb and support libraries failed!
+(qtbase/src/plugins/platforms/xcb/README lists the required packages.)
+
+
+cd qt-everywhere-opensource-src-XXX
+./configure  (To reconfigure, run 'gmake confclean' and 'configure'.)
+make
+make install
+
+Set the environment path:
+vim ~/.bashrc
+# Qt
+PATH=$PATH:/usr/local/Trolltech/Qt-4.8.6/bin
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/Trolltech/Qt-4.8.6/lib
+
+source ~/.bashrc
 
 
 编译MySQl驱动
@@ -604,4 +624,11 @@ yum install filezilla
 
 
 
+
+检测cpu温度
+
+yum install lm_sensors
+sensors-detect
+(choos YES)
+sensors
 
