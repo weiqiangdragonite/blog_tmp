@@ -1,0 +1,108 @@
+
+
+http://bbs.chinaunix.net/thread-3751834-1-1.html
+http://www.myexception.cn/operating-system/1507952.html
+http://wenku.baidu.com/link?url=PewKxUFTyYDIdTx1Zg9Dnk6lPcfFgxzTNBSWCn0lJR4qgQav-9ZBCmGsWFEbqdoP7a7Isz6CDM7UlWk3BV2wyL6Sbb7DlOMsRAKXOQ_EBmy
+
+
+
+从10开始，pkg_add pkg_delete pkg_info等命令变成pkg install xxx,pkg remove xxx
+另外sysinstall变成了bsdinstall和bsdconfig
+
+
+--------------------------------------------------------------------------------
+
+
+更新源
+# vi /etc/make.conf
+添加以下行：
+MASTER_SITE_BACKUP?=        \
+        ftp://ftp.hk.freebsd.org/pub/FreeBSD/distfiles/${DIST_SUBDIR}/\
+        ftp://ftp.tw.freebsd.org/pub/FreeBSD/distfiles/${DIST_SUBDIR}/\
+        ftp://ftp.freebsd.org/pub/FreeBSD/distfiles/${DIST_SUBDIR}/        (注意这里没换行了)
+
+
+
+安装axel来取代默认的下载工具fetch，这样可以提高ports的安装速度：
+# cd /usr/ports/ftp/axel
+# make install
+
+--------------------------------------------------------------------------------
+
+
+# pkg
+# pkg upgrade
+# pkg update
+
+# portsnap fetch extract          （首次更新port使用此命令）
+# portsnap fetch update                （日后更新port使用此命令）
+
+
+
+
+
+
+
+
+切换控制台
+ctrl + alt + F1 ... F8
+
+重启
+shutdown -r now
+
+关机但不关闭电源
+shutdown -h now
+
+关机关电源
+shutdown -p now
+
+--------------------------------------------------------------------------------
+
+
+
+
+--------------------------------------------------------------------------------
+
+FreeBSD
+
+FreeBSD 9.0后采用bsdinstall
+bsdinstall 菜单系统的主要控制键包括方向键、 Enter 键、 Tab 键、 Space 键等。
+
+
+FreeBSD 的标准 GPT 安装至少会使用三个分区：
+标准 FreeBSD GPT 分区
+freebsd-boot - FreeBSD 引导分区， 它必须处于首位。
+freebsd-ufs - FreeBSD 的 UFS 文件系统。
+freebsd-swap - FreeBSD 的交换空间。
+
+正确地对齐磁盘扇区能够获取最佳性能。 无论磁盘的每个扇区为 512 字节还是 4K 字节， 将分区大小
+设置为 4K 字节的倍数都能够确保对齐。 实际操作中， 只要使分区的大小等于 1M 或 1G 的倍数即可。
+唯一的例外是 freebsd-boot 分区， 目前由于引导代码所限， 此分区不能大于 512K。
+
+
+10.0 - 32位安装
+
+可参考手册第三章
+
+Hostname: Dragonite-FreeBSD
+Distribution Select: 按空格键进行选择
+Partitioning: 选择Guided，然后Entire Disk或Partition都无所谓，调整空间的大小需要先用
+tab键移到相应的位置再修改
+
+接着输入root的密码 dragonite-bsd
+选择网卡
+选择Configure IPv4
+可以不要Configure IPv6
+
+时间不要set to UTC
+开机启动那里把dumpdev去掉
+
+然后添加用户
+
+最后可安装handbook，然后就可以重启了
+
+
+9.3 - 64位安装
+
+
+PC-BSD
