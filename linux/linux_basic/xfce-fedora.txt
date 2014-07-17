@@ -274,6 +274,12 @@ yum install libncurses.so.5
 
 qt:
 
+安装OpenGL环境
+yum install mesa* 
+yum install mesa-libGL-devel mesa-libGLU-devel
+yum install freeglut-devel
+
+
 出现 Basic XLib functionality test failed! 
 (原因在于没有安装libX11的开发包，貌似安装libX11-dev,libXext-dev,libXtst-dev三个包
 即可，我这里简单点全部安装了)
@@ -285,9 +291,11 @@ yum install libX*
 
 
 cd qt-everywhere-opensource-src-XXX
-./configure  (To reconfigure, run 'gmake confclean' and 'configure'.)
+./configure -prefix /usr/local/Trolltech/Qt-X.X.X
 make
 make install
+(To reconfigure, run 'gmake confclean' and 'configure'.)
+
 
 Set the environment path:
 vim ~/.bashrc
@@ -631,4 +639,90 @@ yum install lm_sensors
 sensors-detect
 (choos YES)
 sensors
+
+--------------------------------------------------------------------------------
+
+Apache
+Setting Up Apache Virtual Hosts on Fedora
+
+Step 1: Open the Apache configuration file to edit it
+#vi /etc/httpd/conf/httpd.conf
+
+Step 2: Add the below directive to the Apache configuration file since we are using name-based virtual hosts. This directive tells the server to use any and all IP addresses on the machine.
+NameVirtualHost *:80
+
+Step 3: Add the VirtualHost block to each different website in the Apache configuration file
+
+<VirtualHost *:80>
+ServerName website1.example.com
+DocumentRoot /var/www/html/website1
+</VirtualHost>
+The above block tells the server to run website1.example.com using the document root /var/www/html/website1.
+
+Step 4: Add as many virtual hosts as you want using VirtualHost blocks like below:
+<VirtualHost *:80>
+ServerName website2.example.com
+DocumentRoot /var/www/html/website2
+</VirtualHost>
+Save the file and exit.
+
+Step 5: Restart Apache
+#/etc/init.d/httpd restart
+The virtual host configuration is done. If the hostnames are fictitious like this example,you have to add the hostnames in your network configuration.
+
+Step 6: Open /etc/hosts
+#vi /etc/hosts
+
+Step 7: Add the host names
+127.0.0.1    website1.example.com
+127.0.0.1    website2.example.com
+save the file and exit.
+
+
+You will now be able to access http://website1.example.com and http://website2.example.com from your browser. At any given instance your local web server runs both website1.example.com and website2.example.com How convenient it is to work on multiple websites with virtual hosts!
+
+
+Allowing Override
+
+Apache allows overriding certain directives using a .htaccess file. You might want to allow .htaccess files to override all possible directives.
+In your httpd.conf file, find the section with the following
+
+<Directory />
+    Options FollowSymLinks
+    AllowOverride none
+</Directory>
+
+Change AllowOverride from 'none' to 'all'. After changing the settings your file should look like
+
+<Directory />
+    Options FollowSymLinks
+    AllowOverride All
+</Directory>
+
+
+----------
+#
+# VirtualHost example:
+# Almost any Apache directive may go into a VirtualHost container.
+# The first VirtualHost section is used for requests without a known
+# server name.
+#
+#<VirtualHost *:80>
+#    ServerAdmin webmaster@dummy-host.example.com
+#    DocumentRoot /www/docs/dummy-host.example.com
+#    ServerName dummy-host.example.com
+#    ErrorLog logs/dummy-host.example.com-error_log
+#    CustomLog logs/dummy-host.example.com-access_log common
+#</VirtualHost>
+
+
+
+--------------------------------------------------------------------------------
+
+
+在 Fedora 中用 Gitolite 搭建 GIT 服务器
+http://easior.is-programmer.com/posts/40133.html
+
+
+
 
