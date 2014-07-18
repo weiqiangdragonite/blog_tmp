@@ -402,7 +402,9 @@ iptables -F
 --------------------------------------------------------------------------------
 
 GtkTerm
+minicom
 
+yum install minicom
 
 
 
@@ -434,6 +436,8 @@ window主机下设置VirtualBox串口
 端口模式 -> 选择 主机设备
 端口/文件位置 -> 填相应的端口，比如上面的端口编号选了 COM1，则这里填 COM1
 在系统设置里可能需要勾选 启用I/O APIC
+
+
 
 
 linux主机下设置VirtualBox串口

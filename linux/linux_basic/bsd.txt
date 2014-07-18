@@ -12,6 +12,16 @@ http://wenku.baidu.com/link?url=PewKxUFTyYDIdTx1Zg9Dnk6lPcfFgxzTNBSWCn0lJR4qgQav
 
 --------------------------------------------------------------------------------
 
+开启SSH远程登录
+
+编辑/etc/ssh/sshd_config，修改以下内容：
+
+PermitRootLogin yes  #允许root通过sshd登陆
+PermitEmptyPasswords no  #不允许空密码[mi ma]
+PasswordAuthentication yes
+(如果前面有#号的要先去掉)
+
+--------------------------------------------------------------------------------
 
 更新源
 # vi /etc/make.conf
@@ -23,11 +33,31 @@ MASTER_SITE_BACKUP?=        \
 
 
 
+
+vi /etc/portsnap.conf
+找到SERVERNAME=portsnap.freebsd.org
+改为SERVERNAME=portsnap.cn.freebsd.org
+或者portsnap.hshh.org
+
+portsnap首次执行portsnap fetch extract
+以后更新执行portsnap fetch update
+
+# cd /usr/ports/ftp/axel
+# make install clean
+
+
+
+
+
 安装axel来取代默认的下载工具fetch，这样可以提高ports的安装速度：
 # cd /usr/ports/ftp/axel
-# make install
+# make install clean
 
 --------------------------------------------------------------------------------
+
+cd /usr/ports/ftp/wget/
+make install clean
+
 
 
 # pkg
