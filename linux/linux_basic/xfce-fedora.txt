@@ -404,8 +404,20 @@ iptables -F
 GtkTerm
 minicom
 
-yum install minicom
+yum install gtkterm
 
+
+
+yum install minicom
+初始设置:(要在root下设置)
+minicom -s
+
+选择Serial port setup
+串口COM1对应ttyS0
+波特率选为115200 8N1（数据位8，奇偶校验无，停止位1)
+硬/软件流控制分别键入"F"和"G"，并且都选No
+将其保存为默认配置（即save setup as dfl）
+选择"Exit from Minicom"命令退出
 
 
 lsusb
