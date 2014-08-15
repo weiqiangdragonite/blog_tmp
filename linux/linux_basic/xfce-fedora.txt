@@ -552,9 +552,32 @@ sqlite is already installed
 yum install sqlite-devel
 
 
-
 ssh:
 yum install openssh-server openssh-clients
+
+
+
+
+还不行
+/usr/share/phpMyAdmin/
+sudo ln -s /usr/share/phpMyAdmin /var/www/phpMyAdmin 
+
+设置phpMyAdmin管理多个MySql服务器
+
+先备份 phpMyAdmin/libraries/config.default.php
+/usr/share/phpMyAdmin/libraries/config.default.php
+再修改
+
+/**
+ * allow login to any user entered server in cookie based authentication
+ *
+ * @global boolean $cfg['AllowArbitraryServer']
+ */
+$cfg['AllowArbitraryServer'] = true; //默认是false,改成true
+
+
+
+如果不能再其它电脑上连接phpMyAdmin，需要修改 /etc/httpd/conf.d/phpMyAdmin.conf
 
 --------------------------------------------------------------------------------
 

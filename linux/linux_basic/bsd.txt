@@ -151,7 +151,7 @@ FETCH_AFTER_ARGS=
 DISABLE_SIZE=yes 
 
 或直接
-FETCH_CMD=axel -n 10
+FETCH_CMD=axel -n 10  (其实我觉得没必要，更新了源后亲测下载速度杠杠的)
 
 MASTER_SITE_BACKUP?=\
 	http://ports.hshh.org/${DIST_SUBDIR}/\
