@@ -562,6 +562,8 @@ yum install openssh-server openssh-clients
 /usr/share/phpMyAdmin/
 sudo ln -s /usr/share/phpMyAdmin /var/www/phpMyAdmin 
 
+
+！！！行拉！！！
 设置phpMyAdmin管理多个MySql服务器
 
 先备份 phpMyAdmin/libraries/config.default.php
@@ -642,6 +644,12 @@ yum install wireshark wireshark-gnome wireshark-devel
 nmap
 netcat
 
+
+ifconfig 可以看到网卡是否混杂模式，如：
+ifconfig eth0 看是否有“PROMISC”标志
+ifconfig eth0 promisc #设置混杂模式
+ifconfig eth0 -promisc #取消混杂模式
+
 --------------------------------------------------------------------------------
 
 TeamViewer:
@@ -649,6 +657,9 @@ TeamViewer:
 yum localinstall teamviewer_linux.rpm
 yum -ivh teamviewer_linux.rpm
 
+
+
+teamviewer --daemon start
 
 (应该不用)
 安装配置文件
@@ -761,6 +772,46 @@ Change AllowOverride from 'none' to 'all'. After changing the settings your file
 
 在 Fedora 中用 Gitolite 搭建 GIT 服务器
 http://easior.is-programmer.com/posts/40133.html
+
+
+
+--------------------------------------------------------------------------------
+
+mutt
+
+yum -y install sendmail
+#需要安装sendmail并开启防火墙的25端口，如果你需要收邮件110端口也要开
+yum -y install mutt
+
+
+你可以通过find命令找到Muttrc这个文件，命令如下 find / -name Muttrc ，然后通过命令
+cp /etc/Muttrc /root/.muttrc 复制到 /root 下后更名为 .muttrc ，然后你就可以编辑配置文件了。
+
+
+#如果你收到的邮件乱码，设置以下信息
+set charset="utf-8"
+set rfc2047_parameters=yes
+#如果你想自定义发件人信息，需要进行如下设置
+set envelope_from=yes
+set use_from=yes
+set from=root@itdhz.com
+set realname="itdhz"
+
+
+安装完mutt后，在/usr/share/doc/mutt* 下有一份很好的手册，可以看一下。
+
+
+mutt 408160341@qq.com -s "itdhz数据备份" -a /home/backup/itdhz.sql </root/readme.txt
+或者
+echo "test" |　mutt 408160341@qq.com -s "itdhz数据备份" -a /home/backup/itdhz.sql
+
+这段代码表示，发送邮件到 408160341@qq.com 这个邮箱，邮件主题是“itdhz数据备份”，邮件内容在
+/root/readme.txt 中，邮件中包含附件 /home/backup/itdhz.sql。如果要发送多个附件，需要在每个附件前加 -a 参数。
+
+
+
+
+
 
 
 

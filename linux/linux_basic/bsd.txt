@@ -296,7 +296,7 @@ For Apache versions earlier than 2.4:
 
 For Apache version 2.4.x or above:
 
-    Alias /phpmyadmin/ "/usr/local/www/phpMyAdmin/"
+    Alias /phpmyadmin "/usr/local/www/phpMyAdmin/"
 
     <Directory "/usr/local/www/phpMyAdmin/">
 	Options None
@@ -308,6 +308,26 @@ For Apache version 2.4.x or above:
 
 重启apache
 
+
+
+
+安装samba
+/usr/ports/net/samba36
+
+建立samba 用户及密码，命令是：
+smbpasswd  -a  root
+
+修改 /etc/rc.conf 文件，在其上增加一句，以便系统重启时可以自动启用samba:
+samba_enable="YES"
+
+samba的配置文件为 /usr/local/etc/smb.conf ，软件安装完其实就已经生成了一个默认的配置文件了
+
+启用samba服务器
+/usr/local/etc/rc.d/samba start
+
+修改/etc/inetd.conf
+# vim /etc/inetd.conf
+将nmbd和smbd前面的注释符号去掉。samba只有通过nmbd和smbd守护进程才能启动。
 
 
 
@@ -377,6 +397,12 @@ cat /var/run/dmesg.boot | grep CPU
 
 sysctl hw.model 看cpuid
 sysctl machdep.tsc_freq 看cpu频率
+
+
+
+NTP同步时间
+
+time.nist.gov
 
 --------------------------------------------------------------------------------
 
