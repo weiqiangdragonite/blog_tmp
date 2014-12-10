@@ -514,6 +514,10 @@
 		
 		
 	其它SSH命令:
+
+	指定某个端口
+	ssh -p port user@ip (小p)
+	scp -P port file user@ip:/path (大P)
 	
 	scp用于两台计算机间通过ssh进行快速的、加密的数据传输：
 		scp 源文件 目标地址(冒号后跟绝对路径)

@@ -66,6 +66,37 @@ uname -r
 Install VirtualBox Guest Additions
 Then reboot
 
+修改hostname
+
+1.修改/etc/sysconfig/network文件，将包含当前的HOSTNAME改为新的hostname
+2.修改/etc/hosts文件，
+127.0.0.1 localhost.localdomain localhost
+将localhost.localdomain 改成自己的hostname
+
+重启
+
+
+
+关闭SELinux
+1      vi /etc/selinux/config
+2      #SELINUX=enforcing     #注释掉
+3      #SELINUXTYPE=targeted  #注释掉
+4      SELINUX=disabled  #增加
+5      :wq  #保存，关闭。
+6      shutdown -r now   #重启系统
+
+查看SELinux的状态：
+getenforce
+
+
+关闭虚拟机防火墙： 
+关闭命令：  service iptables stop 
+开启： chkconfig iptables on
+永久关闭防火墙：chkconfig iptables off
+
+两个命令同时运行，运行完成后查看防火墙关闭状态 
+service iptables status
+
 -----------------------------------------------------------
 
 3.Install system monitor

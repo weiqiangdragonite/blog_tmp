@@ -286,7 +286,7 @@ add something like the following to httpd.conf:
 
 For Apache versions earlier than 2.4:
 
-    Alias /phpmyadmin/ "/usr/local/www/phpMyAdmin/"
+    Alias /phpmyadmin "/usr/local/www/phpMyAdmin/"
 
     <Directory "/usr/local/www/phpMyAdmin/">
         Order Deny,Allow
@@ -402,10 +402,13 @@ sysctl machdep.tsc_freq 看cpu频率
 
 NTP同步时间
 
-time.nist.gov
+ntpdate time.nist.gov
 
 --------------------------------------------------------------------------------
 
+libpcap
+
+/usr/ports/net/libpcap/
 
 
 

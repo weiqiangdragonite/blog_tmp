@@ -29,6 +29,8 @@ biosboot  2 MB
 ~/.bashrc
 source .bashrc
 
+export PATH=$PATH:/....
+
 fedora启动服务
 systemctl status httpd.service
 
@@ -554,6 +556,57 @@ yum install sqlite-devel
 
 ssh:
 yum install openssh-server openssh-clients
+
+开机启动ssh
+
+查看开机启动列表
+chkconfig --lis
+
+查看sshd
+chkconfig --lis | grep sshd
+显示
+sshd           	0:off	1:off	2:off	3:off	4:off	5:off	6:off
+
+使用如下命令设置sshd服务自动启动：
+# chkconfig --level 5 sshd on
+
+
+
+在CentOS系统下，主要有两种方法设置自己安装的程序开机启动。
+1、把启动程序的命令添加到/etc/rc.d/rc.local文件中，比如下面的是设置开机启动httpd。
+#!/bin/sh
+#
+# This script will be executed *after* all the other init scripts.
+# You can put your own initialization stuff in here if you don't
+# want to do the full Sys V style init stuff.
+ 
+touch /var/lock/subsys/local
+/usr/local/apache/bin/apachectl start
+2、把写好的启动脚本添加到目录/etc/rc.d/init.d/，然后使用命令chkconfig设置开机启动。
+例如：我们把httpd的脚本写好后放进/etc/rc.d/init.d/目录，使用
+chkconfig --add httpd
+chkconfig httpd on
+命令即设置好了开机启动。
+
+
+
+配置SSH免密码登陆
+
+1.查看当前用户下(root)是否有.ssh的隐藏文件，如果没有就创建一个mkdir .ssh
+
+2.输入ssh-keygen -t rsa
+
+这个命令会在.ssh文件夹下生成id_dsa和id_ds.pub两个文件，这私钥和公钥。
+
+3.输入cp id_rsa.pub authorized_keys
+
+这条命令是把公钥加到用于认证的公钥文件中
+
+4.验证SSH是否安装成功，以及是否可以免密码登陆本机
+
+ssh localhost
+
+如果显示如下，表示安装成功
 
 
 

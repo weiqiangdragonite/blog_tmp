@@ -154,15 +154,30 @@ sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.7.0
 sudo update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/jvm/jdk1.7.0/bin/javac" 1
 sudo update-alternatives --install "/usr/bin/javaws" "javaws" "/usr/lib/jvm/jdk1.7.0/bin/javaws" 1
 
+
 或者写入环境变量中: (未测试)
 export JAVA_HOME=/usr/lib/jvm/jdk1.7.0
 export PATH=$PATH:$JAVA_HOME/bin
 export CLASSPATH=$CLASSPATH:$JAVA_HOME/lib:$JAVA_HOME/jre/lib
 
+
+
 update-alternatives --config java
 
 check the version:
 java -version
+
+
+
+Most of java based application’s uses environment variables to work. Use 
+following commands to set up it.
+
+Setup JAVA_HOME Variable
+# export JAVA_HOME=/opt/jdk1.7.0_71
+Setup JRE_HOME Variable
+# export JRE_HOME=/opt/jdk1.7.0_71/jre
+Setup PATH Variable
+# export PATH=$PATH:/opt/jdk1.7.0_71/bin:/opt/jdk1.7.0_71/jre/bin
 
 -----------------------------------------------------------
 
