@@ -39,6 +39,8 @@ mv CentOS-Base.repo CentOS-Base.repo.backup
 下载163的源（请到163处查看实时更新的地址）
 wget http://mirrors.163.com/.help/CentOS-Base-163.repo
 
+http://mirrors.aliyun.com/repo/Centos-6.repo
+
 设为yum源
 mv CentOS6-Base-163.repo CentOS-Base.repo
 

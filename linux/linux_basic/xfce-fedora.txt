@@ -31,6 +31,9 @@ source .bashrc
 
 export PATH=$PATH:/....
 
+或者
+vim /etc/profile
+
 fedora启动服务
 systemctl status httpd.service
 
@@ -563,7 +566,7 @@ yum install openssh-server openssh-clients
 chkconfig --lis
 
 查看sshd
-chkconfig --lis | grep sshd
+chkconfig --list | grep sshd
 显示
 sshd           	0:off	1:off	2:off	3:off	4:off	5:off	6:off
 
@@ -606,7 +609,9 @@ chkconfig httpd on
 
 ssh localhost
 
-如果显示如下，表示安装成功
+
+
+
 
 
 
