@@ -93,6 +93,9 @@ Documentation/CodingStyle的中文翻译
 长于80列的语句要打散成有意义的片段。每个片段要明显短于原来的语句，而且放置的位置
 也明显的靠右。同样的规则也适用于有很长参数列表的函数头。长字符串也要打散成较短的
 字符串。唯一的例外是超过80列可以大幅度提高可读性并且不会隐藏信息的情况。
+(However, never break user-visible strings such as
+printk messages, because that breaks the ability to grep for them.)
+
 
 void fun(int a, int b, int c)
 {

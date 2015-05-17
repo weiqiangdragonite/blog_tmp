@@ -1,4 +1,4 @@
 blog_tmp
 ========
 
-A blog
+My blog (Temporary)

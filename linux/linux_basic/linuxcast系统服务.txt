@@ -375,7 +375,7 @@
 	
 	NFS服务默认安装，通过以下命令可以启动：
 		service nfs start
-		chkconfig nfs on
+		chkconfig nfs on (开机启动)
 		
 	NFSv4不再需要RPC支持，并且是防火墙友好的
 	默认NFS占用5个端口，1个NFS端口（2049），四个动态端口（无法通过防火墙）

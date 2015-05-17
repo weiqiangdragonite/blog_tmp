@@ -46,6 +46,7 @@ yum install wget
 
 跟新yum源
 
+http://mirrors.aliyun.com/
 http://mirrors.163.com/
 http://mirrors.sohu.com/
 
@@ -161,7 +162,7 @@ un-test
 --------------------------------------------------------------------------------
 
 yum install gedit
-yum install system-config-date
+#yum install system-config-date
 yum install gnome-system-monitor
 yum install vim
 yum install wireshark wireshark-gnome
@@ -237,6 +238,17 @@ vbox_share /home/dragonite/Public/share vboxsf defaults 0 0
 fedora 下不成功
 比较犯贱的方法，写个XXX.sh脚本放到 init.d 里面
 执行 update-rc.d XXX.sh defaults
+
+
+以下测试OK
+windown下添加共享文件后，那个自动挂载取消勾掉，
+然后fedora在/etc/rc.d/init.d/function文件的最后添加
+mount -t vbox_share /mnt/share
+就行了
+
+比如在VBox新建的共享文件夹名称为默认的 D_DRIVE
+那么function文件为
+mount -t vboxsf D_DRIVE /home/dragonite/Public
 
 --------------------------------------------------------------------------------
 
@@ -404,6 +416,70 @@ window要打开防火墙的打印机服务smb
 setenforce 0
 iptables -F
 
+
+
+
+NFS
+
+centos:
+yum install nfs-utils rpcbind
+
+NFS服务默认安装，通过以下命令可以启动：
+service nfs start
+
+
+NFS共享配置文件为：
+/etc/exports
+
+设置为：
+#共享路径          客户端列表（NFS共享参数）
+/home/nfs          192.168.1.0/24(rw,sync)  # *(rw,async,insecure,no_root_squash)
+
+exportfs -rv    刷新共享配置
+
+开启
+service rpcbind start
+service nfs start
+
+关防火墙、SELinux
+编辑/etc/selinux/config，找到SELINUX 行修改成为：SELINUX=disabled
+chkconfig --level 35 iptables off
+
+服务端验证NFS共享：
+showmount -e
+
+
+客户端配置
+mount -t nfs 192.168.1.100:/home/nfs  /tmp
+
+将配置写入/etc/fstab中，在启动时自动挂载：
+192.168.1.100:/linuxcast-nfs  /mnt  nfs   default  0 0
+
+umount /mnt
+
+
+
+windows 7挂载 NFS - http://www.it165.net/os/html/201212/4165.html
+1.首先打开windows的服务功能：控制面板->程序->程序和功能->打开和关闭Windows功能->NFS服务，
+勾选 NFS客户端 和 管理工具
+
+Windows7中挂载Linux中的NFS系统文件，在Windows中打开NFS功能的时候无需重启，
+也就直接可以挂载Linux系统中的NFS文件 系统。
+
+但是不能够在该驱动器上创建和修改文件。
+解决办法就是让Windows7在挂载NFS的时候将UID和GID改成0即可：
+打开注册表：regedit
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\ClientForNFS\CurrentVersion\Default，
+增加两项：AnonymousUid，AnonymousGid
+AnonymousUid 是新建->DWORD，名称为 AnonymousUid
+AnonymousGid 是新建->QWORD，名称为 AnonymousGid
+
+修改windows注册表，重启电脑后mount
+
+
+mount  \\192.168.1.x\系统共享文件目录路径  H:(本地磁盘驱动号)
+umount H:
+
 --------------------------------------------------------------------------------
 
 GtkTerm
@@ -542,15 +618,118 @@ yum install -y httpd
 
 MariaDB + php + phpmyadmin
 
-yum install mariadb mariadb-server mariadb-bench mariadb-devel mariadb-libs
+yum install mariadb mariadb-server mariadb-common mariadb-devel mariadb-libs mariadb-connect-engine
 yum install php phpmyadmin
 mysql_secure_installation
+
+( 因为centos源里没有MariaDB，可以自己到官网添加源，不过我直接用MySQL算了
+yum install mysql mysql-server mysql-devel
+貌似centos下没有phpmyadmin的官方源，只能编译，其实服务器哪些需要就装哪些，尽量精简
+但自己使用还是可以的
+
+
+在 /etc/yum.repos.d/ 新建一个源 MariaDB.repo
+然后复制
+# MariaDB 10.0 CentOS repository list - created 2015-01-14 08:13 UTC
+# http://mariadb.org/mariadb/repositories/
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/10.0/centos6-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+
+然后安装
+yum install MariaDB-server MariaDB-client
+
+
+
+还有其实可以下载phpmyadmin来编译安装
+CnetOS 6 的MySQL版本还是5.1，PHP是5.3，所以推荐使用phpMyAdmin 4.0版本的
+yum install php php-mysql
+yum install php-mbstring --> 要安装这个，要不然打不开phpmyadmin
+
+下载phpMyAdmin，解压
+# tar -zxvf phpMyAdmin-xxx.tar.gz
+# mv phpMyAdmin-xxx phpmyadmin
+# mv phpmyadmin /var/www/html
+# chown user:user phpmyadmin
+
+复制样本配置文件到config.inc.php文件
+$ cd phpmyadmin
+$ cp config.sample.inc.php config.inc.php
+$ vim config.inc.php
+$cfg['Servers'][$i]['auth_type'] = ‘http‘; # default is cookies
+
+重启apache
+登录进去后会提示 The mcrypt extension is missing. Please check your PHP configuration.
+需要安装libmcrypt，可以暂时不管
+ )
+
+添加远程登录用户
+GRANT ALL PRIVILEGES ON *.* TO 'mg'@'%' IDENTIFIED BY 'abc' WITH GRANT OPTION;
 
 
 systemctl status mysqld.service
 
 General Access:
 mysql -u root -p
+
+修改sql默认字符集
+utf8_general_ci	        Unicode (multilingual), case-insensitive
+utf8mb4_general_ci	Unicode (multilingual), case-insensitive
+
+(1) 最简单的修改方法，就是修改mysql的my.ini文件中的字符集键值，
+fedora/centos修改/etc/my.cnf
+[mysqld]
+character-set-server=utf8
+[mysql]
+default-character-set=utf8
+
+
+
+修改完后，重启mysql的服务，service mysql restart
+
+使用 mysql> SHOW VARIABLES LIKE 'character%';查看，发现数据库编码均已改成utf8
+
++--------------------------+---------------------------------+   
+| Variable_name | Value |   
++--------------------------+---------------------------------+    
+| character_set_client | utf8 |   
+| character_set_connection | utf8 |   
+| character_set_database | utf8 |  
+| character_set_filesystem | binary |   
+| character_set_results | utf8 |   
+| character_set_server | utf8 |   
+| character_set_system | utf8 |   
+| character_sets_dir | D:"mysql-5.0.37"share"charsets" |   
++--------------------------+---------------------------------+  
+(2) 还有一种修改mysql默认字符集的方法，就是使用mysql的命令
+但这种只是暂时的，重启mysql服务后就恢复了。
+
+mysql> SET character_set_client = utf8 ;  
+mysql> SET character_set_connection = utf8 ;   
+mysql> SET character_set_database = utf8 ;   
+mysql> SET character_set_results = utf8 ;    
+mysql> SET character_set_server = utf8 ;   
+ 
+mysql> SET collation_connection = utf8 ;  
+mysql> SET collation_database = utf8 ;   
+mysql> SET collation_server = utf8 ; 
+一般就算设置了表的mysql默认字符集为utf8并且通过UTF-8编码发送查询，你会发现存入
+数据库的仍然是乱码。问题就出在这个connection连接层上。解决方法是在发送查询前执行
+一下下面这句：
+
+SET NAMES 'utf8';  
+
+它相当于下面的三句指令：
+
+SET character_set_client = utf8;  
+SET character_set_results = utf8;   
+SET character_set_connection = utf8; 
+
+--------------------------
+
+
 
 sqlite is already installed
 
@@ -591,6 +770,18 @@ chkconfig --add httpd
 chkconfig httpd on
 命令即设置好了开机启动。
 
+3.chkconfig --list
+chkconfig --level 35 mysqld on
+345：表示启动级别。启动级别包括1,2,3,4,5,6，其中常用的是3和5。3表示文字模式启动，
+5表示图形界面启动。
+0 系统停止
+1 单用户系统，不需要登陆
+2 多用户系统但不支持NFS，命令行模式登陆
+3 完整多用户模式,命令行模式登陆
+4 未用
+5 X11图形模式，图形模式登陆
+6 重新启动系统
+
 
 
 配置SSH免密码登陆
@@ -615,19 +806,15 @@ ssh localhost
 
 
 
-
-还不行
-/usr/share/phpMyAdmin/
-sudo ln -s /usr/share/phpMyAdmin /var/www/phpMyAdmin 
-
-
 ！！！行拉！！！
 设置phpMyAdmin管理多个MySql服务器
 
 先备份 phpMyAdmin/libraries/config.default.php
-/usr/share/phpMyAdmin/libraries/config.default.php
+fedora在/usr/share/phpMyAdmin/libraries/config.default.php
 再修改
 
+vim搜索字符创
+:/string
 /**
  * allow login to any user entered server in cookie based authentication
  *
@@ -637,7 +824,25 @@ $cfg['AllowArbitraryServer'] = true; //默认是false,改成true
 
 
 
-如果不能再其它电脑上连接phpMyAdmin，需要修改 /etc/httpd/conf.d/phpMyAdmin.conf
+#如果不能再其它电脑上连接phpMyAdmin，需要修改 /etc/httpd/conf.d/phpMyAdmin.conf
+
+
+fedora下能从其他电脑访问网页，但却不能访问phpmyadmin，因为phpmyadmin默认
+只在本地登录，如需要在其它电脑登录，设置
+/etc/httpd/conf.d/phpmyadmin.conf ->不知怎样设置
+
+Alias /phpmyadmin /var/www/phpmyadmin 
+
+下面的部分使得外网没有权限访问和使用phpmyadmin，如果允许外网用户，请不要填加如下部分到配置文件中
+<Location /phpmyadmin>
+Order deny,allow
+Deny from all
+Allow from 127.0.0.1
+Allow from 192.168.0
+</Location>
+
+phpMyAdmin管理多服务器配置 好像还是不行
+http://www.itxinxi.net/blog/post/344/
 
 --------------------------------------------------------------------------------
 
@@ -867,10 +1072,19 @@ echo "test" |　mutt 408160341@qq.com -s "itdhz数据备份" -a /home/backup/itd
 /root/readme.txt 中，邮件中包含附件 /home/backup/itdhz.sql。如果要发送多个附件，需要在每个附件前加 -a 参数。
 
 
+--------------------------------------------------------------------------------
+
+vnc
+
+CentOS 6/RHEL 6中使用tigervnc作为自带的VNC程序
 
 
 
+CentOS使用root直接登录
 
+在最新版本的Linux发行版中预设不允许以root 账号登入图形用户桌面，因此一般使用者登入后，如果要以管理者权限下指令，可以在终端机以su root，暂时取得root权限；
+如果/一定要以root登入图形界面，可以经由修改/etc/pam.d/gdm 以及 /etc/pam.d/gdm-passwd，把以下这行设定加上”#”批注掉。存盘后就可以用root账号
+#auth required pam_succeed_if.so user != root quiet
 
 
 

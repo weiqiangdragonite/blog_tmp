@@ -1,13 +1,19 @@
 
 # Markdown 语法
 
-参考自 [Markdown语法说明（简体中文版）][1] 和 [Markdown快速入门][2]
+参考自 [Markdown语法说明（简体中文版）](http://gitcafe.com/riku/Markdown-Syntax-CN/blob/master/syntax.md) 和 [Markdown快速入门](http://www.oschina.net/question/100267_75314)  
+本文只做简单介绍  
 
---------------------------------------------------------------------------------
+---
 
 # Markdown 安装：
 
-Chrome 的 Markdown 插件：Made 挺好用
+在线编辑：   
+Made(Chrome的插件)  
+[作业部落](https://www.zybuluo.com/mdeditor)  
+[简书]()  
+[马克飞象](http://www.maxiang.info/)  
+不同的编辑器所显示的格式略有不同，比较烦  
 
 Linux 下的 Markdown 编辑器 ReText 安装（基于Fedora）：（需要 Python 3 和 PyQt4）
 
@@ -18,17 +24,19 @@ Linux 下的 Markdown 编辑器 ReText 安装（基于Fedora）：（需要 Pyth
     $ python3-pip install Markups
     $ yum install python3-enchant
 
-然后到 [ReText 主页][3] 处下载安装包安装：
+然后到 [ReText 主页](http://sourceforge.net/p/retext/home/ReText/) 处下载安装包安装：
 
     <!-- lang: shell -->
     # python3 setup.py install
 
---------------------------------------------------------------------------------
+Windows下比较好的是 [MarkdownPad2]()
+
+---
 
 # 标题：
 
-Markdown 支持两种标题的语法，类 Setext 和类 atx 形式。  
-类 Setext 形式是用底线的形式，利用 = （最高阶标题）和 - （第二阶标题），例如：
+Markdown 支持两种标题的语法  
+利用 = （最高阶标题）和 - （第二阶标题），例如：
 
     <!-- lang: shell -->
     This is an H1
@@ -43,21 +51,19 @@ This is an H1
 This is an H2
 -------------
 
-类 Atx 形式则是在行首插入 1 到 6 个 # ，对应到标题 1 到 6 阶，例如：
+另外一种是在行首插入 1 到 6 个 # ，对应到标题 1 到 6 阶，例如：
 
     <!-- lang: shell -->
     # 这是H1
     ## 这是H2
     ### 这是H3
 
-你可以选择性地「闭合」类 atx 样式的标题，这纯粹只是美观用的，若是觉得这样看起  
-来比较舒适，你就可以在行尾加上 #，而行尾的 # 数量也不用和开头一样（行首的井  
-字符数量决定标题的阶数）：
+或者
 
     <!-- lang: shell -->
     # 这是H1 #
     ## 这是H2 ##
-    ### 这是H3 #
+    ### 这是H3 ###
 
 效果显示如下：
 
@@ -66,7 +72,7 @@ This is an H2
 ### 这是H3
 ###### 这是H6
 
---------------------------------------------------------------------------------
+---
 
 # 段落和换行：
 
@@ -127,11 +133,10 @@ I am in another line now.
 
 # 分隔线：
 
-在一行中用三个以上的星号（*）、减号（-）、底线（_）来建立一个分隔线，行内不能  
-有其他东西。你也可以在星号或是减号中间插入空格。下面每种写法都可以建立分隔线：
+在一行中用三个以上的星号（*）、减号（-）、底线（_）来建立一个分隔线，行内不能有其他东西。你也可以在星号或是减号中间插入空格。下面每种写法都可以建立分隔线：
 
     <!-- lang: shell -->
-    *****
+    ****
     -----
     _____
 
@@ -220,6 +225,3 @@ Markdown 会转为：
 
 --------------------------------------------------------------------------------
 
-  [1]: http://gitcafe.com/riku/Markdown-Syntax-CN/blob/master/syntax.md
-  [2]: http://www.oschina.net/question/100267_75314
-  [3]: http://sourceforge.net/p/retext/home/ReText/
