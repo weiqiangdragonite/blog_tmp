@@ -1,0 +1,743 @@
+
+linuxcast.net
+
+Base on CentOS
+
+-----------------------------------------------------------
+
+一、Linux的安装
+
+hostname: CentOS-Practice
+
+练习机主机规划：
+双硬盘（各50GB：CentOS-Practice0.vdi, CentOS-Practice1.vdi）
+
+Hostname: CentOS-Practice
+Configure Network: 192.168.2.110/24 Gateway: 192.168.2.1（安装完后还要通过setup设置DNS服务器地址）
+Unchecked UTC
+
+---------
+sda Free 51199 MB
+sdb Free 51199 MB
+
+Hard Drives:
+sda1          99 MB   /boot        ext4            (/boot分区不能是RAID和LVM)
+sda2       51100 MB   md0          RAID
+sdb1       51199 MB   md0          RAID
+
+RAID Devices:
+md0       102072 MB   vg_centos    pv(LVM)
+
+LVM Volume Groups:
+lv_sys    100000 MB    /           ext4
+lv_swap     2068 MB                swap
+
+Recommend to create password on boot menu
+
+---------
+choose Minimal Desktop to install
+
+
+-----------------------------------------------------------
+
+二、Linux基本操作
+
+1.GNOME图形界面基本操作
+	GNOME最早诞生于1999年，主要由redhat员工开发
+	GNOME是Linux系统以及其他类Unix系统下使用最为广泛的开源图形化界面系统
+	GNOME使用X11作为底层图形驱动服务
+	
+2.命令行BASH的基本操作
+	Shell（壳）是用户与操作系统底层（通常是内核）之间交互的中介程序，负责将用户指令、操作传递给操作系统底层
+	Shell一般分为：图形化Shell（GUI）、命令行Shell（CLI）
+	Linux中一般默认GUI为：GNOME，默认CLI为：BASH
+	BASH提示符以#或$起始，#代表当前用户为root用户，$代表当前用户为普通用户
+	我们可以通过键盘上的Tab按键对命令或文件名进行自动补全
+	BASH会记录我们以往操作的命令，可以通过history命令查看
+	BASH可以通过以下方式调用历史记录以简化操作：
+		!!       重复前一个命令
+		!字符    重复前一个以指定字符开头的命令
+		!num     按历史记录序号执行命令
+		!?abc    重复之前包含abc的命令
+		!-n      重复n个命令之前那个命令
+	我们可以通过 ctrl + r 来对历史记录进行搜索查询
+	命令su可以切换用户
+	命令passwd可以修改当前用户的密码
+	命令id可以显示当前用户的信息
+	通过在命令后追加一个&，可以将该命令放入后台运行
+	通过以下命令可以管理后台作业：
+		jobs  显示后台作业
+		fg    将后台作业调到前台执行
+		bg    继续执行一个后台作业
+		
+3.Linux文件系统基本结构
+	Linux文件系统为一个倒置的树状结构，所有文件或文件夹均包含在一个根目录“/”中。
+	Linux系统严格区分大小写
+	每一个Shell都有一个当前的工作目录，通过命令pwd可以查看当前工作目录
+	命令“ls”可以列出当前目录信息，支持以下参数：
+		ls -a       显示所有文件
+		ls -l       显示文件的详细信息
+		ls -R       递归显示子目录信息
+		ls -ld      显示目录及链接信息
+	命令“file”可以用来查看指定文件的文件类型
+	Linux目录管理使用绝对路径与相对路径两个概念：
+		绝对路径：以根目录“/”为起点，递归每一级目录直到目标文件/文件夹，如：/etc/passwd
+		相对路径：以当前目录为起点，到达目标文件/文件夹的路径，如：../../etc/passwd
+		相对路径基本定义：“..”代表上级目录，“.”代表当前目录，
+		“~”代表当前用户家目录，“-”代表上一个工作目录
+		
+4.Linux文件基本操作管理
+	命令“cp”用以复制文件或目录：
+		cp 源文件（文件夹）  目标文件（文件夹）
+			-r  递归复制整个目录
+			-v  显示详细信息
+	命令“mv”用来移动或重命名一个文件或目录：
+		mv 源文件（文件夹） 目标目录
+	移动时如果指定文件名，则会进行重命名
+	命令“touch”用以创建一个空白文件或更新一个现有文件的时间戳：
+		touch 文件名
+	命令“rm”用以删除一个文件或文件夹：
+		rm 文件/文件夹
+			-i   交互式删除（每删除一个文件会有一个提示）
+			-r   递归删除文件夹下所有文件
+			-f   强制删除，不提示（慎用）
+	命令“mkdir”、“rmdir”用以创建或删除一个空目录
+	查看文件类型：
+		file
+
+5.Linux系统目录架构
+	/dev     存放设备文件
+	/boot    存放内核与启动程序相关文件
+	/lib     存放系统库文件
+	/bin     存放二进制文件（可执行命令）
+	/sbin    存放特权级二进制文件（特权级可执行命令）
+	/usr     一般存放安装程序
+	/var     一般存放经常变化的数据，如服务数据、日志文件等
+	/proc    只存在于内存中的文件系统，保存操作系统的实时信息
+	/home    用户家目录 
+	/root    特权用户（root）家目录
+
+6.Linux系统常用命令
+	日期时间：
+		date命令：   显示当前时间日期
+		hwclock命令：显示硬件时钟
+		cal命令：    显示日历
+		uptime命令： 显示系统运行时间
+
+	输出、查看：
+		echo命令：输出输入内容
+		cat命令： 查看制定文件内容
+		head命令：查看指定文件头10行内容
+		tail命令：查看指定文件末尾10行内容
+		more命令：以翻页形式查看指定文件内容（只可向下翻页）
+		less命令：以翻页形式查看指定文件内容（可上下翻页）
+
+	查看硬件信息：
+		lspci命令：查看PCI设备信息
+		lsusb命令：查看USB设备信息
+		lsmod命令：查看加载的模块（驱动）
+		
+			-v 查看详细信息
+
+	关机、重启：
+		shutdown命令：关机、重启、休眠（可定时）
+		reboot命令：  立即重启
+		poweroff命令：立即关机
+
+	归档、压缩：
+		zip命令：  创建zip压缩文件
+		unzip命令：解压缩zip压缩文件
+		gzip命令： 创建gzip格式压缩文件
+		tar命令：  创建归档文件（一般用于备份，可与gzip一起执行创建归档压缩文件）
+
+	查找：
+		locate命令：快速查找文件（需要特定数据库支持，非实时更新，可通过updatedb命令手工更新数据库）
+		find命令：  功能强大的实时查找命令，可支持多条件查找，但速度慢
+
+7.VI文本编辑器
+	vi是Linux及类Unix系统中主流的命令行文本编辑器，功能极为强大，vim是增强版本的vi
+	
+	vim有三种工作模式：
+		命令模式（常规模式）
+		插入模式
+		ex模式
+
+	命令模式常用指令：
+		i    插入
+		o    在当前行下插入新行
+		dd   删除当前行
+		yy   复制一行
+		p    粘贴
+		u    撤销上一个操作
+		r    替换当前字符
+		/    搜索
+
+	ex模式常用命令：
+		:w     保存修改
+		:q     退出
+		:q!    强制退出，不保存修改
+		:x     保存并退出，相当于:wq
+		:!     执行系统命令
+		:sh    切换到命令行，使用ctrl + d切换回vim
+
+-----------------------------------------------------------
+
+三、Linux磁盘及文件系统管理
+
+1.磁盘基本概念
+	磁盘基本概念：
+		cylinder（柱面）
+		sector（扇区）
+		head（磁头）
+
+	Linux系统中，磁盘以磁盘文件形式保存在/dev目录下，
+	文件名以hd或sd开头（IDE设备以hd开头，usb、sata、SCSI、SAS等设备以sd开头），
+	以a、b、c等表示编号，如第一块硬盘叫做/dev/sda，第二块叫做/dev/sdb，以此类推
+
+	分区使用设备名+分区号形式表示，如第一个磁盘的第一个分区：/dev/sda1，
+	第二个分区：/dev/sda2
+
+	MBR是PC架构计算机使用的最为广泛的分区机制（分区是软件概念），特点如下：
+		支持32位及64位系统
+		支持的分区数量有限
+		支持最大空间为2T
+
+	MBR分区机制最多支持2TB硬盘空间，
+	磁盘的头512字节是被MBR占用的。（前446字节是系统的引导代码，
+	接着的4*16=64字节是分区表，最后2字节是启动标识（55AA））
+	
+	MBR（Master Boot Record）分区概念：
+		主分区（最多创建4个主分区）
+		扩展分区（一个扩展分区占用一个主分区位置，扩展分区是不能用的，要在其上创建逻辑分区）
+		逻辑分区（Linux最多支持63个IDE分区和15个SCSI分区）
+
+	GPT（GUID Partion Table）是较MBR更新、更先进的分区机制，应用于支持uEFI的计算机上，特点如下：
+		支持超过2T的硬盘空间
+		向后兼容MBR
+		必须使用64bit系统
+		底层硬件必须使用EFI
+		必须在支持UEFI（取代BIOS）的硬件上才能使用
+
+2.使用fdisk进行磁盘管理
+	fdisk是来自IBM的老牌分区软件，几乎所有Linux系统均默认安装
+	fdisk是一个MBR分区工具，不可用于GPT分区
+	只有超级用户（root）权限可以执行fdisk
+	
+	fdisk -l 列出所有安装的磁盘及其分区信息
+	fdisk /dev/sda可以对目标磁盘进行分区操作
+	fdisk分区后需要使用partprobe让内核识别新的分区，否则要重启才能识别新分区
+	/proc/partitions文件也可用来查看分区信息
+
+3.Linux文件系统
+	文件系统是操作系统用以管理磁盘或分区上的文件数据使用的，创建文件系统的过程一般称之为格式化
+	windows下主流的文件系统是：fat32、NTFS，Linux下主流的文件系统是：ext3、ext4
+	
+	没有文件系统的设备称为裸（raw）设备
+	
+	判断一个文件系统优劣通常通过以下几个方面：
+		支持最大分区大小
+		支持最大单个文件大小
+		支持文件名长度
+		日志功能
+		文件存取性能
+
+	命令mke2fs用以创建文件系统：
+		mke2fs -t ext4 /dev/sdb1
+			-t  文件系统类型
+			-b  指定文件系统块（block）大小（block是文件系统读写操作的最小单位，默认是4096）
+			-c  建立文件系统的时候检查块损坏
+			-L  指定卷标
+			-j  建立文件系统日志（ext3/4默认带日志）
+
+	命令mkfs可用来快速建立文件系统：（支持的参数较少，不能精细化控制）
+		mkfs.ext3、mkfs.ext4、mkfs.vfat
+
+	命令dumpe2fs可用来查看指定文件系统的信息：
+		dumpe2fs /dev/sda1
+
+	命令e2label用以为指定文件系统添加卷标：（标签建议大写）
+		e2label /dev/sda1 LINUXCAST
+
+	命令fsck用以检查文件系统错误：
+		fsck /dev/sda1
+			-y   不提示而直接进行修复
+			-t   指定文件系统类型（用于文件系统损坏较严重时）
+	
+	对于识别为文件的损坏数据（文件系统无记录），fsck会将该文件放入lost+found目录
+
+	日志是文件系统通常都支持的功能，用以提高文件系统的稳定性及可恢复性
+
+4.Linux文件系统挂在管理
+	文件系统创建好之后需要挂载到系统中方可使用，windows、Mac系统会自动挂载文件系统，而Linux下一般需要手工挂载
+
+	命令mount可用来挂载文件系统：
+		mount 要挂载的设备 挂载点
+		mount -o rw,sync /dev/sdb1 /mnt
+			不带参数的mount命令会显示所有已挂载的文件系统
+			-t  指定文件系统的类型，如： -t ext3、-t vfat  
+			-o  指定挂载选项：
+				ro,rw    只读挂载或读写挂载
+				sync     不使用文件缓存，所有操作直接写入磁盘
+				async    使用缓存提高文件系统读写效率
+				noatime  不更新文件访问时间
+				atime    更新文件访问时间
+				remount  重新挂载
+
+	命令umount用以卸载一个挂载的文件系统：
+		umount  挂载源或挂载点
+		umount  /dev/sdb1
+		umount  /mnt
+
+	命令fuser可查看使用文件系统的进程
+		fuser -m /mnt
+
+	命令lsof可查看正在被使用的文件
+		lsof /mnt
+		
+	可以将挂载配置写入/etc/fstab中以实现自动挂载
+	格式如下：
+	
+	<file system>   <mount point>  <type>    <options>  <dump>  <pass>
+	需要挂载的设备  挂载点         文件系统  挂载选项
+	/dev/sda2       /home           ext4     defaults    0       0
+	(中间空格用tab，dump和pass暂时不用管)
+	LABEL=...
+	(根分区是使用uuid来识别)
+	
+	要挂载的设备也可以使用LABEL进行识别，使用LABEL=...取代/dev/sda
+	mount -a 命令会挂载所有fstab中定义的自动挂载项
+	
+-----------------------------------------------------------
+
+四、Linux下获取帮助
+
+	几乎所有命令都可以通过 -h 或 --help参数获取命令的帮助信息
+	man命令是Linux中最为常用的帮助工具，可以通过以下形式获取man帮助：
+	man 要获取帮助的命令
+	man -k 关键字       搜索包含关键字的帮助文档
+	info与man命令类似，但是输出信息更为详细
+	man和info都可通过"/+关键字"进行搜索
+	绝大多数程序都有相应的帮助文档，保存在/usr/share/doc文件夹中
+	
+	man文档分类:
+		1    User commands that may be started by everyone.
+		2    System calls, that is, functions provided by the kernel. 
+		3    Subroutines, that is, library functions. 
+		4    Devices, that is, special files in the /dev directory. 
+		5    File format descriptions, e.g. /etc/passwd . 
+		6    Games, self-explanatory. 
+		7    Miscellaneous, e.g. macro packages, conventions. 
+		8    System administration tools that only root can execute. 
+		9    Another (Linux specific) place for kernel routine documentation. 
+	
+-----------------------------------------------------------
+
+五、用户及权限基础
+
+1.Linux用户基础
+	操作系统通过用户、组概念来管理使用计算机的人
+	用户代表一个使用计算机的使用者，操作系统通过用户概念限制一个使用者能够访问的资源
+	组用来组织管理用户
+
+	用户具有以下概念：
+		每个用户有一个用户名和一个用户ID（UID)，用户ID是操作系统真正用来管理标识用户的，UID为32位长，从0开始，最大一般到60000。
+		用户分为：root用户（uid为0）、系统用户（uid 1~499）、普通用户（uid 500以上）
+		每个用户有一个家目录，用来保存用户私有数据，root用户的家目录为/root，普通用户家目录为/home下与用户名相同的目录
+		每个可登陆用户拥有一个指定的shell
+		系统用户没有shell（为某项程序、软件创建的用户）
+
+	一个用户可以属于一个主组，可以属于一个或多个附属组
+
+	用户、组信息保存在以下三个文件中：
+		/etc/passwd    用户信息
+		/etc/shadow    用户密码
+		/etc/group     组信息
+
+	命令id用以显示当前用户的信息，命令passwd用以修改当前用户的密码
+
+	以下命令用以显示登陆用户信息：
+		whoami     显示当前用户
+		who        显示登陆的用户的信息   
+		w          显示登陆的用户的详细信息
+
+	命令useradd用以添加一个用户：
+		useradd 用户名
+			-d   指定用户家目录 
+			-s   指定用户登陆shell
+			-u   指定用户uid
+			-g   指定用户所属主组
+			-G   指定用户所属附属组
+
+	命令usermod用以修改一个用户的信息：
+		usermod 参数 用户名
+			-l   修改用户名
+			-u   修改uid
+			-g   修改用户主组
+			-G   修改用户附属组
+			-L   锁定用户使其不能登录
+			-U   解锁用户
+
+	命令userdel用以删除一个用户：
+		userdel 用户名        保留用户的家目录
+		userdel -r 用户名     删除用户的同时删除该用户家目录
+
+	命令groupadd用以创建一个组：
+		groupadd 组名
+
+	命令groupmod用以修改一个组信息：
+		groupmod -n  新组名 旧组名
+		groupmod -g  新组ID 旧组ID
+
+	命令groupdel用以删除一个组
+
+2.Linux权限机制
+	权限是操作系统用来限制用户、组、进程对操作系统资源（文件、设备等）的访问的机制
+	权限分为：读、写、执行，一般表示为 r、w、x（4、2、1）
+	每个文件或文件夹拥有一个所属用户和所属组，并且设置对应的权限
+	每个进程在运行的时候均以一个用户的身份运行，同时继承该用户的权限
+
+	Linux使用UGO权限模型，U代表所属用户、G代表所属组、O代表其他，每个文件的权限基于UGO模型设置
+
+	命令ls -l可以查看文件的权限
+	
+	命令chown可以修改一个文件的所属用户：
+		chown 用户 文件
+		chown linuxcast  testfile
+
+	命令chgrp用以修改一个文件的所属组：
+		chgrp 组  文件
+		chgrp linuxcast-group testfile
+
+	命令chmod用以修改一个文件的权限：
+		chmod 权限 文件
+		chmod o-rwx linuxcast-file(+、-代表加入或删除对应权限)
+
+3.Linux扩展权限(默认权限、特殊权限)
+	umask属性用来确定新建文件的默认权限
+
+	umask使用数字权限表示，如：022（对应于UGO权限）
+	目录的默认权限是：777 - umask
+	文件的默认权限是：777 - umask，再去掉执行权限
+	一般，普通用户的默认umask是002，root用户是022
+	
+	因此，对于普通用户来讲：
+		新建文件的权限是：777 - 002 = 775（rw-rw-r--）
+		新建目录的权限是：777 - 002 = 775（rwxrwxr-x）
+	
+	可以用umask查看当前的值
+	命令umask可以修改当前umask属性：
+		umask 022
+
+	Linux拥有三个特殊权限：
+		权限         对文件的影响                  对目录的影响
+		suid         以文件的所属用户身份执行，    无
+		             而非执行文件的用户
+		sgid         以文件所属组身份执行          在该目录中创建的任意新文件的所属
+		                                           组与该目录的所属组相同
+		sticky       无                            对目录拥有写入权限的用户仅可以删
+		                                           除其拥有的文件，无法删除其他用户
+												   所拥有的文件
+
+	命令chmod用以设置特殊权限：
+		chmod u+s linuxcast-file   设置suid
+		chmod g+s linuxcast-dir    设置sgid
+		chmod o+t linuxcast-dir    设置sticky
+		
+	与普通权限一样，特殊权限也可以使用数字方式表示
+	- suid = 4
+	- sgid = 2
+	- sticky = 1
+	chmod 4755 linuxcast.net
+
+-----------------------------------------------------------
+ 
+六、Linux网络基本配置
+
+1.网络基础
+	IP编址是现今使用最为广泛的网路编址协议，拥有两个主流版本：IPv4、IPv6，IPv4是部署最多的版本，未来会逐渐切换到IPv6.
+	IPv4编制拥有32位长，一般使用点分十进制表示，如：192.168.1.1
+	IPv6地址为128位长
+	
+	IPv4地址分为两个部分：网络部分、主机部分，使用子网掩码确定网络部分的位数
+	子网掩码与IP地址同等长度，与IP地址每一位一一对应，IP地址中对应子网掩码为1的位为网络部分
+	如255.255.255.0是代表前24位为网络部分
+	192.168.1.0/24 （24是代表前24位为网络部分）
+	10.0.0.0/8 （8是代表前8位是网络部分）
+	通过比较网络部分是否相同来判断是否处于同一网络
+	
+	在不同网络之间进行通讯需要一个具有路由功能的设备进行数据转发，这个设备叫做路由器或网关
+	域名是用来代表IP地址，因为IP地址难以记忆使用，所以一般使用域名，一个域名对应一个IP地址
+	DNS服务提供IP地址到域名的转换
+
+2.Linux网络基础配置
+	Linux中网卡标识为eth(Ethernet)，第一块网卡叫做eth0，第二块叫做eth1，以此类推
+
+	使用lspci查看网卡物理信息（如果是usb网卡，则要使用lsusb命令）
+	命令ifconfig用以查看网卡信息
+		ifconfig -a        查看所有接口
+		ifconfig eth0      查看特定接口
+	命令ifup、ifdown用以启用、关闭一个网卡接口
+		ifup eth0
+		ifdown eth0
+
+	我们一般使用setup命令设置网卡信息
+	
+	网卡的配置信息保存在下面目录中：
+		/etc/sysconfig/network-scripts/
+		配置文件为ifcfg-网卡名称，如：ifcfg-eth0
+		
+	重启网络服务：
+		service network restart
+
+	DNS服务器IP保存在：
+		/etc/resolv.conf
+
+	主机名配置保存在：
+		/etc/sysconfig/network
+
+	测试网络连通性：
+		ping 192.168.1.1
+		ping www.linuxcast.net
+	
+	测试DNS解析：
+		host www.linuxcast.net
+		dig www.linuxcast.net
+		
+	显示路由表：
+		ip route
+		
+	追踪到达目标地址的网络路径：
+		traceroute www.linuxcast.net
+		
+	使用mtr进行网络质量测试：（结合了ping和traceroute）
+		mtr www.linuxcast.net
+		
+	常用网络命令：
+		ping
+		host
+		traceroute
+		mtr
+
+	网络故障排查遵循从上至下、从里至外的原则：
+		先查看网络配置信息是否正确：
+		- IP地址
+		- 子网掩码
+		- 网关
+		- DNS
+		
+		查看到达网关是否连通：
+			ping 网关IP地址
+			
+		查看DNS解析是否正确：
+			host www.126.com
+
+-----------------------------------------------------------
+
+七、Linux管道、重定向及文本处理
+
+1.Linux多命令协作：管道及重定向
+	开源文化的核心理念之一就是不要重复发明轮子，很多开源软件都大量使用了其他开源软件或功能组建，
+	同样，Linux中的命令也往往只实现某个特定的、单一的功能，复杂功能往往都是通过多命令协作完成的
+
+	管道及重定向就是Linux多命令协作的基础机制
+
+	Linux的Shell对数据流进行以下分类定义： 
+		stdin     标准输入  编号为：0   默认：键盘   使用<或<<
+		stdout    标准输出  编号为：1   默认：终端   使用>或>>
+		stderr    标准错误  编号为：2   默认：终端   使用2>或2>>
+
+	重定向用来控制终端数据流：
+		>       将标准输出以覆盖形式重定向到指定文件，如：ls > outfile
+		>>      将标准输出以追加形式重定向到指定文件，如：ls >> outfile
+		<       重定向标准输入   如：grep linuxcast < /etc/passwd
+		2>      重定向标准错误
+		2>&1    将标准错误合并到标准输出中
+
+	管道“|”用以将一个命令的标准输出作为另一个命令的标准输入：
+		命令1  |  命令2
+
+	管道通常用来组合不同命令
+	重定向通常用来保存输出信息
+    
+    双向重定向tee
+        ls | tee file
+        
+        同时向standard output和文件传送信息
+
+2.Linux命令行文本处理工具
+	文件浏览：
+		cat		查看文件内容
+		more	以翻页形式查看文件内容（只能向下翻页）
+		less	以翻页形式查看文件内容（可上下翻）
+		head	查看文件的开始10行（或指定行数）
+		tail	查看文件的结束10行（或指定行数）
+
+	关键字搜索：
+		grep  关键字  指定文件
+			-i   搜索时忽略大小写
+			-n   显示结果所在行
+			-v   显示不包含关键字的行
+
+	基于列的文本处理：
+		cut -d: -f1 /etc/passwd
+			-d  指定分割字符
+			-f  指定显示列
+			-c  基于字符顺序进行列分割
+
+	文本统计：
+		wc linuxcast
+			-l   只统计行数
+			-w   只统计单词书
+			-c   只统计字节数
+			-m   只统计字符数 
+
+	文本排序：
+		sort linuxcast
+			-r   倒序排序
+			-n   基于数字进行排序
+			-f   忽略大小写
+			-u   删除重复行
+
+	文本比较：
+		diff linuxcast-1 linuxcast-2
+			-i   忽略大小写
+			-b   忽略空格数变化
+			-u   统一显示信息（一般用于生成patch文件）
+
+	文本转换：
+		tr -d "TMD" < linuxcast       删除指定关键字
+		tr 'a-z' 'A-Z' < linuxcast    转换大小写
+
+	搜索替换：
+		sed 's/linux/unix/g' linuxcast   将所有linux关键字替换为unix
+
+-----------------------------------------------------------
+
+八、Linux系统启动详解
+
+1.Linux系统启动详解
+	Linux系统启动流程如下：
+		BIOS		（负责检查硬件并且查找启动设备）
+		MBR			（引导代码为MBR的前446字节）
+		GRUB		（引导程序，相关文件保存在/boot/grub目录中，配置文件在/boot/grub/grub.conf）
+		加载内核	（可用命令dmesg查看本次开机内核输出信息）
+		init		（init是系统运行的第一个进程，是所有进程的父进程，
+					  调用/etc/rc.d/rc.sysinit对系统进行初始化，挂载文件按系统，
+					  并且根据运行级别启动相应服务）
+		runlevel
+		
+	Linux内核文件保存在:
+		/boot/vmlinuz    内核文件
+		/boot/initramfs   内核模块
+
+	Linux运行级别：
+		0   关机
+		1   单用户模式
+		2   不带网络的多用户模式
+		3   命令行多用户模式 
+		4   未使用
+		5   X11图形界面模式
+		6   重启
+
+	运行级别保存在配置文件：
+		/etc/inittab
+
+	命令runlevel显示当前及上一个运行级别
+	
+	命令init可修改当前运行级别
+		init 3
+
+	单用户模式下可恢复root密码（存在安全隐患）
+		在GRUB启动菜单上按'e'进入详细设置，然后移到kernel那行按'e'进入设置，
+		在光标最后那里添加1（即 ...quiet 1），回车，按'b'重启，就能
+		以root身份进入单用户模式，用passwd修改密码
+		
+	通过GRUB加密，可防止任何人通过重启计算机进入内核修改root密码
+	
+	通过在grub.conf中的启动配置中加入如下参数即可对grub进行加密：
+	password --md5 $..........
+	加密的密码可通过grub-md5-crypt生成
+	
+
+-----------------------------------------------------------
+
+九、Linux软件管理基础：RPM、YUM
+
+UPDATING...
+
+1.RPM软件包管理
+	大多数开源软件都是以源代码形式发布的，源代码形式程序安装流程一般如下：
+		./configure    检查编译环境、相关库文件以及配置参数并生成makefile
+		make           将源代码编译为可执行文件
+		make install   安装编译好的可执行文件
+
+	rpm无法自动解决软件的依赖关系
+	RPM（redhat Package Manager）是为了方便软件管理使用所开发的一套开源软件格式，RPM的设计目标如下：
+		使用简单
+		以单一软件包格式发布（.rpm文件）
+		可升级
+		追踪依赖关系
+		保存软件基本信息
+		软件验证功能
+		支持多平台
+
+	RPM基础命令：
+		安装软件：rpm -i linuxcast-version.rpm
+		卸载软件：rpm -e linuxcast
+		升级形式安装：rpm -U linuxcast-soft-new.rpm
+
+		常用参数：
+			-v  显示详细信息
+			-h  显示文本进度条
+
+	RPM常用查询命令：
+		rpm -qa   列出所有已安装的rpm软件
+		rpm -qf filename  查询指定文件属于哪个rpm包
+		rpm -qi packagename  查询软件包的信息
+		rpm -ql packagename  查询指定软件包包含的文件
+		rpm -qip software.rpm 查询rpm文件的信息
+		rpm -qlp software.rpm  查询rpm文件包含的文件
+
+	RPM软件验证命令：
+		rpm -K software.rpm
+		rpm -V softname
+
+2.YUM软件管理
+	rpm无法自动解决软件的依赖关系
+
+	YUM（YellowDog Updater，Modified）是一个RPM的前端程序，主要用来自动解决rpm依赖关系，其特点如下：
+		自动解决依赖关系
+		可以对rpm进行分组，并基于组进行安装操作
+		使用仓库管理rpm文件，支持多个仓库
+		配置简单
+
+	YUM引入仓库（repo）概念，仓库用来存放管理rpm软件包，当软件存在依赖关系时，自动从仓库中寻找软件解决以来关系
+	仓库可以使本地的，也可以是使用HTTP、FTP、NFS协议的网络仓库
+	YUM仓库的配置文件保存在/etc/yum.repos.d目录下，配置文件必须以.repo结尾
+	一个配置文件内可以保存多个仓库的配置信息
+	/etc/yum.repos.d目录下可以存在多个配置文件
+	格式如下：
+	[LinuxCast]
+	name = This is LinuxCast.net rpm soft repo
+	baseurl = http://www.linuxcast.net/yum/centos/6/i386/rpms/
+	或
+	baseurl = file://仓库的绝对路径
+	enabled = 1
+	gpgcheck = 1
+	
+	YUM常用命令：
+		安装软件：yum install software-name
+		删除软件：yum remove software-name
+		升级软件：yum update software-name
+
+	搜索查询：
+		基于关键字搜索软件：yum search 关键字
+		列出YUM仓库中全部软件：yum list all
+		显示软件信息：yum info packagename
+		清除YUM缓存：yum clean all
+
+	创建yum仓库：
+		将rpm包保存到一个指定文件夹下
+		使用createrepo命令创建yum仓库
+
+

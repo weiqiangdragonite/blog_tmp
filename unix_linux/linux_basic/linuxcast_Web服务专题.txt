@@ -1,0 +1,191 @@
+
+一、Nginx服务详解
+
+
+
+-----------------------------------------------------------
+
+二、Apache服务深入解析
+
+1.Apache服务的安装、服务管理及相关文件
+	CentOS 6.3 ( RHEL 6）YUM中集成的是apache 2.2.15(httpd 2.2.15)
+
+	使用以下命令可以安装apache服务器：
+		yum install -y httpd
+		
+	其他apache相关软件包：
+		httpd-devel - 开发相关头文件
+		httpd-tool - apache相关工具，如ab、htpasswd
+		httpd-manual - apache官方文档
+
+	安装之后可以使用以下命令启动、关闭apache服务器：
+		service httpd start
+		service httpd stop
+		service httpd restart
+
+	apache还提供了一些特殊的服务器指令：
+		service httpd graceful
+		service httpd graceful-stop   
+  
+		/etc/httpd
+		/etc/httpd/conf/httpd.conf      - apache主配置文件
+		/etc/httpd/conf.d               - apache模块配置文件
+		/etc/httpd/modules              - apache模块文件路径链接
+
+	apache默认网站根目录：
+		/var/www/html
+
+	apache相关用户：
+		cat /etc/passwd | grep apache
+
+	默认日志文件位置：
+		/var/log/httpd
+
+2.Apache服务基本概念（DSO、MPM等）
+	apache服务默认会启用一个主进程和多个子进程，子进程负责处理用户请求。主进程以root用户身份运行，而子进程则以较低权限的apache用户身份运行。子进程数量由配置决定。
+		ps aux | grep httpd
+
+	apache是一个模块化服务器，核心只包含基本功能，扩展功能由不同功能模块实现。
+
+	使用以下命令可以查看编译的模块：
+		httpd -M
+
+	使用以下命令可以查看静态编译入apache程序的模块：
+		httpd -l
+
+	共享模块可以通过apxs命令进行单独编译。
+
+	共享模块在配置文件中通过LoadModule加载：
+		LoadModule 模块名称 模块路径
+
+	apache在2.0版本以上引入了MPM功能，通过MPM（Multi Process Modules）来负责网络端口绑定、接收处理请求等功能。
+
+	可以通过以下两种方式确定apache所使用的MPM：
+		httpd -l
+		httpd -V
+ 
+	Linux下默认使用的MPM是prefork，也可以选择使用worker。
+	prefork通常比worker性能高，但是会使用较多的资源。
+
+3.Apache进程管理MPM详解（prefork及worker）
+	prefork是一个非线程、预派生型的MPM，适用于没有线程安全库、需要避免线程兼容性问题的系统。
+
+	prefork通过多个子进程处理用户请求，每个子进程同一时刻只能处理一个请求。apache通过一个父进程（控制进程）来负责产生子进程。
+
+	子进程的数量是根据请求数量动态调整的，但是为了避免在请求到达的时候再创建子进程，apache会预先创建一些子进程，等待请求的到来。
+
+	StartServers:         服务启动时创建的子进程数量
+	MinSpareServers:      空闲子进程的最小数量
+	MaxSpareServers:      空闲子进程的最大数量
+	ServerLimit:          允许 MaxClients 的最大值
+	MaxClients:           允许同时处理的最大请求数量
+	MaxRequestsPerChild:  每个子进程所能处理的最大请求数量
+	
+	<IfModule prefork.c>
+	StartServers       8
+	MinSpareServers    5
+	MaxSpareServers   20
+	ServerLimit      256
+	MaxClients       256
+	MaxRequestsPerChild  4000
+	</IfModule>
+
+4.Apache主配置文件概述-1（全局配置）
+	apache主配置文件默认分为三个部分：
+		Section 1: Global Environment - 全局配置
+		Section 2: 'Main' server configuration - 主服务配置
+		Section 3: Virtual Hosts - 虚拟主机配置
+
+	第一部分主要配置内容：
+		ServerTokens OS            控制服务器响应给客户端的头部信息中Server信息的详细程度
+		Prod：Apache
+		Major:  Server: Apache/2
+		OS: Server: Apache/2.0.41 (Unix)
+		Full: Server: Apache/2.0.41 (Unix) PHP/4.2.2 MyMod/1.2
+
+		ServerRoot "/etc/httpd"
+		指定服务器所在目录位置
+
+		PidFile run/httpd.pid
+		指定记录服务器控制进程（父进程）ID的文件位置
+
+		Timeout 60
+		指定连接的超时时间
+
+		KeepAlive Off
+		指定是否开启keepalive功能
+
+		MaxKeepAliveRequests 100
+		指定在开启keepalive之后一个连接最多进行的请求次数
+
+		KeepAliveTimeout 15
+		指定在开启keepalive之后一个连接内两个请求之间的最长时间间隔
+
+		Listen 12.34.56.78:80
+		Listen 80
+		指定apache服务默认监听的端口号和IP地址
+
+		LoadModule foo_module modules/mod_foo.so
+		指定apache加载那些模块
+
+		Include conf.d/*.conf
+		加载conf.d中的配置文件信息（模块配置文件）
+
+		User apache
+		Group apache
+		指定apache子进程所使用的用户
+
+5.Apache主配置文件概述-2（主服务配置）
+	ServerName www.LinuxCast.net:80
+	域名
+
+	UseCanonicalName Off
+	如果设为On，apache会使用ServerName设置的标准域名. 如果设置为off, Apache会使用客户端传递的HOST参数所指定的主机名. 如果使用基于域名的虚拟主机，那么这里要设置为off。
+
+	DocumentRoot "/var/www/html"
+	网站根目录
+	
+	<Directory "/var/www/html">
+	</Directory>
+	基于目录的访问控制
+
+	<IfModule mod_userdir.c>
+	</IfModule>
+	条件模块配置
+
+	DirectoryIndex index.html index.html.var
+		指定网站缺省首页配置
+
+	AccessFileName .htaccess
+	读取分布式配置文件
+
+	<Files ~ "^\.ht">
+	</Files>
+	基于文件名的访问控制
+
+	TypesConfig /etc/mime.types
+	指定mime类型文件
+
+	DefaultType text/plain
+	默认相应内容类型
+
+	HostnameLookups Off
+	指定是否开启域名解析（如果开启，在日志记录中将会尝试将IP地址解析为域名）
+
+	ErrorLog logs/error_log
+	保存错误日志的保存位置，错误日志记录apache服务运行相关信息
+
+	LogLevel warn
+	指定日志记录级别（详细程度）
+
+	LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+	设置日志记录格式，combined指明多了两个%{header}i信息。
+
+	CustomLog logs/access_log combined
+	设置访问日志的位置和相关参数
+
+
+
+
+
+

@@ -1,0 +1,431 @@
+
+
+https://www.djangoproject.com/
+
+pip install Django
+默认安装到 /usr/lib/python2.7/site-packages/django
+如果你的django是从linux发行版中安装的，那么，django-admin.py常会被django-admin替代
+
+Tutorial https://docs.djangoproject.com/en/1.6/intro/tutorial01/
+
+The Django Book http://djangobook.py3k.cn/2.0/
+                http://www.djangobook.com/en/2.0/
+
+-----------
+
+Django支持四种数据库：
+
+PostgreSQL (http://www.postgresql.org/)
+SQLite 3 (http://www.sqlite.org/)
+MySQL (http://www.mysql.com/)
+Oracle (http://www.oracle.com/)
+
+安装PostgreSQL:
+yum install postgresql postgresql-devel postgresql-libs postgresql-client \
+            postgresql-server pgadmin3 postgresql-contrib
+postgresql-setup initdb
+systemctl enable postgresql.service
+
+python驱动: yum install python-psycopg2 
+
+SQLite
+
+MySQL: yum install mysql-connector-python
+
+----------------------
+
+开始一个项目
+
+新建一个工作目录，如/XXX/djcode
+转到你创建的目录，运行命令django-admin startproject mysite
+(如果在运行时，你看到权限拒绝的提示，你应当修改这个文件的权限)
+
+startproject 命令创建一个目录，包含4个文件：
+mysite/
+├── manage.py
+└── mysite
+    ├── __init__.py
+    ├── settings.py
+    ├── urls.py
+    └── wsgi.py
+
+- The outer mysite/ root directory is just a container for your project. 
+  Its name doesn’t matter to Django; you can rename it to anything you like.
+- manage.py: A command-line utility that lets you interact with this Django
+  project in various ways. You can read all the details about manage.py in
+  django-admin.py and manage.py.
+
+The inner mysite/ directory is the actual Python package for your project.
+Its name is the Python package name you’ll need to use to import anything
+inside it (e.g. mysite.urls).
+
+- mysite/__init__.py: An empty file that tells Python that this directory
+  should be considered a Python package. (Read more about packages in the
+  official Python docs if you’re a Python beginner.)
+- mysite/settings.py: Settings/configuration for this Django project. Django
+  settings will tell you all about how settings work.
+- mysite/urls.py: The URL declarations for this Django project; a “table of
+  contents” of your Django-powered site. You can read more about URLs in URL
+  dispatcher.
+- mysite/wsgi.py: An entry-point for WSGI-compatible web servers to serve your
+  project. See How to deploy with WSGI for more details.
+
+
+
+如果你还没启动服务器的话，请切换到你的项目目录里 (cd mysite )，运行下面的命令：
+python manage.py runserver
+
+默认情况下， runserver 命令在 8000 端口启动开发服务器，且仅监听本地连接。 
+要想要更改服务器端口的话，可将端口作为命令行参数传入：
+python manage.py runserver 8080
+
+通过指定一个 IP 地址，你可以告诉服务器–允许非本地连接访问。 如果你想和其他
+开发人员共享同一开发站点的话，该功能特别有用。 `` 0.0.0.0`` 这个 IP 地址，
+告诉服务器去侦听任意的网络接口。
+python manage.py runserver 0.0.0.0:8000
+
+--------------------------------------------------------------------------------
+
+在上一章使用django-admin.py startproject制作的mysite文件夹中，创建一个
+叫做views.py的空文件。这个Python模块将包含这一章的视图。
+
+需要通过一个详细描述的URL来显式的告诉它并且激活这个视图。
+为了绑定视图函数和URL，我们使用URLconf。
+URLconf 就像是 Django 所支撑网站的目录。 它的本质是 URL 模式以及要为
+该 URL 模式调用的视图函数之间的映射表。
+例如，当用户访问/foo/时，调用视图函数foo_view()，这个视图函数
+存在于Python模块文件view.py中。
+
+前一章中执行 django-admin.py startproject 时，该脚本会自动为你建了一份
+ URLconf（即 urls.py 文件）
+
+
+总结一下：
+
+1.进来的请求转入/hello/.
+2.Django通过在ROOT_URLCONF配置来决定根URLconf.
+3.Django在URLconf中的所有URL模式中，查找第一个匹配/hello/的条目。
+4.如果找到匹配，将调用相应的视图函数
+5.视图函数返回一个HttpResponse
+6.Django转换HttpResponse为一个适合的HTTP response， 以Web page显示出来
+
+--------------------------------------------------------------------------------
+
+模板
+
+{{ name }} 称为 变量(variable)
+{% if XXX %} 是 模板标签(template tag)
+{{ ship_date|date:"F j, Y" }} 是filter过滤器
+{# This is a comment #} 单行注释
+{% comment %}
+This is a
+multi-line comment.
+{% endcomment %}  多行注释
+Django 模板含有很多内置的tags和filters,我们将陆续进行学习
+
+在Python代码中使用Django模板的最基本方式如下：
+1.可以用原始的模板代码字符串创建一个 Template 对象， Django同样支持用指定
+  模板文件路径的方式来创建 Template 对象;
+2.调用模板对象的render方法，并且传入一套变量context。它将返回一个基于模板
+  的展现字符串，模板中的变量和标签会被context值替换。
+
+代码如下： python manage.py shell
+>>> from django import template
+>>> t = template.Template('My name is {{ name }}.')
+>>> c = template.Context({'name': 'Adrian'})
+>>> print t.render(c)
+My name is Adrian.
+>>> c = template.Context({'name': 'Fred'})
+>>> print t.render(c)
+My name is Fred.
+
+使用Django模板系统的基本规则： 写模板，创建 Template 对象，创建 Context ， 调用 render() 方法
+
+
+1.6后的版本不需要到settings.py文件里设置TEMPLATE_DIRS，
+by default, Django automatically looks for a templates/ subdirectory
+within each application package
+好像不行哦，还是要设置templates，如下
+
+TEMPLATE_DIRS = (
+    '/path/djcode/mysite/mysites/templates',
+)
+或者
+TEMPLATE_DIRS = (
+    os.path.join(os.path.dirname(__file__), 'templates'),
+)
+
+include 模板标签
+{% include "XXX" %}
+
+模板继承
+{% block XXX %} {% endblock %}
+{% extends XXX %}
+
+--------------------------------------------------------------------------------
+
+Python 连接数据库:
+可以使用 廖雪峰 那样的 import mysql.connector
+也可以使用 import MySQLdb
+
+
+以下是 Django 中 M、V 和 C 各自的含义：
+
+M ，数据存取部分，由django数据库层处理，本章要讲述的内容。
+V ，选择显示哪些数据要显示以及怎样显示的部分，由视图和模板处理。
+C ，根据用户输入委派视图的部分，由 Django 框架根据 URLconf 设置，
+    对给定 URL 调用适当的 Python 函数。
+
+由于 C 由框架自行处理，而 Django 里更关注的是模型（Model）、模板(Template)和
+视图（Views），Django 也被称为 MTV 框架 。
+
+M 代表模型（Model），即数据存取层。 该层处理与数据相关的所有事务： 
+  如何存取、如何验证有效性、包含哪些行为以及数据之间的关系等。
+T 代表模板(Template)，即表现层。 该层处理与表现相关的决定： 
+  如何在页面或其他类型文档中进行显示。
+V 代表视图（View），即业务逻辑层。 该层包含存取模型及调取恰当模板的相关逻辑。 
+  你可以把它看作模型与模板之间的桥梁。
+
+
+数据库设置
+DATABASE_ENGINE = ''
+DATABASE_NAME = ''
+DATABASE_USER = ''
+DATABASE_PASSWORD = ''
+DATABASE_HOST = ''
+DATABASE_PORT = ''
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'mydatabase',
+        'USER': 'mydatabaseuser',
+        'PASSWORD': 'mypassword',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    }
+}
+
+'django.db.backends.postgresql_psycopg2'
+'django.db.backends.mysql'
+'django.db.backends.sqlite3'
+'django.db.backends.oracle'
+
+如果是sqlite，需要将完整路径列出:
+'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+
+DATABASE_USER 告诉 Django 用哪个用户连接数据库。 例如： 
+              如果用SQLite，空白即可。
+
+DATABASE_PASSWORD 告诉Django连接用户的密码。 SQLite 用空密码即可。
+
+DATABASE_HOST 告诉 Django 连接哪一台主机的数据库服务器。 
+              如果数据库与 Django 安装于同一台计算机（即本机），
+              可将此项保留空白。 如果你使用SQLite，此项留空。
+PORT
+The port to use when connecting to the database. An empty string means the
+default port. Not used with SQLite.
+
+
+一旦在输入了那些设置并保存之后应当测试一下你的配置。 
+我们可以在`` mysite`` 项目目录下执行上章所提到的`` python manage.py shell`` 来
+进行测试。 （我们上一章提到过在，`` manager.py shell`` 命令是以正确Django配置
+启用Python交互解释器的一种方法。 这个方法在这里是很有必要的，因为Django需要
+知道加载哪个配置文件来获取数据库连接信息。）
+
+输入下面这些命令来测试你的数据库配置：
+
+>>> from django.db import connection
+>>> cursor = connection.cursor()
+
+
+Django app - 
+一个包含模型，视图和Django代码，并且形式为独立Python包的完整Django应用
+
+一个project包含很多个Django app以及对它们的配置。
+
+技术上，project的作用是提供配置文件，比方说哪里定义数据库连接信息, 
+安装的app列表， TEMPLATE_DIRS ，等等。
+一个app是一套Django功能的集合，通常包括模型和视图，按Python的包结构的方式存在。
+
+如果你使用了Django的数据库层（模型），你 必须创建一个Django app。 
+模型必须存放在apps中。
+
+python manage.py startapp books
+这个命令并没有输出什么，它只在 mysite 的目录里创建了一个 books 目录
+
+books
+├── admin.py
+├── __init__.py
+├── models.py
+├── tests.py
+└── views.py
+
+
+插入和更新数据:
+p = Publisher(...)
+p.save()	// 第一次调用创建
+
+或
+p = Publisher.objects.create(...)
+
+更新数据
+p.name = "..."
+p.save()	// 第二次调用save()不会创建新的记录，只是修改记录
+
+
+第一次调用save()会转换为 INSERT INTO
+第二次会转化为 UPDATE (注意，并不是只更新修改过的那个字段，所有的字段都会被更新)
+更新多个对象:
+
+
+选择对象:
+Publisher.objects.all()  相当于 SELECT
+
+在Django API中，我们可以使用`` filter()`` 方法对数据进行过滤
+Publisher.objects.filter(name='Apress')  相当于 SELECT xxx WHERE xxx
+上面的 '=' 是精确匹配的
+下面是模糊匹配
+Publisher.objects.filter(name__contains="press") 
+相当于 SELECT xxx WHERE xxx LIKE xxx
+其他的一些查找类型有：icontains(大小写无关的LIKE),startswith和endswith, 
+还有range(SQLBETWEEN查询）
+
+
+获取单个对象:
+Publisher.objects.get(name="Apress")
+返回单个结果，如果结果是多个对象，会导致抛出异常: MultipleObjectsReturned，
+如果查询没有返回结果也会抛出异常: DoesNotExist
+可以捕获并处理这些异常:
+try:
+	p = Publisher.objects.get(name='xxx')
+except Publisher.DoesNotExist:
+	print 'xxx'
+else:
+	print 'xxx'
+
+
+
+数据排序:
+返回的结果是无序的，可以根据某字段的值对检索结果排序:
+Publisher.objects.order_by("name")
+相当于 SELECT xxx FROM xxx ORDER BY xxx
+
+以多个字段为标准进行排序（第二个字段会在第一个字段的值相同的情况下被使用到）
+Publisher.objects.order_by("state_province", "address")
+
+指定逆向排序，在前面加一个减号 - 前缀:
+Publisher.objects.order_by("-name")
+
+Django让你可以指定模型的缺省排序方式：
+
+class Publisher(models.Model):
+    name = models.CharField(max_length=30)
+    address = models.CharField(max_length=50)
+    city = models.CharField(max_length=60)
+    state_province = models.CharField(max_length=30)
+    country = models.CharField(max_length=50)
+    website = models.URLField()
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
+现在，让我们来接触一个新的概念。 class Meta，内嵌于 Publisher 这个类的定义中
+（如果 class Publisher 是顶格的，那么 class Meta 在它之下要缩进4个空格－－按
+ Python 的传统 ）。你可以在任意一个 模型 类中使用 Meta 类，来设置一些与特定
+模型相关的选项。 在 附录B 中有 Meta 中所有可选项的完整参考，现在，我们关注
+ ordering 这个选项就够了。 如果你设置了这个选项，那么除非你检索时特意额外地
+使用了 order_by()，否则，当你使用 Django 的数据库 API 去检索时，Publisher对象
+的相关返回值默认地都会按 name 字段排序。
+
+
+
+同时进行过滤和排序查询的操作:
+Publisher.objects.filter(country="U.S.A.").order_by("-name")
+相当于 SELECT xxx FROM xxx WHERE xxx ORDER BY xxx
+
+
+取出固定数目的记录:
+Publisher.objects.order_by('name')[0] --> 取出第一个
+相当于 SELECT FROM ORDER BY xxx LIMIT 1
+
+Publisher.objects.order_by('name')[0:2] --> 取出前两个
+相当于 SELECT FROM ORDER BY xxx OFFSET 0 LIMIT 2
+
+
+
+更新多个对象:
+save()方法会更新一行里的所有列。 而某些情况下，我们只需要更新行里的某几列。
+
+可以调用结果集（QuerySet）对象的update()方法：
+Publisher.objects.filter(id=52).update(name='Apress Publishing')
+相当于 UPDATE xxx SET xxx WHERE id = 52
+
+update()方法对于任何结果集（QuerySet）均有效，这意味着你可以同时更新
+多条记录:
+Publisher.objects.all().update(country='USA')
+
+
+删除对象:
+调用该对象的delete()方法
+p = Publisher.objects.get(name="O'Reilly")
+p.delete()
+
+删除部分数据
+同时删除多条记录
+Publisher.objects.filter(country='USA').delete()
+
+删除表内所有数据
+Publisher.objects.all().delete()
+
+--------------------------------------------------------------------------------
+
+Django自动管理工具是django.contrib的一部分。Django框架就是由众多包含
+附加组件(add-on)的基本代码构成的
+
+
+运行 python manage.py syncdb 。这一步将生成管理界面使用的额外数据库表。 
+当你把'django.contrib.auth'加进INSTALLED_APPS后，第一次运行syncdb命令时, 
+系统会请你创建一个超级用户。 如果你不这么作，
+你需要运行python manage.py createsuperuser来另外创建一个admin的用户帐号，
+否则你将不能登入admin (提醒一句: 只有当INSTALLED_APPS
+包含'django.contrib.auth'时，python manage.py createsuperuser这个命令才可用.)
+
+在Django管理页面中，每一种数据类型都有一个* change list* 和* edit form * 。
+前者显示数据库中所有的可用对象；后者可让你添加、更改和删除数据库中的某条记录。
+
+如果你的母语不是英语，而你不想用它来配置你的浏览器，你可以做一个快速更改来
+观察Django管理工具是否被翻译成你想要的语言。
+ 仅需添加`` ‘django.middleware.locale.LocaleMiddleware’`` 到
+`` MIDDLEWARE_CLASSES`` 设置中，并确保它在
+’django.contrib.sessions.middleware.SessionMiddleware’* 之后* 。
+
+
+--------------------------------------------------------------------------------
+
+HttpRequest对象包含当前请求URL的一些信息：
+
+request.path	除域名以外的请求路径，以正斜杠开头	"/hello/"
+request.get_host()	主机名（比如，通常所说的域名）	"127.0.0.1:8000" or "www.example.com"
+request.get_full_path()	请求路径，可能包含查询字符串	"/hello/?print=true"
+request.is_secure()	如果通过HTTPS访问，则此方法返回True， 否则返回False	True 或者 False
+
+request.META 是一个Python字典，包含了所有本次HTTP请求的Header信息
+
+“request.GET和request.POST是类字典对象”
+
+POST数据是来自HTML中的〈form〉标签提交的，而GET数据可能来自〈form〉提交也可能
+是URL中的查询字符串(the query string)。
+
+通常，表单开发分为两个部分： 前端HTML页面用户接口和后台view函数对所提交数据的处理过程。
+
+
+
+
+
+
+
+

@@ -1,0 +1,140 @@
+
+Lesson 3: How to Manage Data
+
+--------------------------------------------------------------------------------
+
+    Structured Data:
+    String - sequence of characters(every assignment will create a new string)
+             s = 'Hello' -> Hello
+             s[0] = 'Y' -> error
+             s = 'Yello' -> a new string: Yello
+    List   - sequence of anything(mutation: can change value after create)
+             list = ['H', 'e', 'l', 'l', 'o'] -> Hello
+             list[0] = 'Y' -> Yello
+             
+             list.append()
+             <list1> + <list2> -> create a new list = list1 + list2
+             len(list) -> len() works for many objects
+             
+             loop:
+             for <name> in <list>:
+                <block>
+             
+             <list>.index(<value>)
+             <value> in <list>
+             <value> not in <list>
+             <list>.pop()
+             
+    Turple - (v1, v2, v3)
+             
+---------------------------------------
+
+    def get_next_target(page):
+        start_link = page.find("<a href=")
+        if start_link == -1:
+            return None, 0
+        start_quote = page.find('"', start_link);
+        end_quote = page.find('"', start_quote+1);
+        url = page[start_quote+1:end_quote]
+        return url, end_quote
+    
+    def print_all_links(page):
+        while True:
+            url, endpos = get_next_target(page)
+            if url:
+                print url
+                page = page[endpos:]
+            else:
+                break
+                
+    def get_all_links(page):
+        links = []  # empty list
+        while True:
+            url, endpos = get_next_target(page)
+            if url:
+                links.append(url)
+                page = page[endpos:]
+            else:
+                break
+        return links
+
+---------------------------------------
+
+    two variable:
+    tocrawl - link that not crawle yet
+    crawled - link that had crawled
+    
+    
+    def get_page(url):
+        #...
+        
+    def get_next_target(page):
+        start_link = page.find("<a href=")
+        if start_link == -1:
+            return None, 0
+        start_quote = page.find('"', start_link);
+        end_quote = page.find('"', start_quote+1);
+        url = page[start_quote+1:end_quote]
+        return url, end_quote
+        
+    def get_all_links(page):
+        links = []  # empty list
+        while True:
+            url, endpos = get_next_target(page)
+            if url:
+                links.append(url)
+                page = page[endpos:]
+            else:
+                break
+        return links
+        
+    def union(p, q):
+        for e in q:
+            if e not in p:
+                p.append(e)
+
+    def crawl_web(seed, max_pages):
+        tocrawl = [seed]
+        crawled = []
+        while tocrawl:
+            url = tocrawl.pop()
+            if (url not in crawled) and (len(crawled) < max_pages):
+                page = get_page(url)
+                links = get_all_links(page)
+                union(tocrawl, links)
+                crawled.append(url)
+        return crawled
+    
+    def crawl_web2(seed, max_depth):
+        tocrawl = [seed]
+        crawled = []
+        sub_links = []
+        depth = 0
+        while tocrawl:
+            url = tocrawl.pop()
+            if url not in crawled:
+                page = get_page(url)
+                links = get_all_links(page)
+                union(sub_links, links)
+                crawled.append(url)
+            if not tocrawl:
+                tocrawl, sub_links = sub_links, []
+                depth = depth + 1
+                if depth > max_depth:
+                    break
+        return crawled
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+

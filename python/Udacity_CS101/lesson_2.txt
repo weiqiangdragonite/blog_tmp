@@ -1,0 +1,74 @@
+
+--------------------------------------------------------------------------------
+
+Lesson 2: How to repeat
+
+    Our main goal for this unit is to make the web crawler, instead of just
+finding one link in the page, to find all the links on a page, so that we can
+follow these links and collect more and more pages on the web.
+
+    To do that we need two big concepts in computer science. The first is
+procedures(步骤). Procedures are a way to package code so that we can reuse it
+more easily. The second is control. We need a way to able to make decisions,
+and to do repetion, to find all those links on a page.
+
+    page = ...
+    start_link = page.find("<a href=")
+    start_quote = page.find('"', start_link);
+    end_quote = page.find('"', start_quote+1);
+    url = page[start_quote+1:end_quote]
+    print url
+    
+    page = page[end_quote:]
+    start_link = page.find("<a href=")
+    start_quote = page.find('"', start_link);
+    end_quote = page.find('"', start_quote+1);
+    url = page[start_quote+1:end_quote]
+    print url
+    
+    page = page[end_quote:]
+    start_link = page.find("<a href=")
+    ...
+    
+    
+    The first thing we want to do, is what's called "procedural abstraction"
+(过程抽象). The idea behind procedural abstraction, is that anything that we're
+doing over and over again, we want to abstract, we want to make it a procedure,
+and we want to make the things that change, inputs.
+
+    A procedure is smething that takes inputs in, there can be more than one,
+does some work on those inputs, and produces outputs as results.
+
+    Inputs ---> Procedure ---> Outputs
+    
+    def get_next_target(page):
+        start_link = page.find("<a href=")
+        if start_link == -1:
+            return None, 0
+        start_quote = page.find('"', start_link);
+        end_quote = page.find('"', start_quote+1);
+        url = page[start_quote+1:end_quote]
+        return url, end_quote
+    
+    def print_all_links(page):
+        while True:
+            url, endpos = get_next_target(page)
+            if url:
+                print url
+                page = page[endpos:]
+            else:
+                break
+    
+--------------------------------------------------------------------------------
+
+Lesson 2.5: How to solve Problems
+
+    Solving the Problem:
+    - Don't Panic
+    - Understand the Inputs
+    - Understand the Outputs
+    - Understand the Relationship - some examples
+    - Consider systematically how a human solves the problem
+    - Develop incrementally and test as we go
+
+

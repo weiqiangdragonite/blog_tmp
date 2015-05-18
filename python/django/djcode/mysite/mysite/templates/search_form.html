@@ -1,0 +1,23 @@
+
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>search</title>
+  </head>
+  <body>
+    {% if errors %}
+      <ul style="color: red;">
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {# <form action="/search/" method="GET"> #}
+    {# action=”“意味着表单将提交给与当前页面相同的URL。#}
+    <form action="" method="GET">
+      <input type="text" name="q">
+      <input type="submit" value="search">
+    </form>
+  </body>
+</html>

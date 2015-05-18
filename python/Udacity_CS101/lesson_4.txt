@@ -1,0 +1,54 @@
+
+Lesson 4: Pesponding to Queries
+
+--------------------------------------------------------------------------------
+
+    <string>.split() -> split the string to list
+    
+    
+    index = [[keyword, [url, url, ...]],
+             [keyword, [url, url, ...]],
+             ...]
+    
+    
+    def add_to_index(index,keyword,url):
+        for entry in index:
+            if entry[0] == keyword:
+                entry[1].append(url)
+                return
+        index.append([keyword,[url]])
+
+    def add_page_to_index(index,url,content):
+        str_list = content.split()
+        for keyword in str_list:
+            add_to_index(index, keyword, url)
+    
+    def crawl_web3(seed):
+        tocrawl = [seed]
+        crawled = []
+        index = []
+        while tocrawl:
+            url = tocrawl.pop()
+            if (url not in crawled) and (len(crawled) < max_pages):
+                page = get_page(url)
+                links = get_all_links(page)
+                union(tocrawl, links)
+                crawled.append(url)
+                add_page_to_index(index, url, page)
+        return index
+
+-------------------------------------
+
+    The Internet
+    
+    url --> get_page() --> contents of that page
+
+    def get_page(url):
+        try:
+            import urllib
+            return urllib.urlopen(url).read()
+        except:
+            return ""
+    
+
+

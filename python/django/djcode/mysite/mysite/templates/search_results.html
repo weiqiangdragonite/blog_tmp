@@ -1,0 +1,15 @@
+
+<p>You searched for: <strong>{{ query }}</strong></p>
+
+{% if books %}
+  {# 注意这里pluralize的使用，这个过滤器在适当的时候会输出s（例如找到多本书籍） #}
+  <p>Found {{ books | length }} book{{ books | pluralize }}.</p>
+  <ul>
+    {% for book in books %}
+    <li>{{ book.title }}</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No books matched your search criteria.</p>
+{% endif %}
+

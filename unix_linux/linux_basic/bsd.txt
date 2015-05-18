@@ -1,0 +1,461 @@
+
+
+http://bbs.chinaunix.net/thread-3751834-1-1.html
+http://www.myexception.cn/operating-system/1507952.html
+http://wenku.baidu.com/link?url=PewKxUFTyYDIdTx1Zg9Dnk6lPcfFgxzTNBSWCn0lJR4qgQav-9ZBCmGsWFEbqdoP7a7Isz6CDM7UlWk3BV2wyL6Sbb7DlOMsRAKXOQ_EBmy
+
+http://cryolite.iteye.com/blog/1566769
+
+
+
+从10开始，pkg_add pkg_delete pkg_info等命令变成pkg install xxx, pkg remove xxx
+另外sysinstall变成了bsdinstall和bsdconfig
+
+BSD默认shell使用csh
+切换回bash shell
+cd /usr/ports/shells/bash
+make install clean
+完了以后运行命令切换shell： (bash装在/usr/local/bin)
+chsh 
+
+复原csh：chsh -s /bin/csh
+
+在/bin目录下面做一个符号连接。
+ln -s /usr/local/bin/bash /bin/bash
+加入bash
+echo '/bin/bash' >> /etc/shells
+更改用户shell
+chsh -s /bin/bash root
+
+在~/.profile配置文件中设置shell彩色提示符：
+PS1="[\[\033[01;35m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]]$ "
+alias ls='ls -G' #显示颜色
+alias ll='ls -al'
+
+
+如何让csh显示彩色文件列表
+编辑/etc/csh.cshrc加入以下代码
+setenv LSCOLORS ExGxFxdxCxegedabagExEx 
+setenv CLICOLOR yes
+然后执行
+# sed -i.bak -E s/set\ prompt/#set\ prompt/g /root/.cshrc
+
+如何让csh想bash那样按TAB自动列出无法补全的候选文件,
+标准方法是按Ctrl+D,但如果一定要用TAB的话,在/etc/csh.cshrc中加入;
+set autolist
+如何让FreeBSD的csh显示类似[xiaopang@BSD]~这样的提示符号?
+在/etc/csh.cshrc中加入;
+set prompt = '[%B%n@%m%b] %B%~%b%# '
+然后执行;
+# sed -i.bak -E s/set\ prompt/#set\ prompt/g /root/.cshrc
+
+
+
+bsd 有vi和ee编辑器
+
+cd /usr/ports/editors/nano
+
+
+
+cd /usr/ports/editors/vim-lite
+make install clean
+cp /usr/local/share/vim/vim73/vimrc_example.vim ~/.vimrc  
+
+
+
+
+
+
+语言环境  设成中文还是不行
+locale
+
+/usr/share/locale
+
+csh:
+编辑 ~/.chsr
+setenv LANG en_US.UTF-8
+setenv MM_CHARSET en_US.UTF-8
+
+或
+
+/etc/profile
+LANG=en_US.UTF-8; export LANG
+MM_CHARSET=en_US.UTF-8; export MM_CHARSET
+
+
+bash:
+      /etc/profile
+      ~/.profile
+
+LC_CTYPE=en_US.UTF-8;export LC_CTYPE
+LC_ALL=en_US.UTF-8;export LC_ALL
+LANG=en_US.UTF-8;export LANG
+
+
+--------------------------------------------------------------------------------
+
+开启SSH远程登录
+
+编辑/etc/ssh/sshd_config，修改以下内容：
+
+PermitRootLogin yes  #允许root通过sshd登陆
+PermitEmptyPasswords no  #不允许空密码
+PasswordAuthentication yes
+(如果前面有#号的要先去掉)
+
+service sshd restart
+
+--------------------------------------------------------------------------------
+
+更新源
+# vi /etc/make.conf
+添加以下行：
+MASTER_SITE_BACKUP?= \
+        ftp://ftp.hk.freebsd.org/pub/FreeBSD/distfiles/${DIST_SUBDIR}/\
+        ftp://ftp.tw.freebsd.org/pub/FreeBSD/distfiles/${DIST_SUBDIR}/\
+        ftp://ftp.freebsd.org/pub/FreeBSD/distfiles/${DIST_SUBDIR}/
+MASTER_SITE_OVERRIDE?= ${MASTER_SITE_BACKUP}
+
+
+
+vi /etc/portsnap.conf
+找到SERVERNAME=portsnap.freebsd.org
+改为SERVERNAME=portsnap.cn.freebsd.org
+或者portsnap.hshh.org
+
+
+
+portsnap首次执行portsnap fetch extract
+portsnap extractportsnap fecth
+以后更新执行portsnap fetch update
+
+
+安装wget代替fetch
+cd /usr/ports/ftp/wget/
+make install clean
+
+修改/etc/make.conf
+
+
+
+安装axel来取代默认的下载工具fetch，这样可以提高ports的安装速度：
+# cd /usr/ports/ftp/axel
+# make install clean
+
+修改 /etc/make.conf
+# vi /etc/make.conf
+加入以下内容
+FETCH_CMD=axel 
+FETCH_BEFORE_ARGS= -n 10 -a
+FETCH_AFTER_ARGS=
+DISABLE_SIZE=yes 
+
+或直接
+FETCH_CMD=axel -n 10  (其实我觉得没必要，更新了源后亲测下载速度杠杠的)
+
+MASTER_SITE_BACKUP?=\
+	http://ports.hshh.org/${DIST_SUBDIR}/\
+	http://ports.cn.freebsd.org/${DIST_SUBDIR}/\
+	ftp://ftp.freeBSDchina.org/pub/FreeBSD/ports/distfiles/${DIST_SUBDIR}/\
+	ftp://ftp.hk.freebsd.org/pub/FreeBSD/distfiles/${DIST_SUBDIR}/\
+        ftp://ftp.tw.freebsd.org/pub/FreeBSD/distfiles/${DIST_SUBDIR}/\
+	ftp://ftp.freebsd.org/pub/FreeBSD/distfiles/${DIST_SUBDIR}/
+MASTER_SITE_OVERRIDE?=${MASTER_SITE_BACKUP}
+
+
+portsnap首次执行portsnap fetch extract
+以后更新执行portsnap fetch update
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------
+
+安装Apache
+
+make config
+make deinstall
+make reinstall
+
+cd /usr/ports/www/apache22
+make install clean
+去掉IPV6的支持（看你需求），添加MySQL支持
+
+
+在 /etc/rc.conf 文件中添加对apache的支持和启用
+apache22_enable="YES"
+
+备份apache的配置文件
+cp /usr/local/etc/apache22/httpd.conf /usr/local/etc/apache22/httpd.conf.bak
+
+启动apache
+/usr/local/etc/rc.d/apache22 start
+
+如果出现
+WARNING: failed to start apache22
+
+将httpd.conf文件中的
+大约在128行左右 注释即可 
+#LoadModule unique_id_module libexec/apache2/mod_unique_id.so
+
+出现
+httpd: apr_sockaddr_info_get() failed for shiwei
+httpd: Could not reliably determine the server's fully qualified domain name, using 127.0.0.1 for ServerName
+的问题：
+可以设定httpd.conf文件中的 ServerName，如下：ServerName localhost
+
+
+
+
+安装php
+装53版，其它版好像有问题，具体是apache解析不了php，打开php网页变成下载该文件
+cd /usr/ports/lang/php53
+make install clean
+去掉IPV6的支持，添加CLI、CGI、FPM、APACHE、AP2FILTER、SUHOSION的支持
+
+配置httpd.conf文件让其Apache能够运行PHP
+AddType application/x-httpd-php .php   
+AddType application/x-httpd-php-source .phps
+
+ ( cp /usr/local/etc/php.ini-development /usr/local/etc/php.ini
+   php_fpm_enable="YES"
+ )
+
+重启apache
+
+
+DocumentRoot "/usr/local/www/apache22/data"
+
+测试php
+vi info.php
+添加
+<?php phpinfo(); ?>
+
+
+
+安装php扩展
+cd /usr/ports/lang/php5-extensions   
+make config
+make install clean
+
+推荐配置
+BZ2、CALENDAR、CTYPE、GD、GETTEXT、ICONV、MBSTRING、MCRYPT、MHASH、JSON、MYSQL、MYSQLI、OPENSSL、PCRE、POSIX、SESSION、SOCKETS、TOKENIZER、ZIP、ZLIB
+
+
+
+
+cd /usr/ports/databases/mysql55-server   
+make install clean
+
+
+
+在 /etc/rc.conf 文件中添加对MySQl的支持和启用
+mysql_enable="YES"
+
+复制mysql配置文件
+cp /usr/local/share/mysql/my-medium.cnf /etc/my.conf
+
+启动mysql服务器
+/usr/local/etc/rc.d/mysql-server start
+
+修改密码
+/usr/local/bin/mysqladmin -uroot password 123456
+
+mysql -u root -p
+
+
+
+
+cd /usr/ports/database/phpmyadmin
+make install clean
+
+
+phpMyAdmin-4.2.7 has been installed into:
+    /usr/local/www/phpMyAdmin
+
+ee /usr/local/www/phpMyAdmin/libraries/config.default.php
+Please edit config.inc.php to suit your needs.
+
+
+add something like the following to httpd.conf:
+
+For Apache versions earlier than 2.4:
+
+    Alias /phpmyadmin "/usr/local/www/phpMyAdmin/"
+
+    <Directory "/usr/local/www/phpMyAdmin/">
+        Order Deny,Allow
+        Allow from all
+    </Directory>
+
+
+For Apache version 2.4.x or above:
+
+    Alias /phpmyadmin "/usr/local/www/phpMyAdmin/"
+
+    <Directory "/usr/local/www/phpMyAdmin/">
+	Options None
+	AllowOverride Limit
+
+	Require local
+    	Require host .example.com
+    </Directory>
+
+重启apache
+
+
+
+
+安装samba
+/usr/ports/net/samba36
+
+建立samba 用户及密码，命令是：
+smbpasswd  -a  root
+
+修改 /etc/rc.conf 文件，在其上增加一句，以便系统重启时可以自动启用samba:
+samba_enable="YES"
+
+samba的配置文件为 /usr/local/etc/smb.conf ，软件安装完其实就已经生成了一个默认的配置文件了
+
+启用samba服务器
+/usr/local/etc/rc.d/samba start
+
+修改/etc/inetd.conf
+# vim /etc/inetd.conf
+将nmbd和smbd前面的注释符号去掉。samba只有通过nmbd和smbd守护进程才能启动。
+
+
+
+
+选择系统自带的vsftp:
+
+使用 inetd 的方式启动 FTP 服务器。编辑 /etc/inetd.conf，将 ftp 设定开头的 # 移除：
+
+#ee /etc/inetd.conf
+
+ftp stream tcp nowait root /usr/libexec/ftpd ftpd -l
+
+ftp stream tcp6 nowait root /usr/libexec/ftpd ftpd -l
+
+然后在 /etc/rc.conf 中加入:
+
+#ee /etc/rc.conf
+
+inetd_enable="YES"
+
+重启电脑FTP服务启动.
+
+使用命令查看打开的端口:netstat -an
+
+
+配置/etc/ftpusrs文件,里面定义了所有不允许登陆本机的用户名,包括root,所以为了暂时的方便root
+前面应打上"#",以后安装了其它更高的FTP服务再把这个禁掉.同时,如果 /var/run/nologin 存在，
+则所有账号都不可以登入。这个档案可以用来暂时停止 FTP 服务。如果您要设定的是登入前的讯息，
+请新增一个档案 /etc/ftpwelcome，并将您的讯息写入该文件中。登入后的讯息是存放在 /etc/ftpmotd，
+您可以编辑该档以进行设定。如要配置匿名登陆,最简单方法就是通过sysinsatll,配置网络,
+FTP选项里的ftp anm,设置好后目录为:/usr/var/ftp
+
+
+--------------------------------------------------------------------------------
+
+
+
+# pkg
+# pkg upgrade
+# pkg update
+
+# portsnap fetch extract          （首次更新port使用此命令）
+# portsnap fetch update                （日后更新port使用此命令）
+
+
+
+
+
+切换控制台
+ctrl + alt + F1 ... F8
+
+重启
+shutdown -r now
+reboot
+
+关机但不关闭电源
+shutdown -h now
+
+关机关电源
+shutdown -p now
+
+
+
+
+查看CPU信息
+cat /var/run/dmesg.boot | grep CPU
+
+sysctl hw.model 看cpuid
+sysctl machdep.tsc_freq 看cpu频率
+
+
+
+NTP同步时间
+
+ntpdate time.nist.gov
+
+--------------------------------------------------------------------------------
+
+libpcap
+
+/usr/ports/net/libpcap/
+
+
+
+
+
+--------------------------------------------------------------------------------
+
+FreeBSD
+
+FreeBSD 9.0后采用bsdinstall
+bsdinstall 菜单系统的主要控制键包括方向键、 Enter 键、 Tab 键、 Space 键等。
+
+
+FreeBSD 的标准 GPT 安装至少会使用三个分区：
+标准 FreeBSD GPT 分区
+freebsd-boot - FreeBSD 引导分区， 它必须处于首位。
+freebsd-ufs - FreeBSD 的 UFS 文件系统。
+freebsd-swap - FreeBSD 的交换空间。
+
+正确地对齐磁盘扇区能够获取最佳性能。 无论磁盘的每个扇区为 512 字节还是 4K 字节， 将分区大小
+设置为 4K 字节的倍数都能够确保对齐。 实际操作中， 只要使分区的大小等于 1M 或 1G 的倍数即可。
+唯一的例外是 freebsd-boot 分区， 目前由于引导代码所限， 此分区不能大于 512K。
+
+
+10.0 - 32位安装
+
+可参考手册第三章
+
+Hostname: Dragonite-FreeBSD
+Distribution Select: 按空格键进行选择
+Partitioning: 选择Guided，然后Entire Disk或Partition都无所谓，调整空间的大小需要先用
+tab键移到相应的位置再修改
+
+接着输入root的密码 dragonite-bsd
+选择网卡
+选择Configure IPv4
+可以不要Configure IPv6
+
+时间不要set to UTC
+开机启动那里把dumpdev去掉
+
+然后添加用户
+
+最后可安装handbook，然后就可以重启了
+
+
+9.3 - 64位安装
+
+
+PC-BSD

@@ -1,0 +1,219 @@
+
+Lesson 6: How to Have Infinite Power
+
+--------------------------------------------------------------------------------
+
+    Relaxation Algorithm
+    
+    basic idea:
+    start with a guess
+    while not done:
+        make the guess better
+
+    such:
+    def popularity(step, people):
+        if step == 0:
+            return 1
+        else:
+            score = 0
+            for friend in people:
+                score = score + popularity(step - 1, frienf)
+            return score
+    
+    Page Rank:
+    rank(timestep, url)
+    
+    rank(0, url) -> 1/N
+    rank(t, url) -> SUM d * rank(t-1,p)/outlinks[p] + (1-d)/N;
+    d = damping constant = 0.8
+    N = number of pages
+    
+    
+    URank:
+    Directed Graph,
+    {url:[page it links to], ...}
+    {'A':['B', 'C', 'D'],
+     'B':[],
+     'C':['A']}
+    
+    Building the Link Graph
+    
+def crawl_web(seed): # returns index, graph of outlinks
+    tocrawl = [seed]
+    crawled = []
+    graph = {}  # <url>:[list of pages it links to]
+    index = {} 
+    while tocrawl: 
+        page = tocrawl.pop()
+        if page not in crawled:
+            content = get_page(page)
+            add_page_to_index(index, page, content)
+            outlinks = get_all_links(content)
+            graph[page] = outlinks
+            union(tocrawl, outlinks)
+            crawled.append(page)
+    return index, graph
+    
+    
+    
+    
+    Mian idea for search engine:
+         input            output               input                output
+    seed -----> crawl_web ------> index, graph -----> compute_ranks ------> rank
+    
+                         input              output
+    keyword, index, rank -----> lookup_best ------> best page
+
+
+
+
+    rank(0, url) -> 1/N
+    rank(t, url) -> SUM d * rank(t-1,p)/outlinks[p] + (1-d)/N;
+    d = damping constant = 0.8
+    N = number of pages
+    
+                   ranks -> ranks at time t - 1
+    dictionaries <
+                   newranks -> ranks at time t
+    
+
+def compute_ranks(graph):
+    d = 0.8 # damping factor
+    num_loops = 10 # timestep
+    
+    ranks = {}
+    num_pages = len(graph)
+    
+    for page in graph:
+        ranks[page] = 1.0 / num_pages
+    
+    for i in range(0, num_loops):
+        new_ranks = {}
+        for page in graph:  # go through all the page in the graph
+            newrank = (1 - d) / num_pages
+            
+            # update by summing in the inlink ranks
+            for node in graph:  # go through each page in the graph
+                if page in graph[node]: # check the page if it linked by other page
+                    newrank = newrank + d * (ranks[node] / len(grap[node]))
+            
+            new_ranks[page] = newrank
+        ranks = new_ranks
+    return ranks
+    
+    
+######
+{ 'A':['B', 'C', 'D'],
+  'B':['D'],
+  'C':['B', 'D'],
+  'D':['A', 'B', 'C'],
+  'E':[],
+  ...
+}
+
+first:
+page = 'A', node = 'A'
+    'A' not in graph['A'] (A page not contain the link to A)
+
+second:
+page = 'A', node = 'B'
+    'A' not in graph['B'] (B page no link to A)
+
+third:
+
+fourth:
+page = 'A', node = 'D'
+    'A' in graph['B']
+        newrank = (1 - d) / N + d * (ranks['D'] / num_links in 'D')
+
+
+--------------------------------------------------------------------------------
+
+PageRank Clarified(?)
+
+I really have loved this course and think Dave has done a great job teaching it.
+However, I thought his explanation of PageRank was a little confusing, so I'm
+going to take a stab at explaining what I believe is going on. Please let me
+know if I’m missing something.
+
+From what I can tell, PageRank is an algorithm for answering the question:
+"What's the probability that someone will view a particular webpage?"
+
+For the sake of concreteness, let's suppose that we're interested in knowing
+that probability for udacity.com. Well, there are two ways someone might arrive
+at udacity.com: 1.) from a link on another webpage or 2.) by opening up his/her
+browser and typing in www.udacity.com/clicking on a udacity.com bookmark.
+
+Let’s suppose there are N webpages on the Internet. Initially, we know nothing
+about their relative popularity, so the probability that someone will pick
+udacity.com upon opening their web browser is just 1/N. (Obviously, certain
+webpages are much more popular than others, so this equally likely assumption
+isn't realistic. However, before we run PageRank, we don't know which pages are
+the popular ones, so we have to assume they're all equally popular. As PageRank
+iterates, it will discover each page's popularity and this initial assumption
+will have almost no effect.) The other way someone can get to udacity.com is if
+he/she is currently on another page and clicks a link to udacity.com. To get
+that probability, we have to sum up the probabilities for every possible website
+the surfer could currently be on:
+
+[probability that the person is on espn.com and clicks link to udacity.com] +
+[probability that the person is on nytimes.com and clicks link to udacity.com]
++ ...
+
+To make this calculation clearer, let’s introduce some notation. Let p(i) be the
+probability that the web surfer is on page i and L(i) be the probability that he
+clicks on that page’s link to udacity.com. Then, the probability that the web
+surfer is on a particular webpage and clicks on that webpage’s link to
+udacity.com is p(webpage)*L(webpage). With this notation, the previous
+expression becomes:
+
+p(espn.com)L(espn.com) + p(nytimes.com)L(nytimes.com) + ...
+
+Of course, for most webpages L(webpage) = 0 (for example, espn.com probably
+won’t have a link to udacity.com, so L(espn.com) = 0 and the entire first term
+drops out). As a result, the only terms that remain will be those with a link
+to udacity.com. Suppose that, of the N pages on the Net, k of them link to
+udacity.com. If we label those pages 1 to k. The expression simplifies to:
+
+p(1)L(1) + p(2)L(2) + ... + p(k)L(k).
+
+Let’s label this sum I, for indirect. And let’s label the probability that
+the web surfer comes to udacity.com directly upon opening his/her browser D
+(we’ve previously seen that D = 1/N). If we let d denote the probability that
+the web surfer is currently on a webpage, then the probability that he has just
+opened up his browser and isn't currently on a webpage must be (1-d) (since
+that person is either on a webpage or not and probabilities must sum to 1).
+Thus, the probability that a random web surfer arrives at udacity.com is:
+
+(probability that he opens his browser and comes directly to udacity.com) +
+(probability that he is on another page and clicks on a link to udacity.com).
+
+In math, this is just
+
+(1-d)D + dI
+
+Plugging in the values for D and I, we get:
+
+(1-d)(1/N) + d[ p(1)L(1) + p(2)L(2) + ... + p(k)L(k) ]
+
+Now, L(i), the probability that someone who is on page i will click the udacity
+link, is just 1/(number of links on page i) – we're assuming the web surfer is
+equally likely to select any link on the page. Also, p(i), the probability that
+someone is on page i, is just that page’s popularity -- i.e., it’s PageRank!
+Substituting, we get Dave’s formula:
+
+(1-d)(1/N) + d[ PageRank(1)(1/number of links on page 1) +
+PageRank(2)(1/number of links on page 2) + ... +
+PageRank(k)*(1/number of links on page k) ]
+
+Well, almost. The PageRank we need is not the current PageRank, but the PageRank
+from the previous iteration through the procedure (we're in the process of
+finding the current PageRanks, so we can't use those):
+
+(1-d)(1/N) + d[ PriorPageRank(1)(1/number of links on page 1) +
+PriorPageRank(2)(1/number of links on page 2) + ... +
+PriorPageRank(k)*(1/number of links on page k) ]
+
+
+Which is Dave’s formula!
+

@@ -1,0 +1,90 @@
+
+Lesson 10: Inheritance
+
+Reuse definitions from other classes in defining
+new classes.
+
+format strings:
+
+class Dish(object):
+    """ ... """
+    def __init__(self, name, price, description):
+        self.name = ...
+        ...
+    
+    def __str__(self):
+        return "{name} ({desc}): {price:.2f}".format(
+            name=self.name, desc=self.description, price=self.price)
+
+
+named arguments:
+
+default parameters:
+    AVOID default parameter values that are MUTABLE objects.
+    
+-----------------------------------------------------------
+
+class <ClassName>(<BaseClass>):
+
+BaseClass(parent) <---- SubClass(child)
+
+
+class Bear(object):
+    """ ... """
+    def __init__(self, name):
+        ...
+    
+    def eat(self, victim):
+        ...
+
+class GrizzlyBear(Bear):
+    """ ... """
+
+
+class BlackBear(Bear):
+    """ ... """
+    def climb(self):
+        ...
+    
+    def chase(self, victim):
+        ...
+
+class DiscerningBear(GrizzlyBear):
+    """ ... """
+    
+    # overwrite parent eat method
+    def eat(self, victim):
+        if victim.name == '...':
+            # we use new eat method
+            ...
+        else:
+            # use parent eat method
+            super(DiscerningBear, self).eat(self, victim)
+
+# define a human instance, assume we have an human object
+person = Human("Dave")
+# create bear instance
+bear = Bear("bear")
+# Bear have function eat
+bear.eat(person)
+# create GrizzlyBear instance, there nothing define in GrizzlyBear
+bb = GrizzlyBear("bb")
+# and it also have eat function
+bb.eat(person)
+
+
+
+super(<class>, <object (must be an instance of class)>) --> special proxy
+
+isinstance(<object>, <class>) -->
+    return True if <object> is an instance of <class> or one of it superclass.
+
+hassattr(<object>, <name>) -->
+    return True if <objet> has an attribute <name>
+
+
+
+Multiple Inheritance
+    Can a class have more than one base class? Yes! (But avoid to use)
+
+

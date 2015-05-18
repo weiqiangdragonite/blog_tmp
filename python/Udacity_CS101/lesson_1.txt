@@ -1,0 +1,92 @@
+Udacity
+CS101 - Introduction to Computer Science
+Instructor: David Evans
+
+--------------------------------------------------------------------------------
+
+Lesson 1: How to Get Started
+
+    Computer science is about how to solve problems, like building a search
+engine, by breaking them into smaller pieces and then precisely and
+mechanically describing a sequence of steps that you can use to solve each
+piece. And those steps can be executed by a computer.
+
+    For our search engine the three main pieces are: fnding data by
+crawling(爬行) web pages, building an index to be able to respond quickly to
+search queries, and ranking pages so that we get the best result for a given
+query.
+
+    In this course we will not get into everything that you need to build
+a search engine as powerful as Google, but we will cover the main ideas and
+learn a lot about computer science along the way.
+
+    The first three units will focus on building the web crawler. Unit 4 and 5
+will cover how to respond to queries quickly. And unit 6 will get into how to
+rank results and cover the method Google uses to rank pages, that made it so
+successful.
+
+---------------------------------------
+
+Unit 1: Getting Started
+
+    The goal of the first three units in this course is to build a Web
+crawler(爬虫) that will collect data from the Web for our search engine. In
+Unit 1, we'll get started by extracting(提取) the first link on a web page.
+    
+    A Web crawler finds web pages for our search engine by starting from a
+"seed" page and following links on that page to find other pages. Each of
+those links lead to some new web page, which itself could have links that
+lead to other pages. As we follow those links, we'll find more and more
+web pages building a collection of data that we'll use for our search engine.
+
+    A web page is really just a chunk(块) of text that comes from the Internet
+into your Web browser. A link is really just a special kind of text in that
+web page. When you click on a link in your browser it will direct you to a
+new page.
+
+    Computer <-- Python Interpreter <-- Our programs
+    Program = Instructions + data
+              (Data Structure + Algorithms)
+    
+    Why do we need to invent new languages like Python to program computers,
+rather than using natural languages like English?
+    First is ambiguity. Natural languages are inherently(本质) ambiguous.
+Different prople can interpret the same sentence to mean many different things.
+When we program computers, the computer need to interpret that program, and we
+want to make sure that the computer interprets that program the exact same way
+that the programmer who wrote a program intend for it to be interpreted.
+    The second is verbosity(赘言, 冗长). To write a program, we need to describe
+exactly what the  computer should do in very precise sequence of steps. If we
+had to describe all those details using a national language, that would
+require a huge amount of text.
+
+    All the web page is really a long string. When you see a web page in your
+browser, your browser send a request(the URL) and get a stream of text(html
+source code). So our goal is take the text that came back from a Web crawler,
+find a link that in the text which start with (<a href="....">), and then
+extracted from that tag to the URL of the web page.
+
+    We can use the Python string find() function to find the string. What we
+actually want to find the string is: <a href="URL"> on the web page.
+
+    Code example:
+    page = "...."   # page contains the html contents
+    # so we need to find the start position of the '<a href='
+    start_link = page.find("<a href=")
+    
+    Now our goal is to extract the URL. <a href="...">, the URL starts from the
+first double quote that we find after the start_link, and ends with the second
+double quote.
+
+    Code example:
+    end_link = page.find('">', start_link)
+    url = page[start_link+9:end_link]
+    
+    Or:
+    start_quote = page.find('"', start_link);
+    end_quote = page.find('"', start_quote+1);
+    url = page[start_quote+1:end_quote]
+
+
+Problem Set 1:
+

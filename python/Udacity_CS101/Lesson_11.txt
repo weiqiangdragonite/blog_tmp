@@ -1,0 +1,70 @@
+
+Lesson 11: Files, IO, and Exceptions
+
+------------
+
+web.py
+
+pip install web.py
+
+web.py was written by Aaron Swartz, and placed in the public domain. There are
+many other web application frameworks for Python including Django and
+Google App Engine (which is what Steve Huffman uses for the Web Application
+Engineering class) which are probably better choices for large applications,
+but web.py is a fantastic web framework for getting started with a simple web
+application.
+
+import web
+
+
+
+------------------------
+
+Files:
+
+open(<filename>, <mode>)
+
+>>> fout = open('python.py', 'w')
+>>> fout.write('....')
+>>> fout.close()
+
+
+
+Exceptions:
+
+try:
+    <Block>
+except <ExceptionType>[, <name>]:
+    <Block>
+
+
+try:
+    fout = open('python.py', 'r')
+    val = fout.readline()
+    x = int(val)
+    pint x
+except IOError, e:
+    print '...' + str(e)
+print '...'
+
+
+Raising Exceptions:
+raise <Expression (must evaluate to an Exception instance)>
+
+
+
+try:
+    <Block>
+except <ExceptionType>[, <name>]:
+    <Block>
+finally:
+    <FinallyBlock>
+    # this will always runs before try statement finishes
+
+
+with <ContextGuard> a <name>:
+    <Block>
+    
+
+>>> with open('txt.py', 'w') as fout:
+...     fout.write(...)

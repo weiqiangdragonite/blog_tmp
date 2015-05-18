@@ -1,0 +1,15 @@
+
+Lesson 5: How Programs Run
+
+--------------------------------------------------------------------------------
+
+    ord(<one-letter string>) -> number
+    chr(<number>) -> one-letter string
+    
+    Ex:
+    ord('A') = 65
+    chr(65) = 'A'
+    
+    range(<start>, <stop>) -> [start, start+1, ..., stop-1]
+    range(0, 10) -> [0, 1, ..., 9]
+
