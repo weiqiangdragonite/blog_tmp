@@ -487,6 +487,13 @@ minicom
 
 yum install gtkterm
 
+(CentOS 要自己安装
+http://gtkterm.feige.net/
+./configure --prefix=/usr/local
+make
+make install
+)
+
 
 
 yum install minicom
