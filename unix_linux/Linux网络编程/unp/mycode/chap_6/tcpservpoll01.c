@@ -10,26 +10,35 @@
 #include <errno.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <poll.h>
+
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
+
+#define OPEN_MAX	1024
+#define INFTIM		-1
+
 
 #define SERV_PORT	10000
 #define BACK_LOG	128
 #define BUF_SIZE	100
 
 void str_echo(int sockfd);
-void sigchld_handler(int sig);
-int catch_signal(int sig, void (*handler)(int));
+
 
 int
 main(int argc, char *argv[])
 {
-	int listenfd, connfd;
-	pid_t childpid;
+	int listenfd, connfd, sockfd;
 	socklen_t socklen;
 	struct sockaddr_in svaddr, cliaddr;
-	int ret;
+	int ret, i;
+	ssize_t n;
+	int maxi, nready;
+	struct pollfd client[OPEN_MAX];
+	char buf[BUF_SIZE];
+
 
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (listenfd == -1) {
@@ -57,61 +66,78 @@ main(int argc, char *argv[])
 	}
 
 
-	/* 处理子进程 */
-	if (catch_signal(SIGCHLD, sigchld_handler) == -1)
-		fprintf(stderr, "catch_signal(SIGCHLD) function failed.\n");
+
+
+
+	client[0].fd = listenfd;
+	client[0].events = POLLRDNORM;
+	for (i = 1; i < OPEN_MAX; ++i)
+		client[i].fd = -1;
+	maxi = 0;
 
 
 	socklen = sizeof(cliaddr);
 	while (1) {
-		connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &socklen);
-		if (connfd == -1) {
-			fprintf(stderr, "accept() failed: %s\n", strerror(errno));
-			continue;
+		nready = poll(client, maxi + 1, INFTIM);
+
+		/* new client connection */
+		if (client[0].revents & POLLRDNORM) {
+			connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &socklen);
+
+			/* 从下标1开始，0固定用于监听套接字 */
+			for (i = 1; i < OPEN_MAX; ++i) {
+				if (client[i].fd < 0) {
+					client[i].fd = connfd;
+					break;
+				}
+			}
+
+			if (i == OPEN_MAX) {
+				fprintf(stderr, "Too many clients\n");
+				exit(EXIT_FAILURE);
+			}
+
+			client[i].events = POLLRDNORM;
+			if (i > maxi)
+				maxi = i;
+
+			/* no more readable descriptor */
+			if (--nready <= 0)
+				continue;
 		}
 
-		childpid = fork();
-		switch (childpid) {
-		case -1:	/* error */
-			fprintf(stderr, "fock() failed: %s\n", strerror(errno));
-			break;
-		case 0:		/* child */
-			close(listenfd);
-			str_echo(connfd);
-			close(connfd);
-			exit(0);
-		default:	/* parent */
-			close(connfd);
-			break;
+		/* check all clients for data */
+		for (i = 1; i <= maxi; ++i) {
+			if ((sockfd = client[i].fd) < 0)
+				continue;
+			if (client[i].revents & (POLLRDNORM | POLLERR)) {
+				if ((n = read(sockfd, buf, BUF_SIZE)) < 0) {
+					if (errno == ECONNRESET) {
+						close(sockfd);
+						client[i].fd = -1;
+					} else {
+						fprintf(stderr, "read() failed: %s\n", strerror(errno));
+						exit(EXIT_FAILURE);
+					}
+				} else if (n == 0) {
+					/* connection closed by client */
+					close(sockfd);
+					client[i].fd = -1;
+				} else {
+					write(sockfd, buf, n);
+				}
+
+				/* no more readable descriptor */
+				if (--nready <= 0)
+					break;
+			}
 		}
 	}
-	close(listenfd);
 	return 0;
 }
 
-void
-sigchld_handler(int sig)
-{
-	pid_t pid;
-	int stat;
 
-	pid = wait(&stat);
-	printf("child %d terminated\n", pid);
-}
 
-/*
- * 信号处理
- */
-int
-catch_signal(int sig, void (*handler)(int))
-{
-	struct sigaction action;
-	action.sa_handler = handler;
-	sigemptyset(&action.sa_mask);
-	action.sa_flags = 0;
-
-	return sigaction(sig, &action, NULL);
-}
 
 void
 str_echo(int sockfd)

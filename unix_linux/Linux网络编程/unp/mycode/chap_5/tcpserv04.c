@@ -66,6 +66,8 @@ main(int argc, char *argv[])
 	while (1) {
 		connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &socklen);
 		if (connfd == -1) {
+			if (errno == EINTR)
+				continue;
 			fprintf(stderr, "accept() failed: %s\n", strerror(errno));
 			continue;
 		}
@@ -95,8 +97,10 @@ sigchld_handler(int sig)
 	pid_t pid;
 	int stat;
 
-	pid = wait(&stat);
-	printf("child %d terminated\n", pid);
+	/* use waitpid() to wait for all the child */
+	while ((pid = waitpid(-1, &stat, WNOHANG)) > 0)
+		printf("child %d terminated\n", pid);
+	return;
 }
 
 /*

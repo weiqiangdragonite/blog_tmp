@@ -18,37 +18,39 @@ void str_cli(int sockfd);
 int
 main(int argc, char *argv[])
 {
-	int sockfd;
+	int sockfd[5];
 	struct sockaddr_in svaddr;
-	int ret;
+	int ret, i;
 
 	if (argc != 2) {
 		fprintf(stderr, "Usage: %s <IP address>\n", argv[0]);
 		return -1;
 	}
 
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	for (i = 0; i < 5; ++i) {
+		sockfd[i] = socket(AF_INET, SOCK_STREAM, 0);
 
-	memset(&svaddr, 0, sizeof(svaddr));
-	svaddr.sin_family = AF_INET;
-	svaddr.sin_port = htons(SERV_PORT);
-	ret = inet_pton(AF_INET, argv[1], &svaddr.sin_addr);
-	if (ret != 1) {
-		fprintf(stderr, "inet_pton() for %s failed: %s\n",
-			argv[1], strerror(errno));
-		close(sockfd);
-		return -1;
+		memset(&svaddr, 0, sizeof(svaddr));
+		svaddr.sin_family = AF_INET;
+		svaddr.sin_port = htons(SERV_PORT);
+		ret = inet_pton(AF_INET, argv[1], &svaddr.sin_addr);
+		if (ret != 1) {
+			fprintf(stderr, "inet_pton() for %s failed: %s\n",
+				argv[1], strerror(errno));
+			close(sockfd[i]);
+			return -1;
+		}
+
+		ret = connect(sockfd[i], (struct sockaddr *) &svaddr, sizeof(svaddr));
+		if (ret == -1) {
+			fprintf(stderr, "connect() failed: %s\n", strerror(errno));
+			close(sockfd[i]);
+			return -1;
+		}
 	}
 
-	ret = connect(sockfd, (struct sockaddr *) &svaddr, sizeof(svaddr));
-	if (ret == -1) {
-		fprintf(stderr, "connect() failed: %s\n", strerror(errno));
-		close(sockfd);
-		return -1;
-	}
+	str_cli(sockfd[0]);
 
-	str_cli(sockfd);
-	close(sockfd);
 
 	return 0;
 }
@@ -68,7 +70,6 @@ str_cli(int sockfd)
 			break;
 		//printf("fgets() n = %ld\n", strlen(sendbuf));
 		n = write(sockfd, sendbuf, strlen(sendbuf));
-
 		if (n != strlen(sendbuf)) {
 			fprintf(stderr, "str_cli() - write() failed: %s\n",
 				strerror(errno));
