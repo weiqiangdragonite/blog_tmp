@@ -30,6 +30,16 @@ Fullname: dragonite
 环境变量
 ~/.bashrc
 
+
+DNS配置(临时配置，重启网卡后会失效)
+$ vim /etc/resolv.conf
+nameserver 114.114.114.114
+nameserver 8.8.8.8
+
+配置文件 /etc/sysconfig/network-scripts/ifcfg-eth0
+添加一行
+DNS1=8.8.8.8    #手动添加一个dns地址；
+
 --------------------------------------------------------------------------------
 
 跟新yum源
@@ -39,11 +49,15 @@ mv CentOS-Base.repo CentOS-Base.repo.backup
 下载163的源（请到163处查看实时更新的地址） 推荐使用阿里云
 wget http://mirrors.163.com/.help/CentOS-Base-163.repo
 
-http://mirrors.aliyun.com/repo/Centos-6.repo
-
 设为yum源
 mv CentOS6-Base-163.repo CentOS-Base.repo
 
+(
+http://mirrors.aliyun.com/repo/Centos-6.repo
+wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo
+)
+
+yum clean all
 运行yum makecache生成缓存
 
 -----------------------------------------------------------

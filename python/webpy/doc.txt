@@ -1,9 +1,0 @@
-
-http://webpy.org/
-
-Install:
-pip install web.py
-or
-easy_install web.py
-
-
