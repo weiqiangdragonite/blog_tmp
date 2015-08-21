@@ -51,6 +51,7 @@ main(int argc, char *argv[])
 		return -1;
 	}
 
+	/* 迭代服务器 */
 	while (1) {
 		connfd = accept(listenfd, NULL, NULL);
 		if (connfd == -1) {
