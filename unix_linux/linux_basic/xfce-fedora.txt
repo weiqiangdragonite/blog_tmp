@@ -435,6 +435,11 @@ NFS共享配置文件为：
 #共享路径          客户端列表（NFS共享参数）
 /home/nfs          192.168.1.0/24(rw,sync)  # *(rw,async,insecure,no_root_squash)
 
+/home/nfs 为服务器端共享目录
+*为允许nfs服务器共享目录的ip范围，这里表示限制ip地址和主机同一个网段。
+sync表示同步写入存储器
+no_root_squash表示客户机享有主机的root权限
+
 exportfs -rv    刷新共享配置
 
 开启
@@ -749,7 +754,7 @@ yum install openssh-server openssh-clients
 开机启动ssh
 
 查看开机启动列表
-chkconfig --lis
+chkconfig --list
 
 查看sshd
 chkconfig --list | grep sshd
