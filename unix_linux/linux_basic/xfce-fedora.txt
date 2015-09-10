@@ -485,6 +485,16 @@ AnonymousGid 是新建->QWORD，名称为 AnonymousGid
 mount  \\192.168.1.x\系统共享文件目录路径  H:(本地磁盘驱动号)
 umount H:
 
+
+
+
+linux挂载ntfs硬盘/U盘：
+先安装ntfs-3g，然后 mount -t ntfs xxx
+
+挂载fat32硬盘：
+mount -t vfat xxx 
+
+
 --------------------------------------------------------------------------------
 
 GtkTerm
