@@ -198,7 +198,8 @@ update_data(void *arg)
 			/* 连接客户不能大于FD_SETSIZE */
 			if (i == FD_SETSIZE) {
 				fprintf(stderr, "Too many clients\n");
-				//exit(EXIT_FAILURE);
+				close(connect_fd);
+				continue;
 			}
 
 			/* add new client fd to set */

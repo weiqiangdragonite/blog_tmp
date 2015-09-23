@@ -16,6 +16,7 @@ main(int argc, char *argv[])
 	FD_ZERO(&global_reads);
 	FD_SET(0, &global_reads);	// 0 is standard input
 
+	// 监听标准输入
 	while (1) {
 		reads = global_reads;
 	
