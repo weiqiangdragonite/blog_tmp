@@ -1,3 +1,10 @@
+/*
+ * str ip --> int ip
+ * "1.1.1.1" --> binary network ip (int)
+ *
+ * in_addr_t inet_addr(const char *strptr);
+ */
+
 
 #include <stdio.h>
 #include <arpa/inet.h>
