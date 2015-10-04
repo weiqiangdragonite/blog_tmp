@@ -13,14 +13,14 @@ main(int argc, char *argv[])
 {
 	int fd, size, i, unit, a, b;
 	char buf[BUF_SIZE];
-	char ch = 0;
+	char ch = 'A';
 
 	if (argc != 3 && argc != 4) {
 		fprintf(stderr, "Usage: %s <filename> <size> [unit]\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
-	memset(buf, 0, sizeof(buf));
+	memset(buf, 'A', sizeof(buf));
 
 	fd = open(argv[1], O_WRONLY | O_CREAT | O_TRUNC);
 	if (fd == -1) {

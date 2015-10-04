@@ -4,7 +4,7 @@
 #include <fcntl.h>
 #include <time.h>
 
-#define BUF_SIZE	3
+#define BUF_SIZE	1
 
 
 int
@@ -25,7 +25,7 @@ main(int argc, char *argv[])
 	stop = clock();
 	duration = (double) (stop - start) / CLOCKS_PER_SEC;
 
-	printf("used time [3]: %f\n", duration);
+	printf("used time: %f\n", duration);
 
 	close(fd1);
 	close(fd2);

@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <time.h>
 
-#define BUF_SIZE	1024
+#define BUF_SIZE	128
 
 int
 main(int argc, char *argv[])
@@ -23,7 +23,7 @@ main(int argc, char *argv[])
 	stop = clock();
 	duration = (double) (stop - start) / CLOCKS_PER_SEC;
 
-	printf("used time [3]: %f\n", duration);
+	printf("used time: %f\n", duration);
 
 	fclose(fp1);
 	fclose(fp2);
