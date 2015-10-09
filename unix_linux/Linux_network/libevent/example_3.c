@@ -3,17 +3,20 @@
  *
  * And here’s a reimplementation of our ROT13 server, using select() this time.
  *
+ * Original example from Libevent Documentation Book: Programming with Libevent.
  *
  * rewrite by <weiqiangdragonite@gmail.com>
- * update on 2015/10/08
+ * update on 2015/10/09
  *
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <errno.h>
 #include <string.h>
 #include <fcntl.h>
+#include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/select.h>
 
@@ -35,6 +38,20 @@ struct fd_state {
 };
 
 
+
+
+char
+rot13_char(char c)
+{
+	if ((c >= 'a' && c <= 'm') || (c >= 'A' && c <= 'M'))
+		return c + 13;
+	else if ((c >= 'n' && c <= 'z') || (c >= 'N' && c <= 'Z'))
+		return c - 13;
+	else
+		return c;
+}
+
+
 struct fd_state *
 alloc_fd_state(void)
 {
@@ -54,7 +71,7 @@ free_fd_state(struct fd_state *state)
 {
 	if (state != NULL)
 		free(state);
-	state = NULL;
+	//state = NULL;
 }
 
 
@@ -63,6 +80,74 @@ set_nonblocking(int fd)
 {
 	int flag = fcntl(fd, F_GETFL, 0);
 	fcntl(fd, F_SETFL, flag | O_NONBLOCK);
+}
+
+
+int
+do_read(int fd, struct fd_state *state)
+{
+	char buf[1024];
+	int i;
+	ssize_t result;
+
+	//printf("fd = %d in do_read()\n", fd);
+
+	while (1) {
+		result = read(fd, buf, sizeof(buf));
+		if (result <= 0)
+			break;
+
+		for (i = 0; i < result; ++i) {
+			if (state->buffer_used < sizeof(state->buffer))
+				state->buffer[state->buffer_used++] = rot13_char(buf[i]);
+			if (buf[i] == '\n') {
+				state->writing = 1;
+				state->write_upto = state->buffer_used;
+			}
+		}
+	}
+
+	if (result == 0) {
+		return 1;
+	} else if (result < 0) {
+		if (errno == EAGAIN) {
+			return 0;
+		} else {
+			perror("read() failed");
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
+
+int
+do_write(int fd, struct fd_state *state)
+{
+	ssize_t nbytes;
+
+	//printf("fd = %d in do_write()\n", fd);
+
+	while (state->n_written < state->write_upto) {
+		nbytes = write(fd, state->buffer + state->n_written,
+			state->write_upto - state->n_written);
+
+		if (nbytes < 0) {
+			if (errno == EAGAIN)
+				return 0;
+			return -1;
+		}
+
+		state->n_written += nbytes;
+	}
+
+	if (state->n_written == state->buffer_used) {
+		state->n_written = state->write_upto = state->buffer_used = 0;
+		state->writing = 0;
+	}
+
+	return 0;
 }
 
 
@@ -78,7 +163,7 @@ run(void)
 	struct fd_state *state[FD_SETSIZE];
 	int i, maxfd, fd;
 	fd_set readset, writeset, errset;
-	ssize_t nbytes;
+	ssize_t result;
 
 	memset(&serv_addr, 0, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
@@ -146,9 +231,9 @@ run(void)
 					state[i] = alloc_fd_state();
 					if (state[i] == NULL)
 						exit(EXIT_FAILURE);
-						
+					printf("conneced fd = %d\n", clifd);
 					set_nonblocking(clifd);
-					state[i].fd = clifd;
+					state[i]->fd = clifd;
 					break;
 				}
 			}
@@ -159,14 +244,32 @@ run(void)
 			}
 		}
 
+
+		/* recv and send datas */
 		for (i = 0; i < FD_SETSIZE; ++i) {
+			if (state[i] == NULL)
+				continue;
+
+			result = 0;
 			fd = state[i]->fd;
 
-			if (FD_ISSET(fd, &readset))
-				nbytes = do_read(fd, state[i]);
+			if (FD_ISSET(fd, &readset)) {
+				result = do_read(fd, state[i]);
+				//printf("fd = %d, do_read() return %d\n", fd, (int) result);
+			}
 
-			if (FD_ISSET(fd, &writeset))
-				nbytes == do_write(fd, state[i]);
+			if (result == 0 && FD_ISSET(fd, &writeset)) {
+				result = do_write(fd, state[i]);
+				//printf("fd = %d, do_write() return %d\n", fd, (int) result);
+			}
+
+			/* result == 1 || result == -1 -> client closed or error */
+			if (result) {
+				printf("closed fd = %d\n", fd);
+				close(fd);
+				free_fd_state(state[i]);
+				state[i] = NULL;
+			}
 		}
 	}
 

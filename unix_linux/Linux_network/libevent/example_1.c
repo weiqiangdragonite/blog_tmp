@@ -5,6 +5,7 @@
  * It opens a connection to www.google.com, sends it a simple HTTP request,
  * and prints the response to stdout.
  *
+ * Original example from Libevent Documentation Book: Programming with Libevent.
  *
  * rewrite by <weiqiangdragonite@gmail.com>
  * update on 2015/10/08

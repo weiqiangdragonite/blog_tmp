@@ -6,6 +6,7 @@
  * and writes out the ROT13 obfuscation of line each as it arrives. It uses
  * the Unix fork() call to create a new process for each incoming connection.
  *
+ * Original example from Libevent Documentation Book: Programming with Libevent.
  *
  * rewrite by <weiqiangdragonite@gmail.com>
  * update on 2015/10/08
