@@ -9,7 +9,7 @@
  * rewrite by <weiqiangdragonite@gmail.com>
  * update on 2015/10/09
  *
- * Compile: gcc -Wall xxx.c -levent
+ * Compile: gcc -Wall xxx.c -levent_core
  *
  */
 
