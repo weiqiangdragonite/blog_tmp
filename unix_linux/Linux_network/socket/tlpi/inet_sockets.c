@@ -1,23 +1,30 @@
 /*
+ * A library of functions to perform tasks commonly required for Internet
+ * domain sockets.
  *
+ * From book "The Linux Programming Interface"
+ *
+ * rewrite by <weiqiangdragonite@gmail.com>
+ * update on 2015/10/12
  */
 
-#define _BSD_SOURCE
 
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
 
-#include "inet_socket.h"
+#include "inet_sockets.h"
 
 
-char addr_str[ADDRSTRLEN];
+static char addr_str[ADDRSTRLEN];
 
 /*
  * This function creates a socket with the given socket type, and connects it
  * to the address specified by host and service. This function is designed for
  * TCP or UDP clients that need to connect their socket to a server socket.
+ *
+ * Success return socket fd, otherwise return -1.
  */
 int
 inet_connect(const char *host, const char *service, int type)
@@ -25,6 +32,7 @@ inet_connect(const char *host, const char *service, int type)
 	struct addrinfo hints;
 	struct addrinfo *result, *rp;
 	int socket_fd;
+	int n;
 
 	/* Set the hints argument */
 	memset(&hints, 0, sizeof(struct addrinfo));
@@ -34,22 +42,22 @@ inet_connect(const char *host, const char *service, int type)
 	/* User define socket type (SOCK_STREAM or SOCK_DGRAM) */
 	hints.ai_socktype = type;
 	/* ai_protocol = 0;
-	   For our purposes, this field is always specified as 0, meaning that
-	   the caller will accept any protocol */
+	 * For our purposes, this field is always specified as 0, meaning that
+	 * the caller will accept any protocol */
 	/* Allows IPv4 or IPv6 */
 	hints.ai_family = AF_UNSPEC;
 
 	/* get a list of socket address */
-	if (getaddrinfo(host, service, &hints, &result) != 0) {
-		fprintf(stderr, "getaddrinfo() failed: %s\n", strerror(errno));
+	if ((n = getaddrinfo(host, service, &hints, &result)) != 0) {
+		fprintf(stderr, "getaddrinfo() failed: %s\n", gai_strerror(n));
 		return -1;
 	}
 
 	/* Walk through returned list until we find an address structure that
-	   can be used to successfully connect a socket */
+	 * can be used to successfully connect a socket */
 	for (rp = result; rp != NULL; rp = rp->ai_next) {
 		socket_fd = socket(rp->ai_family, rp->ai_socktype,
-			rp->ai_protocol);
+					rp->ai_protocol);
 
 		/* If error, try next address */
 		if (socket_fd == -1)
@@ -57,7 +65,7 @@ inet_connect(const char *host, const char *service, int type)
 
 		/* Try to connect socket */
 		if (connect(socket_fd, rp->ai_addr, rp->ai_addrlen) != -1)
-			break;
+			break;	/* success */
 
 		/* Connect failed: close this socket and try next address */
 		close(socket_fd);
@@ -73,14 +81,17 @@ inet_connect(const char *host, const char *service, int type)
 
 /*
  * Public interfaces: inet_bind() and inet_listen()
+ *
+ * Success return socket fd, otherwise return -1.
  */
 static int
 inet_passive_socket(const char *service, int type, socklen_t *addrlen,
-                    int is_listen, int backlog)
+			int is_listen, int backlog)
 {
 	struct addrinfo hints;
 	struct addrinfo *result, *rp;
 	int socket_fd, optval;
+	int n;
 
 	/* Init hints */
 	memset(&hints, 0, sizeof(struct addrinfo));
@@ -92,38 +103,37 @@ inet_passive_socket(const char *service, int type, socklen_t *addrlen,
 	/* Use wildcard IP address */
 	hints.ai_flags = AI_PASSIVE;
 
-	if (getaddrinfo(NULL, service, &hints, &result) != 0) {
-		fprintf(stderr, "getaddrinfo() failed: %s\n", strerror(errno));
+	if ((n = getaddrinfo(NULL, service, &hints, &result)) != 0) {
+		fprintf(stderr, "getaddrinfo() failed: %s\n", gai_strerror(n));
 		return -1;
 	}
 
 	/* Walk through returned list until we find an address structure that
-	   can be used to successfully connect a socket */
+	 * can be used to successfully connect a socket */
 	optval = 1;
 	for (rp = result; rp != NULL; rp = rp->ai_next) {
 		socket_fd = socket(rp->ai_family, rp->ai_socktype,
-			rp->ai_protocol);
+					rp->ai_protocol);
 
 		/* If error, try next address */
 		if (socket_fd == -1)
 			continue;
 
-		if (!is_listen)
-			break;
-
-		/* For TCP server */
-		if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR,
-				&optval, sizeof(optval)) == -1) {
-			close(socket_fd);
-			freeaddrinfo(result);
-			fprintf(stderr, "setsockopt() failed: %s\n",
-				strerror(errno));
-			return -1;
+		if (is_listen) {
+			/* For TCP server */
+			if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR,
+					&optval, sizeof(optval)) == -1) {
+				close(socket_fd);
+				freeaddrinfo(result);
+				fprintf(stderr, "setsockopt() failed: %s\n",
+					strerror(errno));
+				return -1;
+			}
 		}
 
 		/* Bind to socket */
 		if (bind(socket_fd, rp->ai_addr, rp->ai_addrlen) == 0)
-			break;
+			break;	/* success */
 
 		/* bind() failed: close this socket and try next address */
 		close(socket_fd);
@@ -152,6 +162,8 @@ inet_passive_socket(const char *service, int type, socklen_t *addrlen,
  * The inet_listen() function creates a listening stream (SOCK_STREAM)
  * socket bound to the wildcard IP address on the TCP port specified by
  * service. This function is designed for use by TCP servers.
+ *
+ * Success return socket fd, otherwise return -1.
  */
 int
 inet_listen(const char *service, int backlog, socklen_t *addrlen)
@@ -165,6 +177,8 @@ inet_listen(const char *service, int backlog, socklen_t *addrlen)
  * type indicates whether this is a TCP or UDP service.) This function is
  * designed (primarily) for UDP servers and clients to create a socket bound
  * to a specific address.
+ *
+ * Success return socket fd, otherwise return -1.
  */
 int
 inet_bind(const char *service, int type, socklen_t *addrlen)
@@ -175,10 +189,13 @@ inet_bind(const char *service, int type, socklen_t *addrlen)
 
 /*
  * This function converts an Internet socket address to printable form.
+ *
+ * If success, return charter string "(host, port)" with null terminated,
+ * otherwise, return "(?UNKNOWN?)"
  */
 char *
 inet_addrstr(const struct sockaddr *addr, socklen_t addrlen,
-             char *addr_str, size_t str_len)
+		char *addr_str, size_t str_len)
 {
 	char host[NI_MAXHOST];
 	char service[NI_MAXSERV];
@@ -186,9 +203,9 @@ inet_addrstr(const struct sockaddr *addr, socklen_t addrlen,
 	memset(addr_str, 0, str_len);
 	if (getnameinfo(addr, addrlen, host, NI_MAXHOST, service, NI_MAXSERV,
 			NI_NUMERICHOST | NI_NUMERICSERV) == 0)
-		snprintf(addr_str, str_len, "%s, %s", host, service);
+		snprintf(addr_str, str_len, "(%s, %s)", host, service);
 	else
-		snprintf(addr_str, str_len, "?UNKNOWN?");
+		snprintf(addr_str, str_len, "(?UNKNOWN?)");
 
 	/* Ensure result is null-terminated */
 	addr_str[str_len - 1] = '\0';

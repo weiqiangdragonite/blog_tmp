@@ -14,6 +14,8 @@ struct pollfd {
 };
 
 
+存在点小问题，参考一下UNP 6.11节的程序
+
 */
 
 #include <stdio.h>
