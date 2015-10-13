@@ -190,7 +190,7 @@ inet_bind(const char *service, int type, socklen_t *addrlen)
 /*
  * This function converts an Internet socket address to printable form.
  *
- * If success, return charter string "(host, port)" with null terminated,
+ * If success, return string "(host, port)" with null terminated,
  * otherwise, return "(?UNKNOWN?)"
  */
 char *
