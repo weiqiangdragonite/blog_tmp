@@ -2,6 +2,14 @@
  *
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <errno.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
 
 
 
@@ -37,7 +45,7 @@ int
 tcp_connect(const char *hostname, const char *service)
 {
 	int sockfd, n;
-	struct addrinfo hints, *res, *rp, 
+	struct addrinfo hints, *res, *rp;
 
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;	/* IPv4, IPv6 */
@@ -88,7 +96,7 @@ tcp_listen(const char *hostname, const char *service, socklen_t *len)
 	const int on = 1;
 	struct addrinfo hints, *res, *rp;
 
-	memset(hints, 0, sizeof(hints));
+	memset(&hints, 0, sizeof(hints));
 	hints.ai_flags = AI_PASSIVE;
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
@@ -225,7 +233,7 @@ udp_connect(const char *hostname, const char *service)
 		sockfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
 
 		/* If error, try next address */
-		if (listenfd == -1)
+		if (sockfd == -1)
 			continue;
 
 		/* Try to connect socket */
@@ -254,10 +262,9 @@ int
 udp_server(const char *hostname, const char *service, socklen_t *len)
 {
 	int sockfd, n;
-	const int on = 1;
 	struct addrinfo hints, *res, *rp;
 
-	memset(hints, 0, sizeof(hints));
+	memset(&hints, 0, sizeof(hints));
 	hints.ai_flags = AI_PASSIVE;
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_DGRAM;
@@ -285,7 +292,7 @@ udp_server(const char *hostname, const char *service, socklen_t *len)
 	/* error */
 	if (rp == NULL) {
 		fprintf(stderr, "udp_server failed\n");
-		listenfd = -1;
+		sockfd = -1;
 	}
 
 
@@ -293,7 +300,7 @@ udp_server(const char *hostname, const char *service, socklen_t *len)
 		*len = res->ai_addrlen;	/* return sizeof protocol address */
 
 	freeaddrinfo(res);
-	return listenfd;
+	return sockfd;
 }
 
 

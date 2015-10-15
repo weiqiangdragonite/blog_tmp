@@ -26,8 +26,8 @@ main(int argc, char *argv[])
 	ssize_t n;
 	char buf[128];
 
-	if (argc != 2) {
-		fprintf(stderr, "Usage: %s <IP address>\n", argv[0]);
+	if (argc != 3) {
+		fprintf(stderr, "Usage: %s <IP address> <port>\n", argv[0]);
 		return -1;
 	}
 
@@ -38,7 +38,8 @@ main(int argc, char *argv[])
 
 	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_port = htons(13);	/* daytime server */
+	servaddr.sin_port = htons(atoi(argv[2]));
+	//servaddr.sin_port = htons(13);	/* daytime server */
 	if (inet_pton(AF_INET, argv[1], &servaddr.sin_addr) != 1) {
 		fprintf(stderr, "inet_pton() for %s failed: %s\n",
 			argv[1], strerror(errno));

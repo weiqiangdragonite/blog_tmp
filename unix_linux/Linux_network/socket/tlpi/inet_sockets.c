@@ -17,7 +17,7 @@
 #include "inet_sockets.h"
 
 
-static char addr_str[ADDRSTRLEN];
+//static char addr_str[ADDRSTRLEN];
 
 /*
  * This function creates a socket with the given socket type, and connects it
