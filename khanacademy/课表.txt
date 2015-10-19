@@ -14,9 +14,10 @@
 
 
 指数: exponential
-对数:logarithm
+对数: logarithm
 离散数学: descrete mathematics
-
+代数: algebra
+线性代数: Linear Algebra
 
 
 
