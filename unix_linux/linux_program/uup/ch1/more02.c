@@ -1,7 +1,9 @@
 /*
- * more01.c - version 0.1 of more
+ * more02.c - version 0.2 of more
  * read and print 24 lines then pause for a few spacial commands
+ * feature of version 0.2: reads from /dev/tty for commands
  */
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,7 +13,7 @@
 
 
 void do_more(FILE *fp);
-int see_more(void);
+int see_more(FILE *fp);
 
 int
 main(int argc, char *argv[])
@@ -44,10 +46,17 @@ do_more(FILE *fp)
 	char line[LINELEN];
 	int num_of_lines = 0;
 	int reply;
+	FILE *fp_tty;
+
+	fp_tty = fopen("/dev/tty", "r");		/* cmd stream */
+	if (fp_tty == NULL) {
+		perror("fopen() /dev/tty failed:");
+		exit(EXIT_FAILURE);
+	}
 
 	while (fgets(line, LINELEN, fp)) {
 		if (num_of_lines == PAGELEN) {		/* full screen? */
-			reply = see_more();		/* y: ask user */
+			reply = see_more(fp_tty);	/* y: ask user */
 			if (reply == 0)			/* n: done */
 				break;
 			num_of_lines -= reply;		/* reset count */
@@ -66,11 +75,11 @@ do_more(FILE *fp)
  * q means no, space means yes, CR means one line
  */
 int
-see_more(void)
+see_more(FILE *cmd)
 {
 	int c;
 	printf("\033[7m more? \033[m");		/* reverse on a vt100 */
-	while ((c = getchar()) != EOF) {	/* get response */
+	while ((c = getc(cmd)) != EOF) {	/* read form tty */
 		if (c == 'q')
 			return 0;
 		else if (c == ' ')
