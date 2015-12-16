@@ -41,6 +41,9 @@ systemctl status httpd.service
 
 --------------------------------------------------------------------------------
 
+fedora 23后yum以废弃，用dnf代替
+dnf install xxx
+
 yum install wget
 
 
@@ -280,7 +283,54 @@ yum install google-chrome-stable
 
 --------------------------------------------------------------------------------
 
+centos安装的软件包可以直接到这下载安装
+http://mirrors.aliyun.com/centos/6.7/os/x86_64/Packages/
+http://mirrors.opencas.cn/epel/6/x86_64/
+
+
+centos安装python 2.7
+http://blog.csdn.net/jcjc918/article/details/11022345
+
+centos安装chrome
+http://www.linuxidc.com/Linux/2013-01/78066.htm
+
+安装setuptools
+http://blog.csdn.net/ab198604/article/details/8681851
+
+python setup.py build
+python setup.py install
+
+
+
 java:
+
+卸载centos自带的openjdk：
+rpm -qa | grep java
+http://www.micmiu.com/os/linux/centos-uninstall-openjdk/
+http://www.cnblogs.com/fsjohnhuang/p/3989418.html
+
+
+安装tomcat 7.0(注意tomcat是从binary distributions那里下载)
+下载.tar.gz，解压到/opt/
+http://www.linuxidc.com/Linux/2015-01/111415.htm
+
+vi /opt/tomcat/bin/daemon.sh
+JAVA_HOME=/opt/jdk
+
+编译jsvc
+
+useradd -s /sbin/nologin tomcat #禁止tomcat登陆操作，类似于windows的系统账户
+chown -R tomcat:tomcat /opt/tomcat   #将/opt/tomcat下的所有档案与子目录进行相同的拥有者变更为tomcat用户
+
+chmod +x /opt/tomcat/bin/*.sh # 为tomcat/bin/目录下的*.sh添加相应的x权限位：
+
+添加tomcat为Linux的服务:
+ln  -s  /opt/tomcat/bin/daemon.sh  /etc/init.d/tomcat
+
+
+chkconfig --add  tomcat
+chkconfig tomcat on
+chkconfig --list tomcat
 
 
 Android:

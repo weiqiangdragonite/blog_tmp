@@ -14,7 +14,7 @@
 int
 main(int argc, char *argv[])
 {
-	char *addr = "192.168.1.255";
+	char *addr = "192.168.1.221";
 	struct sockaddr_in conv_addr;
 	char *ptr = NULL;
 
