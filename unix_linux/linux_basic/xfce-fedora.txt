@@ -75,6 +75,27 @@ rpm -ivh ...
 
 
 
+
+
+centos创建本地yum源
+编辑repo文件：
+cd  /etc/yum..repos.d
+文件位置/etc/yum.repos.d/，后缀一定是.repo结束.
+
+编辑自己的repo文件
+方法一：
+[root@helomeyum.repos.d]# vim local.repo (repo后缀)
+[local_server](库名称)
+name=Thisis a local repo （名称描述）
+baseurl=file:///media/dvd(yum源目录，源地址)
+enabled=1（是否启用该yum源，0为禁用）
+gpgcheck=1  （检查GPG-KEY，0为不检查，1为检查）
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6（gpgcheck=0时无需配置）
+保存退出！
+
+
+
+
 lspci -v
 (VGA)
 
@@ -306,6 +327,8 @@ java:
 
 卸载centos自带的openjdk：
 rpm -qa | grep java
+# rpm -e --nodeps tzdata-java-2012c-1.el6.noarch
+# rpm -e --nodeps java-1.7.0-openjdk-1.7.0.45-1.45.1.11.1.el6.x86_64
 http://www.micmiu.com/os/linux/centos-uninstall-openjdk/
 http://www.cnblogs.com/fsjohnhuang/p/3989418.html
 
@@ -318,6 +341,18 @@ vi /opt/tomcat/bin/daemon.sh
 JAVA_HOME=/opt/jdk
 
 编译jsvc
+cd /opt/tomcat/bin/
+tar xvzf commons-daemon-native.tar.gz
+./configure
+make
+执行make后会生成一个jsvc的文件，将其复制到tomcat的bin目录。
+cp jsvc /opt/tomcat/bin/
+
+修改daemon环境变量
+用文本编辑器(vi或emacs等)编辑它，找到类似下面这样配置段：
+test ".$TOMCAT_USER" = . && TOMCAT_USER=tomcat
+# Set JAVA_HOME to working JDK or JRE
+# JAVA_HOME=/opt/jdk-1.6.0.22
 
 useradd -s /sbin/nologin tomcat #禁止tomcat登陆操作，类似于windows的系统账户
 chown -R tomcat:tomcat /opt/tomcat   #将/opt/tomcat下的所有档案与子目录进行相同的拥有者变更为tomcat用户
@@ -327,6 +362,10 @@ chmod +x /opt/tomcat/bin/*.sh # 为tomcat/bin/目录下的*.sh添加相应的x�
 添加tomcat为Linux的服务:
 ln  -s  /opt/tomcat/bin/daemon.sh  /etc/init.d/tomcat
 
+设置tomcat服务开机启动，需要在daemon.sh中增加以下的语句：
+#!/bin/sh      #这句是原文件里有的，下面的2句是要添加的
+# chkconfig: 2345 90 15
+# description: Tomcat-en Manager
 
 chkconfig --add  tomcat
 chkconfig tomcat on
@@ -713,6 +752,9 @@ gpgcheck=1
 然后安装
 yum install MariaDB-server MariaDB-client
 
+
+mysql更改密码
+mysqladmin -u root password "newpass"
 
 
 还有其实可以下载phpmyadmin来编译安装
@@ -1147,6 +1189,7 @@ echo "test" |　mutt 408160341@qq.com -s "itdhz数据备份" -a /home/backup/itd
 --------------------------------------------------------------------------------
 
 vnc
+http://blog.csdn.net/daydreamingboy/article/details/8196747/
 
 CentOS 6/RHEL 6中使用tigervnc作为自带的VNC程序
 
@@ -1157,6 +1200,53 @@ CentOS使用root直接登录
 在最新版本的Linux发行版中预设不允许以root 账号登入图形用户桌面，因此一般使用者登入后，如果要以管理者权限下指令，可以在终端机以su root，暂时取得root权限；
 如果/一定要以root登入图形界面，可以经由修改/etc/pam.d/gdm 以及 /etc/pam.d/gdm-passwd，把以下这行设定加上”#”批注掉。存盘后就可以用root账号
 #auth required pam_succeed_if.so user != root quiet
+
+
+2.编辑vncservers配置文件。
+[root@localhost ~]# vim/etc/sysconfig/vncservers
+
+
+3.初次启动设置root用户的vnc登录密码，会生成/root/.vnc/passwd密码文件。
+[root@localhost ~]# vncserver
+
+
+
+启动vncserver（服务器端）
+vncserver :n
+这里的n是sessionnumber，不指定默认为1，也可以是2、3等等。第一次会提示输入密码，以后可以使用vncpasswd命令修改密码。
+VNC的默认端口是5900，而远程桌面连接端口则是5900+n（n是vncserver命令指定的）。如果使用“vncserver :1”命令启动VNC Server，那么下面的端口应该是5901。
+
+关闭vncserver
+vncserver -kill :n 
+查看连接
+vncserver -list
+
+
+
+
+添加字体：
+1、到xp或者vista下复制字体
+雅黑：msyh 
+黑体：SimHei 
+宋体：SimSun 
+华文细黑：STXihei 
+华文楷体：STKaiti 
+等等 你要的字体 
+
+2、将要的字体复制到/usr/share/fonts/chinese/TrueType目录下 
+
+3、修改字体权限，使root以外的用户可以使用这些字体。
+
+4、建立字体缓存，命令：cd /usr/share/fonts/chinses/TrueType
+
+mkfontscale
+
+mkfontdir 
+
+fc-cache -fv 
+
+5、重启，即可使用
+
 
 
 
