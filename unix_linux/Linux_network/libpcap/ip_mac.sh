@@ -22,7 +22,7 @@ echo "" >> ${file_name}
 echo "Start clean ARP cache ..."
 for ((net_id=1; net_id<255; ++net_id))
 do
-	ip_address="10.192.131.${net_id}"
+	ip_address="192.168.1.${net_id}"
 
 	arp -d $ip_address > /dev/null
 done
@@ -30,7 +30,7 @@ echo "Clean ARP cache done."
 
 
 echo "Start catching network IP and MAC address ..."
-nmap -sP 10.192.131.0/24 > /tmp/nmap.txt
+nmap -sP 192.168.1.0/24 > /tmp/nmap.txt
 
 
 # Use Regular Expression to get the IP and MAC address from the output of nmap
