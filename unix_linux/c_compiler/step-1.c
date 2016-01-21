@@ -12,17 +12,44 @@
 #include <fcntl.h>
 
 
-void next(void);
-void program(void);
-int eval(void);
-void expression(int level);
-
+/*
+ * global variables
+ */
 
 int token = 0;		/* current token */
 char *src = NULL;	/* pointer to source code string */
 char *old_src = NULL;	/* pointer to source code string */
 int poolsize = 0;	/* default size of text/data/stack */
 int line = 0;		/* line number */
+
+
+int *text = NULL;	/* text segment */
+int *old_text = NULL;	/* for dump txt segment */
+int *stack = NULL;	/* stack */
+char *data = NULL;	/* data segment */
+
+
+/* virtual machine registers*/
+int *pc = NULL;		/* 程序计数器 */
+int *sp = NULL;		/* 指针寄存器 */
+int *bp = NULL;		/* 基址指针 */
+int ax = 0;		/* 通用寄存器 */
+int cycle = 0;
+
+
+/* instructions */
+enum { 	LEA, IMM, JMP, CALL, JZ, JNZ, ENT, ADJ, LEV, LI, LC, SI, SC, PUSH,
+	OR, XOR, AND, EQ, NE, LT, GT, LE, GE, SHL, SHR, ADD, SUB, MUL, DIV,
+	MOD, OPEN, READ, CLOS, PRTF, MALC, MSET, MCMP, EXIT };
+
+
+/*
+ * function prototypes
+ */
+void next(void);
+void program(void);
+int eval(void);
+void expression(int level);
 
 
 int
@@ -48,7 +75,7 @@ main(int argc, char *argv[])
 	}
 
 	if ((src = old_src = malloc(poolsize)) == NULL) {
-		fprintf(stderr, "could not malloc %d for source area\n", poolsize);
+		fprintf(stderr, "could not malloc(%d) for source area\n", poolsize);
 		return -1;
 	}
 
@@ -60,6 +87,30 @@ main(int argc, char *argv[])
 	/* add EOF */
 	src[i] = '\0';
 	close(fd);
+
+
+	/* allocate memory for virtual machine */
+	if ((text = old_text = malloc(poolsize)) == NULL) {
+		fprintf(stderr, "Could not malloc(%d) for text area\n", poolsize);
+		return -1;
+	}
+	if ((data = malloc(poolsize)) == NULL) {
+		fprintf(stderr, "Could not malloc(%d) for data area\n", poolsize);
+		return -1;
+	}
+	if ((stack = malloc(poolsize)) == NULL) {
+		fprintf(stderr, "Could not malloc(%d) for stack area\n", poolsize);
+		return -1;
+	}
+
+	memset(text, 0, poolsize);
+	memset(data, 0, poolsize);
+	memset(stack, 0, poolsize);
+
+	/* init stack pointer */
+	sp = bp = (int *) ((int) stack + poolsize);
+	ax = 0;
+
 
 	program();
 	return eval();
@@ -125,7 +176,4 @@ eval(void)
 
 
 
-// instructions
-enum { 	LEA, IMM, JMP, CALL, JZ, JNZ, ENT, ADJ, LEV, LI, LC, SI, SC, PUSH,
-	OR, XOR, AND, EQ, NE, LT, GT, LE, GE, SHL, SHR, ADD, SUB, MUL, DIV,
-	MOD, OPEN, READ, CLOS, PRTF, MALC, MSET, MCMP, EXIT };
+
