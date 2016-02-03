@@ -1,8 +1,8 @@
 /*
  * SDL program: 
- *     - SDL_Init()
- *     - SDL_Quit()
- *
+ *     - SDL_InitSubSystem()
+ *     - SDL_QuitSubSystem()
+ 
  *
  * Compile: gcc ex1.c -lSDL
  */
@@ -47,12 +47,14 @@ end_SDL(void)
 int
 main(int argc, char *argv[])
 {
+	atexit(end_SDL);
 
-
-	if (begin_SDL(SDL_INIT_AUDIO) == -1)
+	if (begin_SDL(SDL_INIT_VIDEO) == -1)
 		exit(EXIT_FAILURE);
 
-	atexit(end_SDL);
+	SDL_InitSubSystem(SDL_INIT_AUDIO);
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+
 
 	return 0;
 }
