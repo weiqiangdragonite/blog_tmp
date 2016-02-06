@@ -8,14 +8,14 @@
 int
 main(int argc, char *argv[])
 {
-	int old, current;
+	int old_ch, ch;
 
-	old = 'A';
-	while ((current = getchar()) != EOF) {
-		if (current != ' ' || old != ' ')
-			putchar(current);
+	ch = old_ch = 0;
+	while ((ch = getchar()) != EOF) {
+		if (ch != ' ' || old_ch != ' ')
+			putchar(ch);
 
-		old = current;
+		old_ch = ch;
 	}
 
 	return 0;

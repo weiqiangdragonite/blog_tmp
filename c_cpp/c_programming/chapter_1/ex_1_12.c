@@ -1,5 +1,5 @@
 /*
- * A program counts lines, words, and characters.
+ * A program prints its input one word per line.
  */
 
 #include <stdio.h>
@@ -10,16 +10,6 @@
 int
 main(int argc, char *argv[])
 {
-/*
-	int ch;
-	while ((ch = getchar()) != EOF) {
-		if (ch == ' ' || ch == '\n' || ch == '\t')
-			putchar('\n');
-		else
-			putchar(ch);
-	}
-*/
-
 	int ch, state;
 	long words, lines, characters;
 

@@ -1,5 +1,5 @@
 /*
- * Print Celsius-Fahrenheit table.
+ * Print Celsius-Fahrenheit table, for celsius = 0, 20, ..., 300
  */
 
 #include <stdio.h>
@@ -15,9 +15,10 @@ main(int argc, char *argv[])
 	step = 20;		/* step size */
 
 	celsius = lower;
+	printf("%7s  %10s\n", "Celsius", "Fahrenheit");
 	while (celsius <= upper) {
 		fahr = (9.0 / 5.0) * celsius + 32.0;
-		printf("%3.0f %6.1f\n", celsius, fahr);
+		printf("%7.0f  %10.1f\n", celsius, fahr);
 		celsius = celsius + step;
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Print string include "\c"
+ * Print hello world.
  */
 
 #include <stdio.h>
@@ -7,7 +7,7 @@
 int
 main(int argc, char *argv[])
 {
-	printf("hello, \cworld\n");
+	printf("hello, world\n");
 
 	return 0;
 }
