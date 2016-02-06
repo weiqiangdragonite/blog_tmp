@@ -10,7 +10,7 @@
 void
 detab(char line[], int len)
 {
-	
+	for (i = 0;)
 }
 
 
