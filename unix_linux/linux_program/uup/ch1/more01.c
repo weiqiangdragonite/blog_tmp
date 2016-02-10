@@ -1,6 +1,18 @@
 /*
  * more01.c - version 0.1 of more
  * read and print 24 lines then pause for a few spacial commands
+ *
+ * more usage:
+ * $ more filename
+ * $ command | more
+ * $ more < filename
+ *
+ * +----> show 24 lines form input
+ * | +--> print [more?] message
+ * | |    Input Enter, SPACE, or q
+ * | +--- if Enter, advance one line
+ * +----- if SPACE
+ *        if q --> exit
  */
 
 #include <stdio.h>
@@ -54,7 +66,7 @@ do_more(FILE *fp)
 		}
 
 		if (fputs(line, stdout) == EOF)		/* show line */
-			exit(EXIT_SUCCESS);		/* or die */
+			exit(EXIT_FAILURE);		/* or die */
 
 		num_of_lines++;				/* count it */
 	}
@@ -72,11 +84,11 @@ see_more(void)
 	printf("\033[7m more? \033[m");		/* reverse on a vt100 */
 	while ((c = getchar()) != EOF) {	/* get response */
 		if (c == 'q')
-			return 0;
+			return 0;		/* exit */
 		else if (c == ' ')
-			return PAGELEN;
+			return PAGELEN;		/* one page */
 		else if (c == '\n')
-			return 1;
+			return 1;		/* one line */
 	}
 	return 0;
 }

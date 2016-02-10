@@ -27,6 +27,7 @@ main(int argc, char *argv[])
 	int utmpfd;
 	int reclen = sizeof(utbuf);
 
+	/* UTMP_FILE is in utmp.h */
 	if ((utmpfd = open(UTMP_FILE, O_RDONLY)) == -1) {
 		perror("open UTMP_FILE failed:");
 		exit(EXIT_FAILURE);
@@ -70,7 +71,8 @@ show_time(long timeval)
 {
 	char *cp;
 	cp = ctime(&timeval);
-	printf("%12.12s", cp+4);
+	//printf("%12.12s", cp+4);
+	printf("%s", cp);
 }
 
 

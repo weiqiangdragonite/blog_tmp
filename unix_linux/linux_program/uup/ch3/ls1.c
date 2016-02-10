@@ -28,13 +28,13 @@ main(int argc, char *argv[])
 }
 
 /*
- * loist files in directory called dirname
+ * list files in directory called dirname
  */
 void
 do_ls(char *dirname)
 {
 	DIR *dir_ptr;
-	struct dirent *direntp;
+	struct dirent *direntp;		/* each entry */
 
 	if ((dir_ptr = opendir(dirname)) == NULL) {
 		fprintf(stderr, "ls1: cannot open %s\n", dirname);

@@ -23,6 +23,7 @@ main(int argc, char *argv[])
 	int utmpfd;
 	int reclen = sizeof(current_record);
 
+	/* UTMP_FILE is in utmp.h */
 	if ((utmpfd = open(UTMP_FILE, O_RDONLY)) == -1) {
 		perror("open UTMP_FILE failed:");
 		exit(EXIT_FAILURE);
@@ -46,7 +47,7 @@ show_info(struct utmp *utbufp)
 	printf(" ");
 	printf("%-8.8s", utbufp->ut_line);	/* tty */
 	printf(" ");
-	printf("%10d", utbufp->ut_time);	/* login time */
+	printf("%10ld", utbufp->ut_time);	/* login time */
 	printf(" ");
 #ifdef SHOWHOST
 	printf("(%s)", utbufp->ut_host);	/* the host */

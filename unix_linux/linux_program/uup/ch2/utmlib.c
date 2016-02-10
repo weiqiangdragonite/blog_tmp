@@ -17,8 +17,8 @@
 #include <fcntl.h>
 #include <utmp.h>
 
-#define NCRES 16
-#define UTSIZE (sizeof(struct utmp))
+#define NCRES	16
+#define UTSIZE	(sizeof(struct utmp))
 
 
 static char utmpbuf[NCRES * UTSIZE];	/* storage */
