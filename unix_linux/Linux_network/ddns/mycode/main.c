@@ -17,6 +17,7 @@
 
 
 
+
 #define HOST		"phddns60.oray.net"
 #define PORT		"6060"
 #define BUF_SIZE	1024
@@ -66,6 +67,9 @@ main(int argc, char *argv[])
 	}
 	printf("[recv server side key - %ld bytes]:\n%s\n\n",
 		nbytes, buf);
+
+	/* decode key string */
+
 
 
 	/* generate encoded auth string */
