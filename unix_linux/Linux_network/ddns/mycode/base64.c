@@ -1,6 +1,6 @@
 /*
  * base64.c
- *
+ * 原理请参考base64编码
  */
 
 #include <stdio.h>
