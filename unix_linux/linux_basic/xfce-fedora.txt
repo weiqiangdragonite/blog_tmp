@@ -274,6 +274,52 @@ mount -t vbox_share /mnt/share
 那么function文件为
 mount -t vboxsf D_DRIVE /home/dragonite/Public
 
+
+
+
+设置虚拟主机和host主机之间共享：
+
+1. 首先需要安装增强功能，前面已经安装完成。
+
+2. 在 Devices”->“Share Folder Settings”中设定虚拟机与Host OS之间的共享目录。
+注意要勾选上“Auto-mount”和“Make Permanent”选项.
+比如我设置了Host中的D盘共享，那么共享的D盘盘符为 D_DRIVE.
+
+3. 在/mnt下新建一个目录ShareD，作为挂载的目的共享目录。
+
+4. 执行下面的命令
+
+sudo mount -t vboxsf D_DRIVE /mnt/ShareD
+此时，就可以在打开/mnt/ShareD目录来访问Host主机上的文件了。
+
+5. 如果想取消挂载，使用umount命令
+
+sudo umount -f /mnt/ShareD
+
+
+1. 通过在终端中运行mount命令我们看到，勾选上“Auto-mount”后，D_DRIVE已经被自动mount到了/media/sf_D_DRIVE目录下，但是在普通用户XXX下却没有权限访问。只有使用root用户登录才能访问。这是为什么呢？
+
+D_DRIVE on /media/sf_D_DRIVE type vboxsf (gid=493,rw)
+E_DRIVE on /media/sf_E_DRIVE type vboxsf (gid=493,rw)
+F_DRIVE on /media/sf_F_DRIVE type vboxsf (gid=493,rw)
+
+2. 通过查看VirtualBox官方文档得知【4】，自VirtualBox 4.0之后，就提供了auto mount的功能，当你在“Devices”->“Share Folder Settings”->点击最右面的“+”按钮，添加一个共享时，如果选择了“Auto Mount”复选框，那么该共享就会自动被mount到/media目录下，并为该共享目录添加了一个sf_前缀。如果没有自动mount，那么可能是由于用户没有添加到vboxsf用户组中。
+
+首先查看用户组，发现当前用户确实没在vboxsf中。
+
+cat /etc/group
+->result:
+vboxsf:x:493:
+3. 将当前用户添加到用户组中：
+
+sudo usermod -a -G vboxsf XXX
+再次检查，发现已将当前用户添加到用户组中了。
+
+cat /etc/group
+-> result
+vboxsf:x:1001:XXX
+4. 添加完后，重启系统，这时就可以在media目录下访问共享目录了。
+
 --------------------------------------------------------------------------------
 
 修改hosts
