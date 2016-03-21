@@ -417,6 +417,9 @@ chkconfig --add  tomcat
 chkconfig tomcat on
 chkconfig --list tomcat
 
+修改tomcat端口
+vim /opt/tomcat/lib/server.xml
+
 
 Android:
 yum install libz.so.1
