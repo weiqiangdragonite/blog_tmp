@@ -1,5 +1,6 @@
 /*
- *
+ * http://biancheng.dnbcw.info/linux/268993.html
+ * https://www.kernel.org/doc/Documentation/input/joystick-api.txt
  */
 
 #include <stdio.h>
