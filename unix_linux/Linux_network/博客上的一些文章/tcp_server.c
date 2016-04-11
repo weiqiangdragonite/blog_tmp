@@ -76,8 +76,8 @@ main(int argc, char *argv[])
 			continue;
 		}
 
-		ret = getnameinfo((struct sockaddr *) &claddr, addrlen, host,
-			NI_MAXHOST, service, NI_MAXSERV, 0);
+		ret = getnameinfo((struct sockaddr *) &claddr, addrlen,
+			host, NI_MAXHOST, service, NI_MAXSERV, 0);
 		if (ret == 0)
 			snprintf(addr_str, ADDRSTRLEN, "(%s:%s)", host, service);
 		else

