@@ -20,7 +20,7 @@ main(int argc, char *argv[])
 	char msg[] = "hello, world!\n"; /* 15 bytes, include '\0' */
 
 	if (argc != 2) {
-		fprintf(stderr, "Usage: ./%s <port>\n", argv[0]);
+		fprintf(stderr, "Usage: %s <port>\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
@@ -51,10 +51,16 @@ main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	ret = write(clifd, msg, sizeof(msg));
-	if (ret == -1)
-		perror("write() failed");
-	printf("write %d bytes\n", ret);
+	//ret = write(clifd, msg, sizeof(msg));
+	//if (ret == -1)
+	//	perror("write() failed");
+	//printf("write %d bytes\n", ret);
+
+	usleep(3500);
+
+	char str[] = "abcdefg,hijklmn, opq, rst, uvw, xyz";
+	ret = write(clifd, str, sizeof(str));
+
 	close(clifd);
 	close(sockfd);
 
