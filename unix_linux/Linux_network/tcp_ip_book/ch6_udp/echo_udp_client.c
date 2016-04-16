@@ -27,6 +27,7 @@ main(int argc, char *argv[])
 		perror("socket() failed");
 		exit(EXIT_FAILURE);
 	}
+	printf("fd = %d\n", sockfd);
 
 	memset(&serv_addr, 0, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
