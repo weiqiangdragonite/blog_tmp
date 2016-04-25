@@ -1,3 +1,8 @@
+/*
+ * 水平触发
+ * epoll的简单例子
+ */
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -92,6 +97,11 @@ main(int argc, char *argv[])
 	}
 
 	// 初始化
+	// Since Linux 2.6.8, the size argument is ignored, but must be greater
+	// than  zero; 因为内核会自动申请空间，但size还是要大于0的
+	// 这个函数的size参数已经弃用。更推荐使用的是epoll_create1(0)来代替普通
+	// 的用法。另外epoll_create1(EPOLLCLOEXEC)表示生成的epoll fd具有
+	// “执行后关闭”特性。
 	epollfd = epoll_create(EPOLL_SIZE);
 	wait_events = malloc(sizeof(struct epoll_event) * EPOLL_SIZE);
 
