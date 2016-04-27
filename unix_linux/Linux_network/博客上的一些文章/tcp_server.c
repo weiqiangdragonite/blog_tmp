@@ -5,7 +5,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-#define BACKLOG		50
+#define BACKLOG		128
 #define PORT_NUM	"8888"
 #define ADDRSTRLEN	(NI_MAXHOST + NI_MAXSERV + 10)
 
