@@ -12,7 +12,8 @@
 int
 main(int argc, char *argv[])
 {
-	int sockfd, clifd;
+	int sockfd;
+	int clifd[65536];
 	int nbytes;
 	struct sockaddr_in svaddr, cliaddr;
 	socklen_t addr_len;
@@ -20,7 +21,7 @@ main(int argc, char *argv[])
 
 	char host[NI_MAXHOST];
 	char service[NI_MAXSERV];
-	int ret, counter;
+	int ret, i;
 
 
 	if (argc != 2 && argc != 3) {
@@ -64,12 +65,12 @@ main(int argc, char *argv[])
 	}
 
 
-	counter = 0;
+	i = 0;
 	while (1) {
 		/* 5 - 等待连接 */
 		addr_len = sizeof(cliaddr);
-		clifd = accept(sockfd, (struct sockaddr *) &cliaddr, &addr_len);
-		if (clifd == -1) {
+		clifd[i] = accept(sockfd, (struct sockaddr *) &cliaddr, &addr_len);
+		if (clifd[i] == -1) {
 			perror("accept() failed");
 			exit(errno);
 		}
@@ -78,20 +79,9 @@ main(int argc, char *argv[])
 			host, NI_MAXHOST, service, NI_MAXSERV, 0);
 		if (ret == 0)
 			printf("Client %d connection from: %s (%s)\n",
-				++counter, host, service);
+				++i, host, service);
 	}
 
-
-
-	/* 6 - 发送数据给客户端 */
-	if ((nbytes = write(clifd, buf, sizeof(buf))) != sizeof(buf))
-		perror("write() failed");
-	printf("write %d bytes\n", nbytes);
-
-
-	/* 7 - 关闭连接 */
-	close(clifd);
-	close(sockfd);
 
 	return 0;
 }

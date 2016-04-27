@@ -35,21 +35,11 @@ main(int argc, char *argv[])
 	memset(&svaddr, 0, sizeof(svaddr));
 	svaddr.sin_family = AF_INET;
 	svaddr.sin_port = htons(atoi(argv[2]));
-	/** 将字符串IP地址 转化为 网络字节序的IP地址 */
-	svaddr.sin_addr.s_addr = inet_addr(argv[1]);
-	/** 不推荐使用inet_addr()，使用inet_aton() */
-	if (inet_aton(argv[1], (struct in_addr *) &svaddr.sin_addr.s_addr) == 0) {
-		fprintf(stderr, "inet_aton() convert %s failed: %s\n",
-			argv[1], strerror(errno));
-		exit(errno);
-	}
-	/** inet_aton() 是过时的函数，推荐采用下面的方法 */
 	if (inet_pton(AF_INET, argv[1], &(svaddr.sin_addr)) != 1) {
 		fprintf(stderr, "inet_pton() convert %s failed: %s\n",
 			argv[1], strerror(errno));
 		exit(errno);
 	}
-
 
 
 	i = 0;
