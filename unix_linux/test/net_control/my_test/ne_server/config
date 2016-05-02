@@ -1,0 +1,6 @@
+dbip:192.168.1.159
+dbname:mydb
+dbusername:mg
+dbpassword:mg
+localip:192.168.1.201
+error_report_ip:192.168.0.101

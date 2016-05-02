@@ -1,0 +1,198 @@
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "f9905e6db452a67c1ffcd33a040f5885" 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "f9905e6db452a67c1ffcd33a040f5885" 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "f9905e6db452a67c1ffcd33a040f5885" 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "f9905e6db452a67c1ffcd33a040f5885" 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "f9905e6db452a67c1ffcd33a040f5885" 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "f9905e6db452a67c1ffcd33a040f5885" 
+OK : the first time connect our server 
+     his's information: CPUID='0001-06E5-0000-0000-0000-0000',MAC='00:0c:29:df:e6:6b',VERSION='0.1',LOCAL='局域网 对方和您在同一内部网'
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "f9905e6db452a67c1ffcd33a040f5885" 
+OK : the first time connect our server 
+     his's information: CPUID='0001-06E5-0000-0000-0000-0000',MAC='00:0c:29:df:e6:6b',VERSION='0.1',LOCAL='局域网 对方和您在同一内部网'
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+############error : wrong_code : "401" 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "0be173ee787c268593714367dd6fd5a6" 
+OK : the first time connect our server 
+     his's information: CPUID='0001-06E5-0000-0000-0000-0000',MAC='00:0c:29:df:e6:6b',VERSION='0.1',LOCAL='局域网 对方和您在同一内部网'
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "0be173ee787c268593714367dd6fd5a6" 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "0be173ee787c268593714367dd6fd5a6" 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "0be173ee787c268593714367dd6fd5a6" 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "0be173ee787c268593714367dd6fd5a6" 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "0be173ee787c268593714367dd6fd5a6" 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "0be173ee787c268593714367dd6fd5a6" 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "0be173ee787c268593714367dd6fd5a6" 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+############error : wrong_code : "403" 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "0be173ee787c268593714367dd6fd5a6" 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "0be173ee787c268593714367dd6fd5a6" 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "0be173ee787c268593714367dd6fd5a6" 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "0be173ee787c268593714367dd6fd5a6" 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "0be173ee787c268593714367dd6fd5a6" 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "0be173ee787c268593714367dd6fd5a6" 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "0be173ee787c268593714367dd6fd5a6" 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : ===============================================
+OK : login ip : 192.168.0.100 
+OK : correct sn : "0be173ee787c268593714367dd6fd5a6" 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
+OK : correct cpuid : "0001-06E5-0000-0000-0000-0000" 
+OK : correct mac : "00:0c:29:df:e6:6b" 
+OK : correct vsersion : "0.1" 
+OK : right ip locate : 局域网 对方和您在同一内部网 
