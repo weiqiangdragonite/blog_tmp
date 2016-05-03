@@ -1,5 +1,5 @@
 /*
- *
+ * arp receiver
  */
 
 #include <stdio.h>
@@ -20,8 +20,14 @@
 
 /* /usr/include/linux/if_ether.h */
 #define ETH_ALEN		6	/* Octets in one ethernet addr */
+#define ETH_FRAME_LEN		1514	/* Max. octets in frame sans FCS */
+
 #define ETH_P_802_3		0x0001	/* Dummy type for 802.3 frames */
+
+#define ETH_P_ARP		0x0806	/* Address Resolution packet    */
 #define ETH_P_ALL		0x0003	/* Every packet (be careful!!!) */
+
+/* /usr/include/net/ethernet.h */
 #define ETHERTYPE_IP		0x0800	/* IP */
 #define ETHERTYPE_ARP		0x0806	/* ARP: Address resolution */
 #define ETHERTYPE_REVARP	0x8035	/* RARP: Reverse ARP */
@@ -68,47 +74,33 @@ struct arp_packet
 
 
 
-
-void
-send_arp()
-{
-	/* fill ethernet header */
-
-
-	/* fill arp header */
-}
-
-
-
 int
 main(int argc, char *argv[])
 {
-	int sfd, n;
+	int sfd, n, i;
 	struct in_addr dst_addr, src_addr;
 
 	/* netpacket/packet.h */
-	struct sockaddr_ll toaddr;	/* 不能使用struct sockaddr_in结构 */
+	struct sockaddr_ll fromaddr;	/* 不能使用struct sockaddr_in结构 */
 	struct ifreq ifr;		/* linux/if_ether.h */
 
 	unsigned char src_mac[ETH_ALEN] = { 0 };
-	/* 全网广播ARP请求 */
-	unsigned char dst_mac[ETH_ALEN] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
-
-	struct arp_packet packet;
+	struct arp_packet *packet;
+	char buf[ETH_FRAME_LEN] = { 0 };
 
 
-	if (argc != 3) {
-		fprintf(stderr, "Usage: %s <dev_name> <dst_ip>\n", argv[0]);
+	if (argc != 2) {
+		fprintf(stderr, "Usage: %s <dev_name>\n", argv[0]);
 		exit(1);
 	}
 
-
-	if ((sfd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) == -1) {
+	/* 只接收发给本机的ARP报文 */
+	if ((sfd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP))) == -1) {
 		perror("socket() failed");
 		exit(1);
 	}
 
-	memset(&toaddr, 0, sizeof(toaddr));
+	memset(&fromaddr, 0, sizeof(fromaddr));
 
 	/* 获取网卡接口索引 */
 	memset(&ifr, 0, sizeof(ifr));
@@ -117,17 +109,9 @@ main(int argc, char *argv[])
 		perror("get dev index error");
 		exit(1);
 	}
-	toaddr.sll_ifindex = ifr.ifr_ifindex;
+	fromaddr.sll_ifindex = ifr.ifr_ifindex;
 	printf("interface index: %d\n", ifr.ifr_ifindex);
 
-	/* 获取网卡接口IP地址 */
-	if (ioctl(sfd, SIOCGIFADDR, &ifr) == -1) {
-		perror("get ip addr error");
-		//exit(1);
-	} else {
-		src_addr = ((struct sockaddr_in *) &(ifr.ifr_addr))->sin_addr;
-		printf("IP addr: %s\n", inet_ntoa(src_addr));
-	}
 
 	/* 获取网卡接口MAC地址 */
 	if (ioctl(sfd, SIOCGIFHWADDR, &ifr) == -1) {
@@ -141,37 +125,45 @@ main(int argc, char *argv[])
 	}
 
 
-	memset(&packet, 0, sizeof(packet));
-	/* 开始填充，构造以太网头部 */
-	memcpy(packet.eth.ether_dst, dst_mac, ETH_ALEN);
-	memcpy(packet.eth.ether_src, src_mac, ETH_ALEN);
-	packet.eth.ether_type = htons(ETHERTYPE_ARP);
+	fromaddr.sll_family = PF_PACKET;
+	fromaddr.sll_protocol = htons(ETH_P_ARP);
+	fromaddr.sll_hatype = ARPHRD_ETHER;
+	fromaddr.sll_pkttype = PACKET_HOST;
+	fromaddr.sll_halen = ETH_ALEN;
 
-	/* 开始填充ARP报文 */
-	packet.arp.arp_hrd = htons(ARPHRD_ETHER);	/* 硬件类型为以太 */
-	packet.arp.arp_pro = htons(ETHERTYPE_IP);	/* 协议类型为IP */
+	memcpy(fromaddr.sll_addr, src_mac, ETH_ALEN);
 
-	/* 硬件地址长度和IPV4地址长度分别是6字节和4字节 */
-	packet.arp.arp_hln = ETH_ALEN;
-	packet.arp.arp_pln = 4;
+	bind(sfd, (struct sockaddr *) &fromaddr, sizeof(struct sockaddr));
 
-	/* 操作码，这里我们发送ARP请求 */
-	packet.arp.arp_op = htons(ARP_REQUEST);
+	printf("start recving ...\n");
+	while (1) {
+		printf("\n");
+		memset(buf, 0, sizeof(buf));
+		n = recvfrom(sfd, buf, sizeof(buf), 0, NULL, NULL);
 
-	/* 填充发送端的MAC和IP地址 */
-	memcpy(&(packet.arp.arp_sha), src_mac, ETH_ALEN);
-	memcpy(&(packet.arp.arp_spa), &src_addr, 4);
+		packet = (struct arp_packet *) buf;
 
-	/* 填充目的端IP地址，MAC地址不用管 */
-	inet_pton(AF_INET, argv[2], &dst_addr);
-	memcpy(&(packet.arp.arp_tpa), &dst_addr, 4);
+		printf("Dest MAC: ");
+		for (i = 0; i < ETH_ALEN - 1; ++i)
+			printf("%02X-", packet->eth.ether_dst[i]);
+		printf("%02X\n", packet->eth.ether_dst[i]);
 
-	toaddr.sll_family = PF_PACKET;
+		printf("Src MAC: ");
+		for (i = 0; i < ETH_ALEN - 1; ++i)
+			printf("%02X-", packet->eth.ether_src[i]);
+		printf("%02X\n", packet->eth.ether_src[i]);
 
-	/* 为什么我发送一个request包，wireshark或者接收程序会抓到两个包，也就是
-	ARP包发送了两遍? */
-	n = sendto(sfd, &packet, sizeof(packet), 0,
-		(struct sockaddr *) &toaddr, sizeof(toaddr));
+		printf("Frame type: %04X\n", ntohs(packet->eth.ether_type));
+
+
+		if (ntohs(packet->arp.arp_op) == ARP_REQUEST) {
+			printf("Get ARP request\n");
+		} else if (ntohs(packet->arp.arp_op) == ARP_REPLY) {
+			printf("Get ARP reply\n");
+		}
+	}
+
+
 
 	close(sfd);
 	return 0;
