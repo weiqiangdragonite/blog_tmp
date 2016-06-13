@@ -1,0 +1,304 @@
+@charset "utf-8";
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, /* structural elements 结构元素 */
+pre, /* text formatting elements 文本格式元素 */
+form, fieldset, legend, button, input, textarea /* form elements 表单元素 */ {
+    margin: 0;
+    padding: 0;
+}
+body,
+button, input, select, textarea /* for ie */ {
+    font:14px/1.6 arial,"Microsoft Yahei","Hiragino Sans GB",sans-serif;
+    color:#6a6a6a;
+}
+img{
+	border:none;
+}
+.clear:after{
+	content:".";
+	display:block;
+	height:0; 
+	clear:both;
+	visibility:hidden;
+}
+.clear{
+	display:inline-block;
+	zoom:1;
+}
+a{
+    color:#6a6a6a;
+    text-decoration:none;
+}
+a:focus{
+    outline:thin dotted #333;
+    outline:5px auto -webkit-focus-ring-color;
+    outline-offset:-2px
+}
+a:hover,a:active{
+    outline:0;
+    color:#ff0042;
+	background-color: #eqeqeq;
+}
+.udl{
+	text-decoration:underline;
+}
+.blue{
+	color:#2554b3;
+}
+.blue:hover{
+	color:#ff0042;
+}
+@font-face{
+    font-family:'iconfont';
+    src: url('http://static.orayimg.com/font/iconfont.eot'); /* IE9*/
+    src: url('http://static.orayimg.com/font/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('http://static.orayimg.com/font/iconfont.woff') format('woff'), /* chrome、firefox */
+    url('http://static.orayimg.com/font/iconfont.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+    url('http://static.orayimg.com/font/iconfont.svg#iconfont') format('svg'); /* iOS 4.1- */
+}
+.iconfont{
+    font-family:"iconfont";
+    font-size:16px;
+    font-style:normal;
+}
+/** 按钮 button btn **/
+.btn{
+    display:inline-block;
+    *display:inline;
+    *zoom:1;
+    margin-bottom:0;
+    font-size:14px;
+    height:38px;
+    line-height:38px;
+    text-align:center;
+    cursor:pointer;
+    background-color:#fff;
+    border:1px solid #ff0042;
+    color:#ff0042;
+    padding:0;
+    width:128px;
+	-webkit-appearance : none ;
+}
+input.btn,button.btn /* 修复input,button边框大小*/{
+    *height:40px;
+    *width:130px;
+}
+.btn:hover,.btn:focus{
+    color:#fff;
+    outline:0;
+    text-decoration:none;
+    background-color:#ff0042;
+}
+.btn.active,.btn:active{
+    outline:0;
+    background-color:#ff0042;
+    -webkit-box-shadow:inset 0 2px 4px rgba(0,0,0,.15);
+    -moz-box-shadow:inset 0 2px 4px rgba(0,0,0,.15);
+    box-shadow:inset 0 2px 4px rgba(0,0,0,.15);
+}
+.btn.disabled,.btn[disabled]{
+    cursor:default;
+    opacity:.65;
+    filter:alpha(opacity=65);
+    -webkit-box-shadow:none;
+    -moz-box-shadow:none;
+    box-shadow:none;
+    color:#e5e9ec;
+    background:#ccd0d9;
+    border-color:#f3f3f3;
+}
+.btn-block{
+    display:block;
+    width:100% !important;
+    padding-left:0;
+    padding-right:0;
+    -webkit-box-sizing:content-box;
+    -moz-box-sizing:content-box;
+    box-sizing:content-box
+}
+.btn-primary{
+    background-color:#ff0042;
+    border-color:#ff0042;
+    color:#fff;
+}
+.btn-primary:hover,.btn-primary:focus,.btn-primary.active,.btn-primary:active{
+    color:#fff;
+    border-color:#e7003c;
+    background-color:#e7003c;
+}
+
+.btn-disabled{
+    cursor:not-allowed;
+    background-color:#fff;
+    border-color:#f3f3f3;
+    color:#f3f3f3
+}
+.btn-disabled:hover,.btn-disabled:focus,.btn-disabled.active,.btn-disabled:active{
+    -webkit-box-shadow:none;
+    -moz-box-shadow:none;
+    box-shadow:none;
+    color:#f3f3f3;
+    border-color:#f3f3f3;
+    background-color:#fff
+}
+
+.login{
+	margin:0 auto;
+	width:320px;
+	position:relative;
+	padding:40px;
+	background-color:#fafafa;
+    font:14px/1.6 arial,"Microsoft Yahei","Hiragino Sans GB",sans-serif;
+    color:#6a6a6a;
+}
+
+.error-tips{
+	height:24px;
+	position:absolute;
+	left:40px;
+	top:16px;
+	width:320px;
+}
+.error-tips p{
+	display:block;
+	height:24px;
+	background-color:#f7c0bc;
+	text-align:center;
+	color:#ce0e00;
+	overflow:hidden;
+}
+.error-tips .iconfont{
+	
+}
+.fieldset label{
+	display:block;
+	position:relative;
+	border:1px solid #d7d7d7;
+	padding-left:10px;
+	height:38px;
+}
+.fieldset input{
+	width:100%;
+	line-height:16px;
+	height:16px;
+	padding:11px 0 11px;
+	padding-left:10px;
+	margin-left:-10px;
+	border:0;
+	ime-mode:disabled;
+	*margin-top:-1px; /* ie offset ?! */
+}
+
+.fieldset label.password{
+	margin-top:-1px;
+}
+
+.fieldset label .text-placeholder {
+
+}
+.opts{
+	margin:20px 0;
+	font-size:12px;
+	height:16px;
+	position: relative;
+}
+.opts .ext{
+	position:absolute;
+	top:0;
+	right:0;
+}
+.container,
+.header{
+	width:550px;
+	margin:0 auto;
+}
+.header{
+	padding-top:30px;
+	height:120px;
+}
+.header .logo{
+	height:42px;
+	padding:39px 0;
+	text-align:center;
+	display:block
+}
+.table{
+    font:14px/1.6 arial,"Microsoft Yahei","Hiragino Sans GB",sans-serif;
+    color:#6a6a6a;
+}
+.table-info th{
+	font-weight:normal;
+	color:#6a6a6a;
+}
+.table-info td{
+	color:#333;
+}
+.help ul,
+.hsk-box ul{
+	margin:0;
+	padding:0;
+	list-style:none;
+	width:100%;
+	color:#6a6a6a;
+    font:14px/1.6 arial,"Microsoft Yahei","Hiragino Sans GB",sans-serif;
+}
+.help li{
+	width:123px;
+	padding-left:60px;
+	float: left;
+	position:relative;
+	height:50px;
+}
+.help .icon-big{
+	position:absolute;
+	top:0;
+	left:0;
+}
+.help strong{
+	font-size:16px;
+	color:#333;
+	font-weight:normal;
+}
+.hsk-box li{
+	width:16.6%;
+	float:left;
+	text-align:center;
+}
+.hsk-box .title{
+	text-align:center;
+	font-size:16px;
+	color:#333;
+	margin-bottom:30px;
+}
+.icon-big{
+	display:inline-block;
+	height:50px;
+	width:50px;
+	background:url(ib.gif) no-repeat;
+}
+.ib-phone{
+	background-position:0 -100px;
+}
+.ib-help{
+	background-position:-50px -100px;
+}
+.ib-bbs{
+	background-position:-100px -100px;
+}
+.ib-remote{
+	background-position:0 0;
+}
+.ib-website{
+	background-position:-50px 0;
+}
+.ib-vpn{
+	background-position:-100px 0;
+}
+.ib-ftp{
+	background-position:0 -50px;
+}
+.ib-oa{
+	background-position:-50px -50px;
+}
+.ib-more{
+	background-position:-100px -50px;
+}

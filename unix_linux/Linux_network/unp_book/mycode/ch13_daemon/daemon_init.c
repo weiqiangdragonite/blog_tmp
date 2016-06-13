@@ -1,5 +1,5 @@
 /*
- * 以TLPI为主
+ * 参考我写的daemon.c
  */
 
 #include <stdlib.h>

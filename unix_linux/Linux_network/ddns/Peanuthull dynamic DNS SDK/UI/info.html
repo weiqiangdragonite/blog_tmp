@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+<title>智能嵌入式</title>
+<link rel="stylesheet" href="img/style.css">
+<script src="img/jquery-1.7.2.js"></script>
+</head>
+<body>
+<div class="header">
+	<a href="http://hsk.oray.com/" class="logo" target="_blank"><img src="img/logo_hsk.gif"></a>
+</div>
+<div class="container">
+	<table border="0" cellspacing="10" cellpadding="0" class="table-info" width="100%">
+    	<caption>
+        	<col width="40%;">
+            <col>
+        </caption>
+        <tr>
+            <th align="right">帐号信息：</th>
+            <td>zzy--2323&nbsp;&nbsp;&nbsp;<a href="#">退出</a></td>
+        </tr>
+        <tr>
+            <th align="right">服务级别：</th>
+            <td>公网版免费级&nbsp;&nbsp;&nbsp;<a href="http://buy.oray.com/upgrade/?sid=1249496&tab=inner&from=peanuthull&account=vp-myusernam-011" target="_blank">升级</a></td>
+        </tr>
+        <tr>
+            <th align="right">状态信息：</th>
+            <td>在线</td>
+        </tr>
+        <tr>
+            <th align="right">公网IP：</th>
+            <td>256.254.256.655</td>
+        </tr>
+        <tr>
+            <th align="right" valign="top">域名列表：</th>
+            <td><div style="display:none;"></div><a href="javascript:void(0);" id="show">显示全部...</a></td>
+        </tr>
+	</table>
+	<div style="margin-top:65px;" class="help">
+    	<ul class="clear">
+        	<li><span class="icon-big ib-phone"></span><strong>客服热线</strong><p>020-62219018</p></li>
+        	<li><span class="icon-big ib-help"></span><strong>帮助中心</strong><p><a href="http://hsk.oray.com/help/" target="_blank">去看看</a></p></li>
+        	<li><span class="icon-big ib-bbs"></span><strong>花生壳论坛</strong><p><a href="http://bbs.oray.com/forum-2-1.html" target="_blank">立即提问&gt;&gt;</a></p></li>
+        </ul>
+    </div>
+</div>
+<script>
+$("#show").click(function(){
+	$(this).siblings("div").toggle();
+	document.getElementById('show').innerHTML =  $(this).siblings("div").is(':visible')? '收起...': '显示全部...'
+});
+</script>
+</body>
+</html>

@@ -40,7 +40,7 @@ main(int argc, char *argv[])
 		}
 	}
 
-
+	printf("argc = %d, optind = %d\n", argc, optind);
 	if (optind < argc) {
 		printf("non-option ARGV-elements:\n");
 		while (optind < argc) {
