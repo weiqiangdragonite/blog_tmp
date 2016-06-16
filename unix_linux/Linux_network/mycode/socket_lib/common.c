@@ -69,11 +69,13 @@ writen(int fd, const void *vptr, size_t n)
 
 /*
  * this code is combine tlpi and unp
+ *
+ * PAINFULLY SLOW VERSION !!!
  */
 ssize_t
 readline(int fd, void *ptr, size_t maxlen)
 {
-	sszie_t n, num_read;
+	ssize_t n, num_read;
 	char c;
 	char *p;
 
