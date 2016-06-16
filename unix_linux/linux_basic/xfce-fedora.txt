@@ -297,6 +297,11 @@ sudo mount -t vboxsf D_DRIVE /mnt/ShareD
 sudo umount -f /mnt/ShareD
 
 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
 1. 通过在终端中运行mount命令我们看到，勾选上“Auto-mount”后，D_DRIVE已经被自动mount到了/media/sf_D_DRIVE目录下，但是在普通用户XXX下却没有权限访问。只有使用root用户登录才能访问。这是为什么呢？
 
 D_DRIVE on /media/sf_D_DRIVE type vboxsf (gid=493,rw)
@@ -319,6 +324,20 @@ cat /etc/group
 -> result
 vboxsf:x:1001:XXX
 4. 添加完后，重启系统，这时就可以在media目录下访问共享目录了。
+
+
+
+Fedora 23亲测
+总结一下：
+vbox共享文件夹设置那里，勾选自动挂载，开机后，进入/media/sf_D_DRIVE，但是普通
+用户不能进入，只能用root用户进入，是因为普通用户没有加入组 vboxsf，只要加入就行
+添加组成员:
+gpasswd -a username groupname
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
 
 --------------------------------------------------------------------------------
 
