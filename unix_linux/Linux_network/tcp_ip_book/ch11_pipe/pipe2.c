@@ -19,6 +19,7 @@ main(int argc, char *argv[])
 		read(fds[0], buf, sizeof(buf));
 		printf("child recv: %s\n", buf);
 	} else {
+		//sleep(10);
 		read(fds[0], buf, sizeof(buf));
 		printf("parent recv: %s\n", buf);
 		write(fds[1], str2, sizeof(str2));

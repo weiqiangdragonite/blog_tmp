@@ -1,4 +1,7 @@
-
+/*
+ * 多播
+ * Receiver: 加入多播组
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,16 +16,17 @@
 
 
 
-#define TTL	64
 
 int
 main(int argc, char *argv[])
 {
 	int sockfd;
+
 	struct sockaddr_in mul_addr;
-	int time_live = TTL;
-	int fd, ret, str_len;
-	char buf[10];
+	struct ip_mreq join_addr;
+
+	int str_len, ret;
+	char buf[128];
 
 	if (argc != 3) {
 		fprintf(stderr, "Usage: %s <ip> <port>\n", argv[0]);
@@ -35,29 +39,39 @@ main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
+
 	memset(&mul_addr, 0, sizeof(mul_addr));
 	mul_addr.sin_family = AF_INET;
-	mul_addr.sin_addr.s_addr = inet_addr(argv[1]);
+	mul_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	mul_addr.sin_port = htons(atoi(argv[2]));
 
-	ret = setsockopt(sockfd, IPPROTO_IP, IP_MULTICAST_TTL, &time_live, sizeof(time_live));
+
+	ret = bind(sockfd, (struct sockaddr *) &mul_addr, sizeof(mul_addr));
+	if (ret == -1) {
+		perror("bind() failed");
+		exit(EXIT_FAILURE);
+	}
+
+	// join multicast addr
+	join_addr.imr_multiaddr.s_addr = inet_addr(argv[1]);	/* 多播组地址信息 */
+	join_addr.imr_interface.s_addr = htonl(INADDR_ANY);	/* 加入多播组的主机地址信息 */
+
+
+	ret = setsockopt(sockfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &join_addr, sizeof(join_addr));
 	if (ret == -1) {
 		perror("setsockopt() failed");
 		exit(EXIT_FAILURE);
 	}
 
-	fd = open("news_sender.c", O_RDONLY);
-	if (fd == -1) {
-		perror("open() failed");
-		exit(EXIT_FAILURE);
-	}
 
-	while ((str_len = read(fd, buf, sizeof(buf) - 1)) > 0) {
+
+	while (1) {
+		str_len = recvfrom(sockfd, buf, sizeof(buf), 0, NULL, NULL);
+		if (str_len < 0)
+			break;
 		buf[str_len] = '\0';
-		sendto(sockfd, buf, strlen(buf), 0, (struct sockaddr *) &mul_addr, sizeof(mul_addr));
-		sleep(3);
+		printf("[recv] %s\n", buf);
 	}
-	close(fd);
 	close(sockfd);
 
 	return 0;
