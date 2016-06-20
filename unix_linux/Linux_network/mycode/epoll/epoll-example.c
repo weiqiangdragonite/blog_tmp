@@ -4,10 +4,14 @@
  *
  * 参考
  * http://www.cnblogs.com/aicro/archive/2012/12/27/2836170.html
- * http://blog.csdn.net/feitianxuxue/article/category/1111233  处理大并发
  * http://blog.chinaunix.net/uid-20583479-id-1920065.html
- * http://blog.csdn.net/huangjm_13/article/details/17676591 epoll 事件类型
+ * http://blog.csdn.net/feitianxuxue/article/category/1111233  处理大并发
+ * http://blog.csdn.net/huangjm_13/article/details/17676591 epoll epoll事件类型
+ *
+ * 例子编译ok，但没测试
  */
+
+
 
 
 #include <stdio.h>
@@ -68,6 +72,13 @@ epoll 没有这些固定限制，也不执行任何线性扫描。因此它可�
 传递到 epoll_ctl(2) 的 epoll 事件结构体如下。对每一个被监听的描述符，你可以关联
 到一个整数或者一个用户数据的指针。
 
+struct epoll_event
+{
+  __uint32_t   events; / * Epoll events * /
+  epoll_data_t data;   / * User data variable * /
+};
+
+
 typedef union epoll_data
 {
   void        *ptr;
@@ -76,11 +87,6 @@ typedef union epoll_data
   __uint64_t   u64;
 } epoll_data_t;
  
-struct epoll_event
-{
-  __uint32_t   events; / * Epoll events * /
-  epoll_data_t data;   / * User data variable * /
-};
 
 */
 
@@ -237,6 +243,7 @@ add_epoll_event_list(struct epoll_event *event, int fd, int epollfd)
 	/* 设置与要处理的事件相关的文件描述符 */
 	event->data.fd = fd;
 	/* 设置要处理的事件类型为 边缘触发 */
+	/* 边缘出发时需要设置为非阻塞的 */
 	event->events = EPOLLIN | EPOLLET;
 
 	/* 注册epoll事件 */
@@ -304,6 +311,7 @@ main(int argc, char *argv[])
 	int sfd, clifd;
 	int epollfd, event_cnt;
 	int timeout, i;
+
 	struct epoll_event event;
 	struct epoll_event *wait_events;
 
@@ -397,7 +405,7 @@ main(int argc, char *argv[])
 					process_client_data(clifd);
 			}
 
-			/* 如果有数据发送 */
+			/* 如果有数据发送，这个不需要吧，真有数据要发送直接发就行了 */
 			else if(wait_events[i].events & EPOLLOUT) {
 				continue;
 			}

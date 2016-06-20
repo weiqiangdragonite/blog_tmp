@@ -156,7 +156,7 @@ update_data(void *arg)
 
 
 
-	socklen = sizeof(cli_addr);
+
 	while (1) {
 
 		// 等待5.5秒
@@ -182,6 +182,7 @@ update_data(void *arg)
 
 		/* new client connection */
 		if (FD_ISSET(socket_fd, &current_rfds)) {
+			socklen = sizeof(cli_addr);
 			connect_fd = accept(socket_fd,
 					(struct sockaddr *) &cli_addr,
 					&socklen);

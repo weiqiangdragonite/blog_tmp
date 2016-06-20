@@ -1,5 +1,6 @@
 /*
  * 回射服务器
+ * 使用poll
  */
 
 
@@ -15,6 +16,7 @@
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <limits.h>
 
 #define OPEN_MAX	1024
 #define INFTIM		-1
@@ -33,11 +35,12 @@ main(int argc, char *argv[])
 	int listenfd, connfd, sockfd;
 	socklen_t socklen;
 	struct sockaddr_in svaddr, cliaddr;
-	int ret, i;
+	int ret, i, nready;
 	ssize_t n;
-	int maxi, nready;
-	struct pollfd client[OPEN_MAX];
 	char buf[BUF_SIZE];
+
+	nfds_t maxi;
+	struct pollfd client[OPEN_MAX];
 
 
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -70,18 +73,21 @@ main(int argc, char *argv[])
 
 
 	client[0].fd = listenfd;
-	client[0].events = POLLRDNORM;
+	client[0].events = POLLRDNORM;	/* 普通数据可读 */
 	for (i = 1; i < OPEN_MAX; ++i)
 		client[i].fd = -1;
-	maxi = 0;
+	maxi = 0;			/* max index into client[] array */
 
 
-	socklen = sizeof(cliaddr);
+
 	while (1) {
+		// -1是阻塞，0是不会阻塞，大于0至多阻塞timeout毫秒
 		nready = poll(client, maxi + 1, INFTIM);
+
 
 		/* new client connection */
 		if (client[0].revents & POLLRDNORM) {
+			socklen = sizeof(cliaddr);
 			connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &socklen);
 
 			/* 从下标1开始，0固定用于监听套接字 */
@@ -106,10 +112,12 @@ main(int argc, char *argv[])
 				continue;
 		}
 
+
 		/* check all clients for data */
 		for (i = 1; i <= maxi; ++i) {
 			if ((sockfd = client[i].fd) < 0)
 				continue;
+
 			if (client[i].revents & (POLLRDNORM | POLLERR)) {
 				if ((n = read(sockfd, buf, BUF_SIZE)) < 0) {
 					if (errno == ECONNRESET) {
