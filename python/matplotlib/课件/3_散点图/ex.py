@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+# 散点图
 
 import matplotlib.pyplot as plt
 import numpy as np

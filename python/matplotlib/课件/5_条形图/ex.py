@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# 条形图
 
 
 import matplotlib.pyplot as plt
