@@ -40,6 +40,28 @@ nameserver 8.8.8.8
 添加一行
 DNS1=8.8.8.8    #手动添加一个dns地址；
 
+
+https://linux.cn/article-3977-1.html
+centos 7设置静态IP
+vi /etc/sysconfig/network-scripts/ifcfg-XXX
+
+BOOTPROTO=static #dhcp改为static（修改）
+ONBOOT=yes       #开机启用本配置，一般在最后一行（修改）
+IPADDR=192.168.1.200
+NETMASK=255.255.255.0
+GATEWAY=192.168.1.1
+DNS1=114.114.114.114
+
+如果要改网卡名，可以参考
+http://www.linuxdiyf.com/linux/21453.html
+
+
+centos 7 可以使用ip addr查看ip
+或者安装 yum install net-tools
+使用ifconfig
+
+
+
 --------------------------------------------------------------------------------
 
 跟新yum源
