@@ -62,6 +62,13 @@ centos 7 可以使用ip addr查看ip
 
 
 
+
+php7
+./configure --enable-fpm --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-session --enable-opcache --with-zlib
+编译安装后 
+http://www.cnblogs.com/52fhy/p/5797981.html
+
+
 --------------------------------------------------------------------------------
 
 跟新yum源
@@ -144,6 +151,10 @@ yum install gnome-system-monitor
 -----------------------------------------------------------
 
 4.Install GCC
+
+yum install gcc gcc-c++ automake autoconf libtool make
+
+
 
 安装GCC 4.8.2:
 http://www.gnu.org/software/gcc/
