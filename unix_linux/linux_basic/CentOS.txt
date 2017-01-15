@@ -62,11 +62,20 @@ centos 7 可以使用ip addr查看ip
 
 
 
+MariaDB
+https://downloads.mariadb.org/
+
+yum install MariaDB-server MariaDB-client
+mysql_secure_installation 
+
 
 php7
 ./configure --enable-fpm --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-session --enable-opcache --with-zlib
 编译安装后 
 http://www.cnblogs.com/52fhy/p/5797981.html
+
+
+
 
 
 --------------------------------------------------------------------------------
