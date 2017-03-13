@@ -10,14 +10,14 @@ from pyquery import PyQuery as pq
 import csv
 
 
-attrs = ["³¬Á´½Ó", "Ãû³Æ", "ÆÀ·Ö", "µ¼Ñİ", "±à¾ç", "Ö÷Ñİ", "ÀàĞÍ", \
-    "ÖÆÆ¬¹ú¼Ò/µØÇø", "ÓïÑÔ", "ÉÏÓ³ÈÕÆÚ", "Æ¬³¤", "ÓÖÃû", "IMDbÁ´½Ó"]
+attrs = ["è¶…é“¾æ¥", "åç§°", "è¯„åˆ†", "å¯¼æ¼”", "ç¼–å‰§", "ä¸»æ¼”", "ç±»å‹", \
+    "åˆ¶ç‰‡å›½å®¶/åœ°åŒº", "è¯­è¨€", "ä¸Šæ˜ æ—¥æœŸ", "ç‰‡é•¿", "åˆå", "IMDbé“¾æ¥"]
 
 
 
 def parse_movie_info(text, info):
     '''
-        ½âÎöµçÓ°ĞÅÏ¢
+        è§£æç”µå½±ä¿¡æ¯
     '''
     key = None
     start = True
@@ -38,16 +38,16 @@ def parse_movie_info(text, info):
 
 def crawl_info(url):
     '''
-        ½âÎöµçÓ°Ò³Ãæ
+        è§£æç”µå½±é¡µé¢
     '''
     info = {}
     response = requests.get(url)
     page = pq(response.content)
     content = page("div#content").eq(0)
 
-    info["³¬Á´½Ó"] = url
-    info["Ãû³Æ"] = content("h1 span").eq(0).text()
-    info["ÆÀ·Ö"] = content("div.rating_wrap strong.rating_num").text()
+    info["è¶…é“¾æ¥"] = url
+    info["åç§°"] = content("h1 span").eq(0).text()
+    info["è¯„åˆ†"] = content("div.rating_wrap strong.rating_num").text()
 
     info_text = content("div#info").text()
     parse_movie_info(info_text, info)
@@ -59,7 +59,7 @@ def crawl_info(url):
 
 def crawl(query_text, counter):
     '''
-        »ñÈ¡µçÓ°ÁĞ±í
+        è·å–ç”µå½±åˆ—è¡¨
     '''
     start = 0
     ret_list = []
@@ -92,7 +92,7 @@ def crawl(query_text, counter):
 
 def write_to_file(info, path):
     '''
-        Ğ´ÈëÎÄ¼ş
+        å†™å…¥æ–‡ä»¶
     '''
     with open(path, 'w') as csvfile:
         writer = csv.writer(csvfile)
@@ -107,13 +107,13 @@ def write_to_file(info, path):
 
 
 if __name__ == "__main__":
-    query_text = input("ÇëÊäÈë¹Ø¼ü×Ö: ")
-    counter = input("ÇëÊäÈëÅÀÈ¡µÄÊı¾İÁ¿: ")
+    query_text = input("è¯·è¾“å…¥å…³é”®å­—: ")
+    counter = input("è¯·è¾“å…¥çˆ¬å–çš„æ•°æ®é‡: ")
 
-    query_text = query_text.strip() if query_text.strip() else "³¤³Ç"
+    query_text = query_text.strip() if query_text.strip() else "é•¿åŸ"
     counter = int(counter) if counter.isdigit() else 10
 
-    print("¹Ø¼ü×Ö: %s, ÊıÁ¿: %d" % (query_text, counter))
+    print("å…³é”®å­—: %s, æ•°é‡: %d" % (query_text, counter))
 
     ret_list = crawl(query_text, counter)
     write_to_file(ret_list, "result.csv")
