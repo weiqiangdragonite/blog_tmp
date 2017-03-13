@@ -187,7 +187,6 @@ def get_image(line):
 
 def save_image(url, path):
     img = get_url_content(url)
-    # 要不要判断返回是否200
     if img != None:
         with open(path, 'wb') as f:
             f.write(img.content)
