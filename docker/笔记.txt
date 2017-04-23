@@ -1,4 +1,0 @@
-
-
-
-docker pull centos:latest

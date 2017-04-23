@@ -1,0 +1,6 @@
+# Dockerfile for httpd
+# https://store.docker.com/images/httpd?tab=description
+# 
+
+FROM httpd:2.4
+COPY ./public-html/ /usr/local/apache2/htdocs/
