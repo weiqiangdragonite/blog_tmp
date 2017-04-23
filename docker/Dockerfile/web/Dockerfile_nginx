@@ -1,0 +1,28 @@
+# This dockerfile uses the debian:8 image
+# VERSION X - EDITION Y
+# Author: 
+# Command format: Instruction [arguments / command] ..
+
+# Base image to use, this must be set as the first line
+FROM daocloud.io/debian:8
+
+# Maintainer: docker_user <docker_user at email.com> (@docker_user)
+MAINTAINER docker_user docker_user@email.com
+
+# Replace the apt-source to aliyun mirror
+ADD debian_sources.list /etc/apt/sources.list
+
+# Update and install nginx (version 1.6.2)
+RUN apt-get update && \
+    apt-get install -y nginx && \
+    rm -rf /var/lib/apt/lists/*
+
+# forward request and error logs to docker log collector
+#RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
+#   ln -sf /dev/stderr /var/log/nginx/error.log
+
+EXPOSE 80
+
+STOPSIGNAL SIGQUIT
+
+CMD ["nginx", "-g", "daemon off;"]
