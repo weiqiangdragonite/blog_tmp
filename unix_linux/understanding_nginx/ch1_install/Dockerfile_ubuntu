@@ -1,0 +1,20 @@
+#
+# Version	0.0.1
+# Author	weiqiangdragonite@gmail
+#
+
+FROM		daocloud.io/ubuntu:16.04
+MAINTAINER	Dragonite "weiqiangdragonite@gmail.com"
+
+# Replace the apt-source to aliyun mirror
+ADD ubuntu_sources.list /etc/apt/sources.list
+
+# Update and install nginx
+RUN apt-get update && \
+    apt-get install gcc g++ -y && \
+	apt-get install libpcre3 libpcre3-dev -y && \
+	apt-get install openssl libssl-dev -y && \
+	apt-get install zlib1g zlib1g-dev -y
+
+
+
