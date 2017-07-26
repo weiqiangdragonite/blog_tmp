@@ -1,0 +1,53 @@
+
+
+docker pull haproxy:1.4.27
+
+
+
+yum install gcc make wget
+
+wget   http://www.haproxy.org/download/1.4/src/haproxy-1.4.27.tar.gz
+tar -xf
+make TARGET=linux26
+make install
+
+mkdir /etc/haproxy
+cp examples/haproxy.cfg   /etc/haproxy/
+vim /etc/haproxy/haproxy.cfg
+
+
+# this config needs haproxy-1.1.28 or haproxy-1.2.1
+
+global
+	log 127.0.0.1	local0
+	log 127.0.0.1	local1 notice
+	#log loghost	local0 info
+	maxconn 4096
+	chroot /usr/share/haproxy
+	uid 99
+	gid 99
+	daemon
+	#debug
+	#quiet
+
+defaults
+	log	global
+	mode	http
+	option	httplog
+	option	dontlognull
+	retries	3
+	#redispatch
+	maxconn	2000
+	contimeout	5000
+	clitimeout	50000
+	srvtimeout	50000
+
+listen	web_cluster 0.0.0.0:80
+	option httpchk GET /index.html
+	balance	roundrobin
+	server	app1 172.17.0.3:80 check inter 2000 fall 3
+	server	app2 172.17.0.4:80 check inter 2000 fall 3
+
+
+cp examples/haproxy.init /etc/init.d/haproxy
+chmod +x /etc/init.d/haproxy
