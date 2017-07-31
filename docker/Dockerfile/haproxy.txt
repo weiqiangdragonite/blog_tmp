@@ -2,6 +2,7 @@
 
 docker pull haproxy:1.4.27
 
+------
 
 
 yum install gcc make wget
@@ -51,3 +52,7 @@ listen	web_cluster 0.0.0.0:80
 
 cp examples/haproxy.init /etc/init.d/haproxy
 chmod +x /etc/init.d/haproxy
+
+
+haproxy    -f /etc/haproxy/haproxy.cfg
+

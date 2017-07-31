@@ -1,0 +1,29 @@
+#
+#
+
+version: '2'
+services:
+    web_1:
+        image: daocloud.io/nginx:1.12
+        volumes:
+            - ./web/web_1/html/:/usr/share/nginx/html/:ro
+        ports:
+            - 80
+
+    web_2:
+        image: daocloud.io/nginx:1.12
+        volumes:
+            - ./web/web_2/html/:/usr/share/nginx/html/:ro
+        ports:
+            - 80
+
+    haproxy:
+        image: docker.io/haproxy:1.7
+        volumes:
+            - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+        links:
+            - web_1
+            - web_2
+        ports:
+            - "80:80"
+            - "8080:8080"
