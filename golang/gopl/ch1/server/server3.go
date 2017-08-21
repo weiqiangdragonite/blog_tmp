@@ -27,7 +27,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
         log.Print(err)
     }
     for k, v := range r.Form {
-        fmt.Fprintf(w, "Form[%q] = %q\n", k, v)
+        fmt.Fprintf(w, "Form[%q] = %s\n", k, v[0])
     }
 }
 
