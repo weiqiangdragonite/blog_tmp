@@ -71,8 +71,8 @@ show_time(long timeval)
 {
 	char *cp;
 	cp = ctime(&timeval);
-	//printf("%12.12s", cp+4);
-	printf("%s", cp);
+	printf("%12.12s", cp+4);
+	//printf("%s", cp);
 }
 
 

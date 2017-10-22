@@ -62,7 +62,7 @@ utmp_reload(void)
 	int amt_read;	/* read them in */
 
 	/* how many did we get */
-	amt_read = read(fd_utmp, utmpbuf, NRECS * UTSIZE);
+	amt_read = read(fd_utmp, utmpbuf, NCRES * UTSIZE);
 	if (amt_read == -1) {
 		perror("utmp_reload() failed");
 		return 0;
