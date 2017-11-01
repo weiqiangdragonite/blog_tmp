@@ -63,6 +63,35 @@ int insert_array_list(struct array_list *list, int data)
 }
 
 /*
+ * 动态增长
+ */
+int insert_array_list_v2(struct array_list *list, int data)
+{
+	int i, *old_data, *new_data;
+
+	/* 如果已用了一半空间，我们就增大空间 */
+	if (list->index >= (list->capacity / 2)) {
+		list->capacity = list->capacity * 2;
+		new_data = (int *) calloc(list->capacity, sizeof(int));
+		if (new_data == NULL) {
+			fprintf(stderr, "expand array size failed\n");
+			return -1;
+		}
+		/* 复制原数据 */
+		for (i = 0; i < list->index; ++i)
+			new_data[i] = list->data[i];
+		old_data = list->data;
+		list->data = new_data;
+		free(old_data);
+	}
+
+	list->data[list->index++] = data;
+
+	return list->index;
+}
+
+
+/*
  * 取出/删除指定位置元素
  * 成功返回0，否则返回-1
  */
@@ -80,6 +109,43 @@ int get_array_list(struct array_list *list, int pos, int *data)
 	for (i = pos + 1; i < list->index; ++i)
 		list->data[i - 1] = list->data[i];
 	list->index--;
+
+	return 0;
+}
+
+/*
+ * 动态减少
+ */
+int get_array_list_v2(struct array_list *list, int pos, int *data)
+{
+	int i, *old_data, *new_data;
+	if (pos >= list->index || pos < 0) {
+		fprintf(stderr, "position not exist\n");
+		return -1;
+	}
+	if (data != NULL)
+		*data = list->data[pos];
+
+	/* 将后面的元素往前移 */
+	for (i = pos + 1; i < list->index; ++i)
+		list->data[i - 1] = list->data[i];
+	list->index--;
+
+	/* 如果数量小于空间的1/4, 就把空间缩小一半 */
+	if (list->index < (list->capacity / 4) && (list->capacity / 2) > 1) {
+		list->capacity = list->capacity / 2;
+		new_data = (int *) calloc(list->capacity, sizeof(int));
+		if (new_data == NULL) {
+			fprintf(stderr, "reduce array size failed\n");
+			return -1;
+		}
+		/* 复制原数据 */
+		for (i = 0; i < list->index; ++i)
+			new_data[i] = list->data[i];
+		old_data = list->data;
+		list->data = new_data;
+		free(old_data);
+	}
 
 	return 0;
 }
@@ -132,7 +198,43 @@ void delete_array_list(struct array_list *list)
 
 
 
-int main(int argc, char *argv)
+
+
+
+void test2(void)
+{
+	int i, ret;
+	struct array_list *list = init_array_list(10);
+	if (list == NULL) {
+		fprintf(stderr, "cannot init array list\n");
+		exit(EXIT_FAILURE);
+	}
+
+	for (i = 0; i < 20; ++i) {
+		ret = insert_array_list_v2(list, i);
+		if (ret == -1)
+			fprintf(stderr, "cannot insert array list\n");
+	}
+	traverse_array_list(list);
+
+	ret = find_array_list(list, 25);
+	printf("data 25 at position %d\n", ret);
+	get_array_list_v2(list, ret, NULL);
+
+	for (i = 15; i >= 0; --i) {
+		ret = find_array_list(list, i);
+		printf("data %d at position %d\n", i, ret);
+		get_array_list_v2(list, ret, NULL);
+	}
+
+	traverse_array_list(list);
+	printf("capacity = %d\n", list->capacity);
+	delete_array_list(list);
+	list = NULL;
+
+}
+
+void test1(void)
 {
 	int i, ret;
 	struct array_list *list = init_array_list(10);
@@ -158,7 +260,12 @@ int main(int argc, char *argv)
 	traverse_array_list(list);
 	delete_array_list(list);
 	list = NULL;
+}
 
+int main(int argc, char *argv[])
+{
+	test1();
+	test2();
 	/*********/
 
 	return 0;
