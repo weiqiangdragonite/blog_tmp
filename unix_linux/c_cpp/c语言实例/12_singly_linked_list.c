@@ -2,6 +2,12 @@
  * 单链表
  * 单链表有两种实现方法，一种是线性存储，一种是链式存储。
  * 功能: 遍历链表，插入和删除元素，查找元素。
+ *
+ * 对比单链表的顺序储存和链式存储，可以看出来。
+ *   顺序存储链表的优点：遍历链表方便，查找也方便。
+ *   顺序存储链表的缺点：删除，插入元素比较繁琐。
+ *   链式存储链表的优点：插入，删除元素比较方便。遍历和查找比较繁
+ *   链式存储链表的缺点：遍历和查找元素比较繁。
  */
 
 #include <stdio.h>
@@ -192,13 +198,128 @@ void delete_array_list(struct array_list *list)
 }
 
 
+/******************************************************************************/
+
 
 /* 链式存储 */
 
+struct linked_list {
+	int data;
+	struct linked_list *next;
+};
+
+
+/*
+ * 一般没必要初始化，直接 struct linked_list *list = NULL; 即可创建链表;
+ * 除非是使用头结点，即struct linked_list list; 第一个结点用于指向链表，
+ * 本身不存放数据，那就需要初始化。
+ *
+ * 使用头指针的方式如果是插入或删除的需要传递指针的指针来进行操作，
+ * 使用头结点的方式只需要传递头结点的指针即可(方便链表操作)。
+ */
+struct linked_list *init_linked_list()
+{
+	return NULL;
+}
+
+
+/*
+ * 头插法
+ */
+int insert_linked_list(struct linked_list **list, int data)
+{
+	struct linked_list *ptr;
+	ptr = (struct linked_list *) malloc (sizeof(struct linked_list));
+	if (ptr == NULL) {
+		perror("malloc() failed");
+		return -1;
+	}
+	ptr->data = data;
+	ptr->next = NULL;
+
+	if (*list == NULL) {
+		*list = ptr;
+	} else {
+		ptr->next = *list;
+		*list = ptr;
+	}
+	return 0;
+}
+
+/*
+ * 删除指定元素
+ * 不好
+ */
+void delete_element(struct linked_list **list, int data)
+{
+	struct linked_list *ptr, *old_ptr;
+	ptr = old_ptr = *list;
+	while (ptr) {
+		if (ptr->data == data) {
+			/* first */
+			if (old_ptr == ptr)
+				*list = old_ptr = ptr->next;
+			else 
+				old_ptr->next = ptr->next;
+
+			free(ptr);
+			ptr = old_ptr;
+		} else {
+			old_ptr = ptr;
+			ptr = ptr->next;
+		}
+	}
+}
+
+void traverse_linked_list(struct linked_list *list)
+{
+	struct linked_list *ptr = list;
+	while (ptr) {
+		printf("%d ", ptr->data);
+		ptr = ptr->next;
+	}
+	printf("\n");
+	return;
+}
+
+
+void free_linked_list(struct linked_list *list)
+{
+	struct linked_list *ptr = list;
+	while (ptr) {
+		list = ptr->next;
+		free(ptr);
+		ptr = list;
+	}
+	return;
+}
 
 
 
 
+/******************************************************************************/
+
+
+void test3(void)
+{
+	struct linked_list *list = NULL;
+	int i;
+
+	for (i = 0; i < 10; ++i)
+		insert_linked_list(&list, i);
+	traverse_linked_list(list);
+
+	insert_linked_list(&list, 100);
+	delete_element(&list, 100);
+	delete_element(&list, 5);
+	delete_element(&list, 0);
+
+	traverse_linked_list(list);
+	free_linked_list(list);
+	list = NULL;
+
+	return;
+}
 
 
 void test2(void)
@@ -266,7 +387,7 @@ int main(int argc, char *argv[])
 {
 	test1();
 	test2();
-	/*********/
+	test3();
 
 	return 0;
 }
