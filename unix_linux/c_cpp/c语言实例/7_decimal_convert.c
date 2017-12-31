@@ -42,6 +42,7 @@ int hex_convert(int num, int base, char *ch, int size)
 			return -1;
 		}
 		n = num % base;
+		// 使用printf函数中的%X可以输出十六进制的内容
 		if (base == 16 && n >= 10)
 			ch[i] = 'A' + n - 10;
 		else
