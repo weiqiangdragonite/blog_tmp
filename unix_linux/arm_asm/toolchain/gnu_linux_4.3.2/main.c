@@ -1,0 +1,1 @@
+#include <stdio.h>#include <string.h>int main(void){    char ch = getchar();    switch (ch) {        case 'A':            break;        default:            break;    }        char str[10];    char *test = "hello";    strcpy(str, test);        switch (str[0]) {        case 'h':            break;        default:            break;    }        return 0;}

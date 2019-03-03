@@ -1,0 +1,149 @@
+
+clock.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00001c00 <_start>:
+    1c00:	e3a00207 	mov	r0, #1879048192	; 0x70000000
+    1c04:	e3800013 	orr	r0, r0, #19
+    1c08:	ee0f0f92 	mcr	15, 0, r0, cr15, cr2, {4}
+    1c0c:	e59f00d8 	ldr	r0, [pc, #216]	; 1cec <DELAY_END+0xc>
+    1c10:	e3a01000 	mov	r1, #0
+    1c14:	e5801000 	str	r1, [r0]
+    1c18:	e59f00d0 	ldr	r0, [pc, #208]	; 1cf0 <DELAY_END+0x10>
+    1c1c:	e5901000 	ldr	r1, [r0]
+    1c20:	e3e02103 	mvn	r2, #-1073741824	; 0xc0000000
+    1c24:	e0011002 	and	r1, r1, r2
+    1c28:	e3a02101 	mov	r2, #1073741824	; 0x40000000
+    1c2c:	e1811002 	orr	r1, r1, r2
+    1c30:	e5801000 	str	r1, [r0]
+    1c34:	e59f00b8 	ldr	r0, [pc, #184]	; 1cf4 <DELAY_END+0x14>
+    1c38:	e5901000 	ldr	r1, [r0]
+    1c3c:	e3e02103 	mvn	r2, #-1073741824	; 0xc0000000
+    1c40:	e0011002 	and	r1, r1, r2
+    1c44:	e5801000 	str	r1, [r0]
+    1c48:	e24f0050 	sub	r0, pc, #80	; 0x50
+    1c4c:	e59f10a4 	ldr	r1, [pc, #164]	; 1cf8 <DELAY_END+0x18>
+    1c50:	e59f20a4 	ldr	r2, [pc, #164]	; 1cfc <DELAY_END+0x1c>
+    1c54:	e1500001 	cmp	r0, r1
+    1c58:	0a000003 	beq	1c6c <CLEAN_BSS>
+
+00001c5c <COPY_CODE>:
+    1c5c:	e4903004 	ldr	r3, [r0], #4
+    1c60:	e4813004 	str	r3, [r1], #4
+    1c64:	e1510002 	cmp	r1, r2
+    1c68:	1afffffb 	bne	1c5c <COPY_CODE>
+
+00001c6c <CLEAN_BSS>:
+    1c6c:	e59f0088 	ldr	r0, [pc, #136]	; 1cfc <DELAY_END+0x1c>
+    1c70:	e59f1088 	ldr	r1, [pc, #136]	; 1d00 <DELAY_END+0x20>
+    1c74:	e3a02000 	mov	r2, #0
+
+00001c78 <CLEAN_LOOP>:
+    1c78:	e1500001 	cmp	r0, r1
+    1c7c:	14802004 	strne	r2, [r0], #4
+    1c80:	1afffffc 	bne	1c78 <CLEAN_LOOP>
+    1c84:	e59ff078 	ldr	pc, [pc, #120]	; 1d04 <DELAY_END+0x24>
+
+00001c88 <START>:
+    1c88:	e320f000 	nop	{0}
+    1c8c:	e320f000 	nop	{0}
+    1c90:	eb00001e 	bl	1d10 <INIT_CLOCK>
+    1c94:	e320f000 	nop	{0}
+    1c98:	e320f000 	nop	{0}
+    1c9c:	e59f0064 	ldr	r0, [pc, #100]	; 1d08 <DELAY_END+0x28>
+    1ca0:	e5901000 	ldr	r1, [r0]
+
+00001ca4 <LOOP>:
+    1ca4:	e3a02902 	mov	r2, #32768	; 0x8000
+    1ca8:	e1811002 	orr	r1, r1, r2
+    1cac:	e5801000 	str	r1, [r0]
+    1cb0:	eb000004 	bl	1cc8 <DELAY>
+    1cb4:	e3e02902 	mvn	r2, #32768	; 0x8000
+    1cb8:	e0011002 	and	r1, r1, r2
+    1cbc:	e5801000 	str	r1, [r0]
+    1cc0:	eb000000 	bl	1cc8 <DELAY>
+    1cc4:	eafffff6 	b	1ca4 <LOOP>
+
+00001cc8 <DELAY>:
+    1cc8:	e3a04000 	mov	r4, #0
+    1ccc:	e59f5038 	ldr	r5, [pc, #56]	; 1d0c <DELAY_END+0x2c>
+
+00001cd0 <DELAY_START>:
+    1cd0:	e1540005 	cmp	r4, r5
+    1cd4:	0a000001 	beq	1ce0 <DELAY_END>
+    1cd8:	e2844001 	add	r4, r4, #1
+    1cdc:	eafffffb 	b	1cd0 <DELAY_START>
+
+00001ce0 <DELAY_END>:
+    1ce0:	e1a0f00e 	mov	pc, lr
+    1ce4:	e320f000 	nop	{0}
+    1ce8:	e320f000 	nop	{0}
+    1cec:	7e004000 	cdpvc	0, 0, cr4, cr0, cr0, {0}
+    1cf0:	7f0080a0 	svcvc	0x000080a0
+    1cf4:	7f0080a8 	svcvc	0x000080a8
+    1cf8:	00001c00 	andeq	r1, r0, r0, lsl #24
+    1cfc:	00001db0 			; <UNDEFINED> instruction: 0x00001db0
+    1d00:	00001db0 			; <UNDEFINED> instruction: 0x00001db0
+    1d04:	00001c88 	andeq	r1, r0, r8, lsl #25
+    1d08:	7f0080a4 	svcvc	0x000080a4
+    1d0c:	0004ffff 	strdeq	pc, [r4], -pc	; <UNPREDICTABLE>
+
+00001d10 <INIT_CLOCK>:
+    1d10:	e59f0074 	ldr	r0, [pc, #116]	; 1d8c <LOOP+0x58>
+    1d14:	e59f1074 	ldr	r1, [pc, #116]	; 1d90 <LOOP+0x5c>
+    1d18:	e4801004 	str	r1, [r0], #4
+    1d1c:	e4801004 	str	r1, [r0], #4
+    1d20:	e5801000 	str	r1, [r0]
+    1d24:	e59f0068 	ldr	r0, [pc, #104]	; 1d94 <LOOP+0x60>
+    1d28:	e5901000 	ldr	r1, [r0]
+    1d2c:	e3c110c0 	bic	r1, r1, #192	; 0xc0
+    1d30:	e5801000 	str	r1, [r0]
+
+00001d34 <LOOP>:
+    1d34:	e59f0058 	ldr	r0, [pc, #88]	; 1d94 <LOOP+0x60>
+    1d38:	e5901000 	ldr	r1, [r0]
+    1d3c:	e2011c0f 	and	r1, r1, #3840	; 0xf00
+    1d40:	e3510000 	cmp	r1, #0
+    1d44:	1afffffa 	bne	1d34 <LOOP>
+    1d48:	e59f0048 	ldr	r0, [pc, #72]	; 1d98 <LOOP+0x64>
+    1d4c:	e59f1048 	ldr	r1, [pc, #72]	; 1d9c <LOOP+0x68>
+    1d50:	e5801000 	str	r1, [r0]
+    1d54:	e59f1044 	ldr	r1, [pc, #68]	; 1da0 <LOOP+0x6c>
+    1d58:	e5801004 	str	r1, [r0, #4]
+    1d5c:	e59f0040 	ldr	r0, [pc, #64]	; 1da4 <LOOP+0x70>
+    1d60:	e5901000 	ldr	r1, [r0]
+    1d64:	e59f203c 	ldr	r2, [pc, #60]	; 1da8 <LOOP+0x74>
+    1d68:	e0011002 	and	r1, r1, r2
+    1d6c:	e3a02c31 	mov	r2, #12544	; 0x3100
+    1d70:	e1811002 	orr	r1, r1, r2
+    1d74:	e5801000 	str	r1, [r0]
+    1d78:	e59f002c 	ldr	r0, [pc, #44]	; 1dac <LOOP+0x78>
+    1d7c:	e5901000 	ldr	r1, [r0]
+    1d80:	e3811003 	orr	r1, r1, #3
+    1d84:	e5801000 	str	r1, [r0]
+    1d88:	e1a0f00e 	mov	pc, lr
+    1d8c:	7e00f000 	cdpvc	0, 0, cr15, cr0, cr0, {0}
+    1d90:	0000ffff 	strdeq	pc, [r0], -pc	; <UNPREDICTABLE>
+    1d94:	7e00f900 	cdpvc	9, 0, cr15, cr0, cr0, {0}
+    1d98:	7e00f00c 	cdpvc	0, 0, cr15, cr0, cr12, {0}
+    1d9c:	810a0301 	tsthi	sl, r1, lsl #6
+    1da0:	810a0302 	tsthi	sl, r2, lsl #6
+    1da4:	7e00f020 	cdpvc	0, 0, cr15, cr0, cr0, {1}
+    1da8:	ffff0000 			; <UNDEFINED> instruction: 0xffff0000
+    1dac:	7e00f01c 	mcrvc	0, 0, pc, cr0, cr12, {0}	; <UNPREDICTABLE>
+
+Disassembly of section .ARM.attributes:
+
+00000000 <.ARM.attributes>:
+   0:	00002041 	andeq	r2, r0, r1, asr #32
+   4:	61656100 	cmnvs	r5, r0, lsl #2
+   8:	01006962 	tsteq	r0, r2, ror #18
+   c:	00000016 	andeq	r0, r0, r6, lsl r0
+  10:	412d3705 	teqmi	sp, r5, lsl #14
+  14:	070a0600 	streq	r0, [sl, -r0, lsl #12]
+  18:	09010841 	stmdbeq	r1, {r0, r6, fp}
+  1c:	2c040a02 	stccs	10, cr0, [r4], {2}
+  20:	Address 0x0000000000000020 is out of bounds.
+

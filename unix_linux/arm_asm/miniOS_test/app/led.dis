@@ -1,0 +1,77 @@
+
+led.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <_start>:
+   0:	e5bd0004 	ldr	r0, [sp, #4]!
+   4:	e28d1004 	add	r1, sp, #4
+   8:	eb00000a 	bl	38 <main>
+
+0000000c <halt>:
+   c:	eafffffe 	b	c <halt>
+
+00000010 <OS_ENTER_CRITICAL>:
+  10:	ef000000 	svc	0x00000000
+  14:	e1a0f00e 	mov	pc, lr
+
+00000018 <OS_EXIT_CRITICAL>:
+  18:	ef000001 	svc	0x00000001
+  1c:	e1a0f00e 	mov	pc, lr
+
+00000020 <sleep>:
+  20:	ef000003 	svc	0x00000003
+  24:	e1a0f00e 	mov	pc, lr
+
+00000028 <leds_on>:
+  28:	ef000005 	svc	0x00000005
+  2c:	e1a0f00e 	mov	pc, lr
+
+00000030 <leds_off>:
+  30:	ef000006 	svc	0x00000006
+  34:	e1a0f00e 	mov	pc, lr
+
+00000038 <main>:
+  38:	e52de004 	push	{lr}		; (str lr, [sp, #-4]!)
+  3c:	e24dd00c 	sub	sp, sp, #12
+  40:	e58d0004 	str	r0, [sp, #4]
+  44:	e58d1000 	str	r1, [sp]
+  48:	ebfffff6 	bl	28 <leds_on>
+  4c:	e3a00064 	mov	r0, #100	; 0x64
+  50:	ebfffff2 	bl	20 <sleep>
+  54:	ebfffff5 	bl	30 <leds_off>
+  58:	e3a00064 	mov	r0, #100	; 0x64
+  5c:	ebffffef 	bl	20 <sleep>
+  60:	eafffff8 	b	48 <main+0x10>
+
+Disassembly of section .comment:
+
+00000000 <.comment>:
+   0:	3a434347 	bcc	10d0d24 <__bss_end__+0x10c8cc0>
+   4:	6f532820 	svcvs	0x00532820
+   8:	65637275 	strbvs	r7, [r3, #-629]!	; 0xfffffd8b
+   c:	43207972 	teqmi	r0, #1867776	; 0x1c8000
+  10:	4265646f 	rsbmi	r6, r5, #1862270976	; 0x6f000000
+  14:	68636e65 	stmdavs	r3!, {r0, r2, r5, r6, r9, sl, fp, sp, lr}^
+  18:	74694c20 	strbtvc	r4, [r9], #-3104	; 0xfffff3e0
+  1c:	30322065 	eorscc	r2, r2, r5, rrx
+  20:	302e3331 	eorcc	r3, lr, r1, lsr r3
+  24:	34322d35 	ldrtcc	r2, [r2], #-3381	; 0xfffff2cb
+  28:	2e342029 	cdpcs	0, 3, cr2, cr4, cr9, {1}
+  2c:	00332e37 	eorseq	r2, r3, r7, lsr lr
+
+Disassembly of section .ARM.attributes:
+
+00000000 <.ARM.attributes>:
+   0:	00002641 	andeq	r2, r0, r1, asr #12
+   4:	61656100 	cmnvs	r5, r0, lsl #2
+   8:	01006962 	tsteq	r0, r2, ror #18
+   c:	0000001c 	andeq	r0, r0, ip, lsl r0
+  10:	45543505 	ldrbmi	r3, [r4, #-1285]	; 0xfffffafb
+  14:	08040600 	stmdaeq	r4, {r9, sl}
+  18:	12010901 	andne	r0, r1, #16384	; 0x4000
+  1c:	15011404 	strne	r1, [r1, #-1028]	; 0xfffffbfc
+  20:	18031701 	stmdane	r3, {r0, r8, r9, sl, ip}
+  24:	Address 0x00000024 is out of bounds.
+

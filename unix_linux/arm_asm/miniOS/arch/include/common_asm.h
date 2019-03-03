@@ -1,0 +1,27 @@
+
+#ifndef COMMON_ASM_H
+#define COMMON_ASM_H
+
+.equ    STACK_BASE,         0x5FFFFFF0
+
+.equ    SVC_STACK_START,    STACK_BASE
+.equ    SVC_STACK_SIZE,     (32 * 1024)
+
+.equ    ABT_STACK_START,    (SVC_STACK_START - SVC_STACK_SIZE)
+.equ    ABT_STACK_SIZE,     (4 * 1024)
+
+.equ    UND_STACK_START,    (ABT_STACK_START - ABT_STACK_SIZE)
+.equ    UND_STACK_SIZE,     (4 * 1024)
+
+.equ    IRQ_STACK_START,    (UND_STACK_START - UND_STACK_SIZE)
+.equ    IRQ_STACK_SIZE,     (32 * 1024)
+
+.equ    FIQ_STACK_START,    (IRQ_STACK_START - IRQ_STACK_SIZE)
+.equ    FIQ_STACK_SIZE,     (16 * 1024)
+
+.equ    SYS_STACK_START,    (FIQ_STACK_START - FIQ_STACK_SIZE)
+
+.equ    USR_STACK_START,    SYS_STACK_START
+
+
+#endif

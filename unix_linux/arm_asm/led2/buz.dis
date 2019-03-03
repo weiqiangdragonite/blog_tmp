@@ -1,0 +1,82 @@
+
+buz.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <_start>:
+   0:	eb000001 	bl	c <init>
+   4:	eb000004 	bl	1c <main>
+   8:	eb000010 	bl	50 <beep>
+
+0000000c <init>:
+   c:	e3a00207 	mov	r0, #1879048192	; 0x70000000
+  10:	e3800013 	orr	r0, r0, #19
+  14:	ee0f0f92 	mcr	15, 0, r0, cr15, cr2, {4}
+  18:	e1a0f00e 	mov	pc, lr
+
+0000001c <main>:
+  1c:	e59f0090 	ldr	r0, [pc, #144]	; b4 <delay_end+0xc>
+  20:	e5901000 	ldr	r1, [r0]
+  24:	e3e02103 	mvn	r2, #-1073741824	; 0xc0000000
+  28:	e0011002 	and	r1, r1, r2
+  2c:	e3a02101 	mov	r2, #1073741824	; 0x40000000
+  30:	e1811002 	orr	r1, r1, r2
+  34:	e5801000 	str	r1, [r0]
+  38:	e59f0078 	ldr	r0, [pc, #120]	; b8 <delay_end+0x10>
+  3c:	e5901000 	ldr	r1, [r0]
+  40:	e3e02103 	mvn	r2, #-1073741824	; 0xc0000000
+  44:	e0011002 	and	r1, r1, r2
+  48:	e5801000 	str	r1, [r0]
+  4c:	e1a0f00e 	mov	pc, lr
+
+00000050 <beep>:
+  50:	e59f0064 	ldr	r0, [pc, #100]	; bc <delay_end+0x14>
+  54:	e5901000 	ldr	r1, [r0]
+  58:	eb00000d 	bl	94 <delay>
+  5c:	eb00000c 	bl	94 <delay>
+  60:	eb00000b 	bl	94 <delay>
+  64:	eb00000a 	bl	94 <delay>
+  68:	e3e02902 	mvn	r2, #32768	; 0x8000
+  6c:	e0011002 	and	r1, r1, r2
+  70:	e59f2048 	ldr	r2, [pc, #72]	; c0 <delay_end+0x18>
+  74:	e1811002 	orr	r1, r1, r2
+  78:	e5801000 	str	r1, [r0]
+  7c:	eb000004 	bl	94 <delay>
+  80:	e3e02902 	mvn	r2, #32768	; 0x8000
+  84:	e0011002 	and	r1, r1, r2
+  88:	e5801000 	str	r1, [r0]
+  8c:	eb000000 	bl	94 <delay>
+  90:	eaffffee 	b	50 <beep>
+
+00000094 <delay>:
+  94:	e3a03000 	mov	r3, #0
+
+00000098 <delay_start>:
+  98:	e3530701 	cmp	r3, #262144	; 0x40000
+  9c:	0a000001 	beq	a8 <delay_end>
+  a0:	e2833001 	add	r3, r3, #1
+  a4:	eafffffb 	b	98 <delay_start>
+
+000000a8 <delay_end>:
+  a8:	e1a0f00e 	mov	pc, lr
+  ac:	e320f000 	nop	{0}
+  b0:	e320f000 	nop	{0}
+  b4:	7f0080a0 	svcvc	0x000080a0
+  b8:	7f0080a8 	svcvc	0x000080a8
+  bc:	7f0080a4 	svcvc	0x000080a4
+  c0:	00008fff 	strdeq	r8, [r0], -pc	; <UNPREDICTABLE>
+
+Disassembly of section .ARM.attributes:
+
+00000000 <.ARM.attributes>:
+   0:	00002041 	andeq	r2, r0, r1, asr #32
+   4:	61656100 	cmnvs	r5, r0, lsl #2
+   8:	01006962 	tsteq	r0, r2, ror #18
+   c:	00000016 	andeq	r0, r0, r6, lsl r0
+  10:	412d3705 	teqmi	sp, r5, lsl #14
+  14:	070a0600 	streq	r0, [sl, -r0, lsl #12]
+  18:	09010841 	stmdbeq	r1, {r0, r6, fp}
+  1c:	2c040a02 	stccs	10, cr0, [r4], {2}
+  20:	Address 0x0000000000000020 is out of bounds.
+

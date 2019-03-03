@@ -1,0 +1,81 @@
+
+u-boot.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+50000000 <_start>:
+50000000:	ea00000e 	b	50000040 <reset>
+50000004:	e59ff018 	ldr	pc, [pc, #24]	; 50000024 <_undefined_instruction>
+50000008:	e59ff018 	ldr	pc, [pc, #24]	; 50000028 <_software_interrupt>
+5000000c:	e59ff018 	ldr	pc, [pc, #24]	; 5000002c <_prefetch_abort>
+50000010:	e59ff018 	ldr	pc, [pc, #24]	; 50000030 <_data_abort>
+50000014:	e59ff018 	ldr	pc, [pc, #24]	; 50000034 <_reserved>
+50000018:	e59ff018 	ldr	pc, [pc, #24]	; 50000038 <_irq>
+5000001c:	e59ff018 	ldr	pc, [pc, #24]	; 5000003c <_fiq>
+50000020:	e59ff044 	ldr	pc, [pc, #68]	; 5000006c <test+0x4>
+
+50000024 <_undefined_instruction>:
+50000024:	5000004c 	andpl	r0, r0, ip, asr #32
+
+50000028 <_software_interrupt>:
+50000028:	50000050 	andpl	r0, r0, r0, asr r0
+
+5000002c <_prefetch_abort>:
+5000002c:	50000054 	andpl	r0, r0, r4, asr r0
+
+50000030 <_data_abort>:
+50000030:	50000058 	andpl	r0, r0, r8, asr r0
+
+50000034 <_reserved>:
+50000034:	5000005c 	andpl	r0, r0, ip, asr r0
+
+50000038 <_irq>:
+50000038:	50000060 	andpl	r0, r0, r0, rrx
+
+5000003c <_fiq>:
+5000003c:	50000064 	andpl	r0, r0, r4, rrx
+
+50000040 <reset>:
+50000040:	e1a00000 	nop			; (mov r0, r0)
+50000044:	e1a00000 	nop			; (mov r0, r0)
+
+50000048 <halt>:
+50000048:	eafffffe 	b	50000048 <halt>
+
+5000004c <undefined_instruction>:
+5000004c:	ebfffffd 	bl	50000048 <halt>
+
+50000050 <software_interrupt>:
+50000050:	ebfffffc 	bl	50000048 <halt>
+
+50000054 <prefetch_abort>:
+50000054:	ebfffffb 	bl	50000048 <halt>
+
+50000058 <data_abort>:
+50000058:	ebfffffa 	bl	50000048 <halt>
+
+5000005c <reserved>:
+5000005c:	ebfffff9 	bl	50000048 <halt>
+
+50000060 <irq>:
+50000060:	ebfffff8 	bl	50000048 <halt>
+
+50000064 <fiq>:
+50000064:	ebfffff7 	bl	50000048 <halt>
+
+50000068 <test>:
+50000068:	ebfffff6 	bl	50000048 <halt>
+5000006c:	50000068 	andpl	r0, r0, r8, rrx
+
+Disassembly of section .ARM.attributes:
+
+00000000 <.ARM.attributes>:
+   0:	00001a41 	andeq	r1, r0, r1, asr #20
+   4:	61656100 	cmnvs	r5, r0, lsl #2
+   8:	01006962 	tsteq	r0, r2, ror #18
+   c:	00000010 	andeq	r0, r0, r0, lsl r0
+  10:	45543505 	ldrbmi	r3, [r4, #-1285]	; 0xfffffafb
+  14:	08040600 	stmdaeq	r4, {r9, sl}
+  18:	Address 0x00000018 is out of bounds.
+

@@ -1,0 +1,25 @@
+CC = arm-linux-gnueabi-gcc
+LD = arm-linux-gnueabi-ld
+CP = arm-linux-gnueabi-objcopy
+DP = arm-linux-gnueabi-objdump
+
+EXE = led
+SRC = led.c
+SRS = start.S clock.S
+OBJS = $(SRS:.S=.o) $(SRC:.c=.o)
+
+CFLAGS = -std=c99 -Wall -Werror -O2 -c
+
+$(EXE).bin : $(OBJS)
+	$(LD) -Ttext 0 -o $(EXE).elf $^
+	$(CP) -O binary $(EXE).elf $@
+	$(DP) -D $(EXE).elf > $(EXE).dis
+
+%.o : %.S
+	$(CC) $(CFLAGS) $^ -o $@
+
+%.o : %.c
+	$(CC) $(CFLAGS) $^ -o $@
+	
+clean:
+	rm *.o led.elf led.bin led.dis
