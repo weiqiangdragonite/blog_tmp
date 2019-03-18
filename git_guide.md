@@ -59,6 +59,7 @@ This will set the cache to timeout after 1 hour (setting is in seconds)
 
 2.将改动添加至缓存
 
+    git add <file>
     git add --all
 
 3.提交改动到本地仓库
@@ -68,14 +69,23 @@ This will set the cache to timeout after 1 hour (setting is in seconds)
 4.将本地仓库推到远程主机
 
     git push -u origin master
+	git push  origin <branch>
 
 5.远程主机的版本有了更新，将这些更新取回本地
 
     git pull origin master
+	
+	不建议使用pull，推荐使用 git fetch 和 git merge
+	(
+	git fetch origin master
+	git log -p master.. origin/master
+	git merge origin/master
+	)
 
 6.创建新的分支并切换过去
 
     git checkout -b feature_x
+	(git branch feature_x && git checkout feature_x)
 
 7.将新的分支推到远程主机上 (更新完后还需要将改动提交到本地仓库再推到主机上)
 
@@ -88,6 +98,129 @@ This will set the cache to timeout after 1 hour (setting is in seconds)
 9.合并分支
 
     git merge feature_x
+
+
+
+
+
+
+查看仓库状态
+git status
+
+查看修改内容
+git diff
+
+查看提交日志
+git log
+git log --pretty=oneline
+
+
+查看命令历史
+git reflog
+
+回退版本
+git reset --hard <ID>
+
+把工作区的修改撤销
+git checkout -- <file>
+git reset HEAD <file>
+
+查看当前分支
+git branch
+git branch -av
+
+切换分支
+git checkout <branch>
+
+合并分支(合并指定分支到当前分支)
+git merge <branch>
+git merge --no-ff -m "merge with no-ff" <branch>
+
+删除分支
+git branch -d <branch>
+git branch -D <branch> (丢弃一个没有被合并过的分支,强行删除)
+
+删除远程分支
+git push origin --delete <分支名称>
+
+删除本地不存在的远程分支
+git remote show origin
+git remote prune origin
+
+
+查看分支合并图
+git log --graph
+git log --graph --pretty=oneline --abbrev-commit
+
+
+
+(Git鼓励你使用分支完成某个任务，合并后再删掉分支，这和直接在master分支上工作效果是一样的，但过程更安全)
+
+分支策略
+在实际开发中，我们应该按照几个基本原则进行分支管理：
+
+首先，master分支应该是非常稳定的，也就是仅用来发布新版本，平时不能在上面干活；
+
+那在哪干活呢？干活都在dev分支上，也就是说，dev分支是不稳定的，到某个时候，比如1.0版本发布时，再把dev分支合并到master上，在master分支发布1.0版本；
+
+你和你的小伙伴们每个人都在dev分支上干活，每个人都有自己的分支，时不时地往dev分支上合并就可以了。
+
+
+
+
+
+
+GitFlow
+
+1、master分支创建一个develop分支
+git branch develop
+git push -u origin develop
+
+开发者使用develop分支
+git clone ssh://user@host/path/to/repo.git
+git checkout -b develop origin/develop
+(如果开发者是在创建develop分支前就clone下来的话，这里checkout会报错，应该先执行
+git fetch origin develop
+然后再执行 git checkout -b develop origin/develop
+)
+
+
+2、开发者基于develop分支，创建各自的功能分支
+git checkout -b some-feature develop
+然后开发、编辑、提交
+git status
+git add <some-file>
+git commit
+
+3、功能开发完后，合并到develop分支
+git pull --rebase origin develop
+git checkout develop
+git merge --no--ff some-feature
+git push
+git branch -d some-feature
+
+4、准备发布
+git checkout -b release-0.1 develop
+
+5、完成发布
+git checkout master
+git merge --no-ff release-0.1
+git push
+git checkout develop
+git merge --no-ff release-0.1
+git push
+git branch -d release-0.1
+
+发布分支是作为功能开发（develop分支）和对外发布（master分支）间的缓冲。只要有合并到master分支，就应该打好Tag以方便跟踪。
+git tag -a 0.1 -m "Initial public release" master
+git push --tags
+Git有提供各种勾子（hook），即仓库有事件发生时触发执行的脚本。 可以配置一个勾子，在你push中央仓库的master分支时，自动构建好对外发布。
+
+
+
+
+
+
 
 
 --------------------------------------------------------------------------------
