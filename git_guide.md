@@ -137,7 +137,7 @@ git merge <branch>
 git merge --no-ff -m "merge with no-ff" <branch>
 
 删除分支
-git branch -d <branch>
+eaa34a0 <branch>
 git branch -D <branch> (丢弃一个没有被合并过的分支,强行删除)
 
 删除远程分支
@@ -170,7 +170,9 @@ git log --graph --pretty=oneline --abbrev-commit
 
 
 
-GitFlow
+GitLab Flow
+https://docs.gitlab.com/ce/workflow/gitlab_flow.html
+
 
 1、master分支创建一个develop分支
 git branch develop
@@ -196,16 +198,16 @@ git commit
 git pull --rebase origin develop
 git checkout develop
 git merge --no--ff some-feature
-git push
+git push -u origin develop
 git branch -d some-feature
 
-4、准备发布
+4、准备发布 (如果是gitlab，第4、5步不需要做，直接在页面发起pull request)
 git checkout -b release-0.1 develop
 
 5、完成发布
 git checkout master
 git merge --no-ff release-0.1
-git push
+git push -u origin  master
 git checkout develop
 git merge --no-ff release-0.1
 git push
