@@ -100,7 +100,9 @@ This will set the cache to timeout after 1 hour (setting is in seconds)
     git merge feature_x
 
 
-
+如果开发者是在创建develop分支前就clone下来的话，这里checkout会报错，应该先执行
+git fetch origin develop
+然后再执行 git checkout -b develop origin/develop
 
 
 
@@ -174,25 +176,87 @@ GitLab Flow
 https://docs.gitlab.com/ce/workflow/gitlab_flow.html
 
 
-1、master分支创建一个develop分支
-git branch develop
-git push -u origin develop
+master：主分支，负责记录上线版本的迭代，该分支代码与线上代码是完全一致的。
+develop：开发分支，该分支记录相对稳定的版本，所有的 feature 分支和 bugfix 分支都从该分支创建。
+(这2个分支是受保护的)
 
-开发者使用develop分支
+其他为短期分支，开发之后需要删除
+feature-*: 特性/功能分支
+bugfix-*: bug修复分支(不紧急)
+release-*: 发布分支
+hotfix-*: 紧急bug修复分支
+
+
+人员分工
+开发人员： a、b  负责代码功能开发，bug修复
+开发 leader：c   负责review代码，合并代码到develop和master分支
+测试人员： d     测试功能或bug修复是否正常
+部署人员：e      部署代码到线上
+
+
+
+1. leader 创建代码仓库，主分支和开发分支设为受保护
+   然后开发者clone这个库下来
 git clone ssh://user@host/path/to/repo.git
+
+因为git clone默认会把远程仓库整个clone下来，但只会在本地默认创建一个master分支，
+因此我们还需要把develop分支从远程分支取到本地
 git checkout -b develop origin/develop
-(如果开发者是在创建develop分支前就clone下来的话，这里checkout会报错，应该先执行
-git fetch origin develop
-然后再执行 git checkout -b develop origin/develop
-)
 
 
 2、开发者基于develop分支，创建各自的功能分支
-git checkout -b some-feature develop
+git checkout -b feature-1 develop
 然后开发、编辑、提交
 git status
 git add <some-file>
-git commit
+git commit -m "Add feature-1"
+git push origin feature-1
+
+
+git checkout -b feature-2 develop
+然后开发、编辑、提交
+git status
+git add <some-file>
+git commit -m "Add feature-2"
+git push origin feature-2
+
+(
+假如开发者2需要进入分支1进行开发
+git fetch                        // 取回远端所有分支的更新
+git checkout feature-1           // 切换到要进行开发的分支
+git pull origin feature-1        // 拉取远端分支
+
+这里少用git pull，多用git fetch和merge
+	git fetch origin feature-1
+	git log -p feature-1.. origin/feature-1
+	git merge origin/feature-1
+	
+然后在进行开发和提交。
+
+如果merge时有冲突，解决完冲突在提交
+)
+
+
+
+3、功能开发完后，在页面发起merge request，请求合并到develop分支。
+功能分支合并到develop分支后需要删除本地分支
+git branch -d feature-1 
+由leader审核并合并代码
+
+
+4、准备发布，创建release分支 (由开发leader创建)
+git checkout -b release-0.2 develop
+git push origin release-0.2            // 推送到远端后，测试人员和开发人员可以使用
+后续所有相关的测试和修改都需要在这个分支进行
+
+测试通过后，开发leader将release分支合并到develop分支和master分支。
+并对master分支打上tag
+
+
+
+
+
+
 
 3、功能开发完后，合并到develop分支
 git pull --rebase origin develop
