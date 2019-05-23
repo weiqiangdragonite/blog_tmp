@@ -1,0 +1,39 @@
+### 这个还是报错
+FROM python:3.7-alpine
+
+WORKDIR /usr/src/app
+
+COPY requirements.txt ./
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+
+RUN apk update && apk add --no-cache \
+    libuuid \
+    pcre \
+    mailcap \
+    gcc \
+    libc-dev \
+    linux-headers \
+    pcre-dev \
+    && pip3 install --no-cache-dir -r requirements.txt \
+    && apk del \
+    gcc \
+    libc-dev \
+    linux-headers \
+    && rm -rf /tmp/*
+
+
+CMD ["python3"]
+
+
+--------------------------------------------------------------------------------
+
+FROM python:3
+
+WORKDIR /usr/src/app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["python3"]
+

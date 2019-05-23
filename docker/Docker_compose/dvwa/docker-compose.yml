@@ -1,29 +1,51 @@
 #
 #
 
-version: '2'
+version: "3"
+
 services:
-    web_1:
-        image: daocloud.io/nginx:1.12
+    
+    web-dvwa:
+        image: nginx:latest
+        container_name: web-dvwa
         volumes:
-            - ./web/web_1/html/:/usr/share/nginx/html/:ro
+            - ./conf/site.conf:/etc/nginx/conf.d/default.conf:ro
+            - ./html/:/usr/share/nginx/html/
+            - ./log/:/var/log/nginx/
         ports:
-            - 80
+            - 80:80
+        networks:
+            - net-dvwa
+        depends_on:
+            - php-dvwa
+            - mysql-dvwa
 
-    web_2:
-        image: daocloud.io/nginx:1.12
+    php-dvwa:
+        #image: php:7-fpm
+        build: ./php
+        container_name: php-dvwa
         volumes:
-            - ./web/web_2/html/:/usr/share/nginx/html/:ro
-        ports:
-            - 80
+            - ./html/:/usr/share/nginx/html/
+            - ./php/conf/php.ini:/usr/local/etc/php/php.ini:ro
+        #expose:
+        #    - 9000
+        networks:
+            - net-dvwa
+            
+    mysql-dvwa:
+        image: mysql:5.7
+        container_name: mysql-dvwa
+        environment:
+            - MYSQL_ROOT_PASSWORD=123456
+        volumes:
+            - /mysql/data/:/var/lib/mysql:rw
+        #expose:
+        #    - 3306
+        networks:
+            - net-dvwa
+        
 
-    haproxy:
-        image: docker.io/haproxy:1.7
-        volumes:
-            - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
-        links:
-            - web_1
-            - web_2
-        ports:
-            - "80:80"
-            - "8080:8080"
+networks:
+    net-dvwa:
+        driver: bridge
+        
