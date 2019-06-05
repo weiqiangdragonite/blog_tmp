@@ -1,0 +1,75 @@
+# 主要是使用php unix socket
+#
+# 问题: 有时停止重启容器会发现失败，某些配置文件无故变成了文件夹，原因待查
+#
+
+version: "3"
+
+services:
+    
+    web-dvwa:
+        image: nginx:latest
+        container_name: web-dvwa
+        environment:
+            - TZ=Asia/Shanghai
+        volumes:
+            - ./conf/site.conf:/etc/nginx/conf.d/default.conf:ro
+            - ./html/:/usr/share/nginx/html/
+            - ./log/:/var/log/nginx/
+            - /var/run/dvwa/:/var/run/
+        ports:
+            - "80:80"
+        networks:
+            - net-dvwa
+        depends_on:
+            - php-dvwa
+            - mysql-dvwa
+
+    php-dvwa:
+        #image: php:7-fpm
+        build: ./php
+        container_name: php-dvwa
+        environment:
+            - TZ=Asia/Shanghai
+        volumes:
+            - ./html/:/usr/share/nginx/html/
+            #- ./log/:/usr/local/var/log/
+            - ./php/conf/php.ini:/usr/local/etc/php/php.ini:ro
+            #- ./php/conf/php-fpm.conf:/usr/local/etc/php-fpm.conf:ro
+            - ./php/conf/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+            - ./php/conf/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
+            - /var/run/dvwa/:/var/run/
+        #expose:
+        #    - "9000"
+        networks:
+            - net-dvwa
+            
+    mysql-dvwa:
+        image: mysql:5.7
+        container_name: mysql-dvwa
+        # 最好是用配置文件
+        #command: [                                     #使用 command 可以覆盖容器启动后默认执行的命令
+        #    '--character-set-server=utf8mb4',          #设置数据库表的数据集
+        #    '--collation-server=utf8mb4_unicode_ci',   #设置数据库表的数据集
+        #    '--default-time-zone=+8:00'                #设置mysql数据库的 时区问题！！！！ 而不是设置容器的时区问题！！！！
+        #]
+        environment:
+            - MYSQL_ROOT_PASSWORD=123456
+            - TZ=Asia/Shanghai
+        volumes:
+            - ./mysql/data/:/var/lib/mysql:rw
+            - ./mysql/conf/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf:ro
+        #expose: # 暴露给其他连接容器
+        #    - "3306"
+        #ports: # 映射容器端口到主机端口
+        #    - "3306:3306"
+        #restart:
+        #    always  #是否随docker服务启动重启
+        networks:
+            - net-dvwa
+        
+
+networks:
+    net-dvwa:
+        driver: bridge
+        
